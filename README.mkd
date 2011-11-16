@@ -1,0 +1,9 @@
+# README
+
+How are the noise contributions from NGTS data affected
+by exposure time?
+
+The plan is to calculate the noise contributions (with some 
+assumptions) at every exposure time between 5s and 1 hour
+and bin them up to a timescale of 1-3 hours to see
+how they are affected.
