@@ -266,10 +266,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--device', 
             help='Plotting device', default='1/xs',
-            required=False, type=str)
+            required=False, type=str,
+            metavar='PGPLOT device')
     parser.add_argument('-m', '--targetmag',
             help="Target magnitude", default=None, 
-            type=int,
+            type=int, metavar='magnitude',
             required=True)
     args = parser.parse_args()
 
