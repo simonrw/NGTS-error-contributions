@@ -116,12 +116,12 @@ def main(args):
 
     # Central pixel fraction (calculated at runtime)
     '''
-    Taken from the ratio between two gaussians:
+    Taken from the ratio between two gaussian integrals:
         * The integral of flux in the central pixel
         * The integral to infinity of the psf
 
     This is calculated using the PyIntegrate function 
-    (which is wrapped cython code), and calculates this 
+    (which is cython code), and calculates this 
     ratio
     '''
     # Integration constants
