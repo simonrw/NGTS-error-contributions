@@ -38,7 +38,7 @@ SkyExposure = 40.
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
-Airmass = 1.
+AirmassOptions = [1., 2.]
 Extinction = 0.04 # magnitudes per airmass
 
 r'''
@@ -88,7 +88,7 @@ def ZP(etime):
     return zp
 
 
-def Scintillation(t):
+def Scintillation(t, Airmass):
     '''
     Scintillation function
 
@@ -100,7 +100,6 @@ def Scintillation(t):
     Height of Paranal = 2400m
     '''
     ApertureSize = 0.2
-    Airmass = 1.
     Height = 2400.
     return 0.004 * ApertureSize**(-2./3.) * Airmass**(7./4.) * exp(-Height/8000.) * (2. * t) ** (-1./2.)
 
@@ -152,9 +151,10 @@ def main(args):
     # Number of exposures that fit into an hour
     nExposures = TargetBinTime / totalFrameTime
 
-    for i, Airmass in enumerate([1,]):
+    for i, Airmass in enumerate(AirmassOptions):
+        print "\t\t*** AIRMASS %.1f ***" % Airmass;
         # Airmass correction factor
-        AirmassCorrection = 10**((Extinction * (Airmass - 1.)) / 2.5)
+        AirmassCorrection = 10**((Extinction * Airmass) / 2.5)
         print "Airmass correction factor: %.5f" % AirmassCorrection
 
         ###############################################################################
@@ -166,7 +166,7 @@ def main(args):
         print "Instrumental zero point: %.5f mag" % zp
 
         # Correct the source magnitude for airmass
-        AirmassCorrectedMag = TargetMag + Extinction * (Airmass - 1.)
+        AirmassCorrectedMag = TargetMag + Extinction * Airmass
         print "Airmass corrected magnitude: %.3f" % AirmassCorrectedMag
 
 
@@ -197,7 +197,7 @@ def main(args):
 
 
         # Correct the sky in 40 seconds value
-        CorrectedSkyIn40Seconds = SkyIn40Seconds / AirmassCorrection
+        CorrectedSkyIn40Seconds = SkyIn40Seconds
 
         # Get the sky counts per pixel per second
         SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
@@ -222,7 +222,7 @@ def main(args):
         ###############################################################################
 
         # scintillation error per source count
-        FractionalScintillationError = Scintillation(expTime)
+        FractionalScintillationError = Scintillation(expTime, Airmass)
 
         # Scale up by the source counts
         ScintillationErrorPerExposure = FractionalScintillationError * SourceCounts
