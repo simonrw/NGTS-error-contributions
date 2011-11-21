@@ -17,6 +17,7 @@ colours = {
         }
 
 # Some constants
+Gain = 3.
 HorizontalSpeed = 3E6
 VerticalTime = 38E-6
 NAXIS1 = 2048
@@ -26,6 +27,8 @@ ReadNoise = 11.7 # e- per pix
 FWHM = 1.5
 Radius = 1.5 * FWHM # pixels
 Area = pi * Radius**2
+BiasLevelADU = 300 # ADU
+BiasLevel = BiasLevelADU * Gain
 
 # Read noise electrons have to be added in quadrature 
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
@@ -104,6 +107,8 @@ def Scintillation(t):
 
 def main(args):
     # Print some nice stuff to the console
+    print "Assuming a gain of %.1f" % Gain
+    print "Bias level: %.2f electrons" % BiasLevel
     print "FWHM: %.2f pixels" % FWHM
     print "Aperture radius: %.2f pixels" % Radius
     print "Aperture area: %.2f pixels" % Area
@@ -144,136 +149,136 @@ def main(args):
     # Number of exposures that fit into an hour
     nExposures = TargetBinTime / totalFrameTime
 
-    # Airmass correction factor
-    AirmassCorrection = 10**((Extinction * (Airmass - 1.)) / 2.5)
-    print "Airmass correction factor: %.5f" % AirmassCorrection
+    for i, Airmass in enumerate([1,]):
+        # Airmass correction factor
+        AirmassCorrection = 10**((Extinction * (Airmass - 1.)) / 2.5)
+        print "Airmass correction factor: %.5f" % AirmassCorrection
 
-    ###############################################################################
-    #                               Source Error
-    ###############################################################################
+        ###############################################################################
+        #                               Source Error
+        ###############################################################################
 
-    # Zero point for a 1s exposure (true zero point)
-    zp = ZP(1.)
-    print "Instrumental zero point: %.5f mag" % zp
+        # Zero point for a 1s exposure (true zero point)
+        zp = ZP(1.)
+        print "Instrumental zero point: %.5f mag" % zp
 
-    # Correct the source magnitude for airmass
-    AirmassCorrectedMag = TargetMag + Extinction * Airmass
-    print "Airmass corrected magnitude: %.3f" % AirmassCorrectedMag
-
-
-    # Number of source photons
-    SourceCountsPerSecond = 10**((zp - AirmassCorrectedMag) / 2.5)
-    print "Source has %.1f electrons per second" % SourceCountsPerSecond
-    SourceCounts = SourceCountsPerSecond * expTime
-
-    # binned source counts
-    BinnedSourceCounts = SourceCounts * nExposures
-
-    #Error due to the source
-    SourceError = sqrt(BinnedSourceCounts)
-
-    ###############################################################################
-    #                               Read Noise Error
-    ###############################################################################
+        # Correct the source magnitude for airmass
+        AirmassCorrectedMag = TargetMag + Extinction * (Airmass - 1.)
+        print "Airmass corrected magnitude: %.3f" % AirmassCorrectedMag
 
 
-    # Read noise error
-    # Must add the read noise errors in quadrature 
-    # for each exposure
-    ReadNoiseError = ReadNoisePerAperture * sqrt(nExposures)
+        # Number of source photons
+        SourceCountsPerSecond = 10**((zp - AirmassCorrectedMag) / 2.5)
+        print "Source has %.1f electrons per second" % SourceCountsPerSecond
+        SourceCounts = SourceCountsPerSecond * expTime
 
-    ###############################################################################
-    #                               Sky Error
-    ###############################################################################
+        # binned source counts
+        BinnedSourceCounts = SourceCounts * nExposures
 
+        #Error due to the source
+        SourceError = sqrt(BinnedSourceCounts)
 
-    # Get the sky counts per pixel per second
-    SkyPerSecPerPix = SkyIn40Seconds / SkyExposure
-    print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
-
-    # Sky counts per second
-    SkyPerSec = SkyPerSecPerPix * Area
-    print "Sky has %.1f electrons per second" % SkyPerSec
-
-    # Total sky counts per exposure
-    SkyCounts = SkyPerSec * expTime
-
-    # Airmass correct the sky counts
-    SkyCounts *= AirmassCorrection
-
-    # Binned sky counts
-    BinnedSkyCounts = SkyCounts * nExposures
-
-    # Sky Error
-    SkyError = sqrt(BinnedSkyCounts)
-
-    ###############################################################################
-    #                               Scintillation Error
-    ###############################################################################
-
-    # scintillation error per source count
-    FractionalScintillationError = Scintillation(expTime)
-
-    # Scale up by the source counts
-    ScintillationErrorPerExposure = FractionalScintillationError * SourceCounts
-
-    # Add the errors in quadrature when binning
-    ScintillationError = ScintillationErrorPerExposure * sqrt(nExposures)
+        ###############################################################################
+        #                               Read Noise Error
+        ###############################################################################
 
 
-    ###############################################################################
-    #                               Total Error
-    ###############################################################################
+        # Read noise error
+        # Must add the read noise errors in quadrature 
+        # for each exposure
+        ReadNoiseError = ReadNoisePerAperture * sqrt(nExposures)
 
-    TotalError = sqrt(SourceError**2 + ReadNoiseError**2 + SkyError**2 + ScintillationError**2)
-
-
-    ###############################################################################
-    #                               Saturation
-    ###############################################################################
-
-    '''
-    From previous calculation, for the worst case when the psf is centred 
-    on the pixel, 30% of the flux goes into that pixel. Therefore when 30% 
-    of the total flux (source + sky) reaches the full well depth then the 
-    central pixel is saturatied
-
-    The 30% is assuming a psf fwhm of 1.5 pixels, and the result is calculated
-    in the variable: CentralPixelFraction
-    '''
-    TotalFrameCounts = SourceCounts + SkyCounts
-
-    # Multiply by the fraction that is in the central pixel
-    FluxInCentralPixel = CentralPixelFraction * TotalFrameCounts
-
-    # Get the exposure times at which the source is saturated
-    SaturatedExpTimes = expTime[FluxInCentralPixel>FullWellDepth]
-
-    # Pick the minimum one to find the saturation point
-    SaturatedLevel = SaturatedExpTimes.min()
-
-    print "Saturation in %.2f seconds" % SaturatedLevel
+        ###############################################################################
+        #                               Sky Error
+        ###############################################################################
 
 
-    ###############################################################################
-    #                               Plotting
-    ###############################################################################
+        # Correct the sky in 40 seconds value
+        CorrectedSkyIn40Seconds = SkyIn40Seconds / AirmassCorrection
+
+        # Get the sky counts per pixel per second
+        SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
+        print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
+
+        # Sky counts per second
+        SkyPerSec = SkyPerSecPerPix * Area
+        print "Sky has %.1f electrons per second" % SkyPerSec
+
+        # Total sky counts per exposure
+        SkyCounts = SkyPerSec * expTime
 
 
-    # Plotting class
-    Plotter = PlotClass(args.device)
+        # Binned sky counts
+        BinnedSkyCounts = SkyCounts * nExposures
 
-    # add the data lines
-    Plotter.addLine({'xdata': expTime, 'ydata': SourceError / BinnedSourceCounts,
-        'label': "Source", 'colour': colours['red'], 'ls': 1})
-    Plotter.addLine({'xdata': expTime, 'ydata': ReadNoiseError / BinnedSourceCounts,
-        'label': "Read noise", 'colour': colours['cyan'], 'ls': 1})
-    Plotter.addLine({'xdata': expTime, 'ydata': SkyError / BinnedSourceCounts,
-        'label': "Sky", 'colour': colours['blue'], 'ls': 1})
-    Plotter.addLine({'xdata': expTime, 'ydata': ScintillationError / BinnedSourceCounts,
-        'label': "Scintillation", 'colour': colours['green'], 'ls': 1})
-    Plotter.addLine({'xdata': expTime, 'ydata': TotalError / BinnedSourceCounts,
-        'label': "Total", 'colour': colours['black'], 'ls': 1})
+        # Sky Error
+        SkyError = sqrt(BinnedSkyCounts)
+
+        ###############################################################################
+        #                               Scintillation Error
+        ###############################################################################
+
+        # scintillation error per source count
+        FractionalScintillationError = Scintillation(expTime)
+
+        # Scale up by the source counts
+        ScintillationErrorPerExposure = FractionalScintillationError * SourceCounts
+
+        # Add the errors in quadrature when binning
+        ScintillationError = ScintillationErrorPerExposure * sqrt(nExposures)
+
+
+        ###############################################################################
+        #                               Total Error
+        ###############################################################################
+
+        TotalError = sqrt(SourceError**2 + ReadNoiseError**2 + SkyError**2 + ScintillationError**2)
+
+
+        ###############################################################################
+        #                               Saturation
+        ###############################################################################
+
+        '''
+        From previous calculation, for the worst case when the psf is centred 
+        on the pixel, 30% of the flux goes into that pixel. Therefore when 30% 
+        of the total flux (source + sky) reaches the full well depth then the 
+        central pixel is saturatied
+
+        The 30% is assuming a psf fwhm of 1.5 pixels, and the result is calculated
+        in the variable: CentralPixelFraction
+        '''
+        TotalFrameCounts = SourceCounts + SkyCounts + (BiasLevel * Area)
+
+        # Multiply by the fraction that is in the central pixel
+        FluxInCentralPixel = CentralPixelFraction * TotalFrameCounts
+
+        # Get the exposure times at which the source is saturated
+        SaturatedExpTimes = expTime[FluxInCentralPixel>FullWellDepth]
+
+        # Pick the minimum one to find the saturation point
+        SaturatedLevel = SaturatedExpTimes.min()
+
+        print "Saturation in %.2f seconds" % SaturatedLevel
+
+
+        ###############################################################################
+        #                               Plotting
+        ###############################################################################
+
+
+
+        # add the data lines
+        Plotter.addLine({'xdata': expTime, 'ydata': SourceError / BinnedSourceCounts,
+            'label': "Source", 'colour': colours['red'], 'ls': i+1, 'legend': not i})
+        Plotter.addLine({'xdata': expTime, 'ydata': ReadNoiseError / BinnedSourceCounts,
+            'label': "Read noise", 'colour': colours['cyan'], 'ls': i+1, 'legend': not i})
+        Plotter.addLine({'xdata': expTime, 'ydata': SkyError / BinnedSourceCounts,
+            'label': "Sky", 'colour': colours['blue'], 'ls': i+1, 'legend': not i})
+        Plotter.addLine({'xdata': expTime, 'ydata': ScintillationError / BinnedSourceCounts,
+            'label': "Scintillation", 'colour': colours['green'], 'ls': i+1, 'legend': not i})
+        Plotter.addLine({'xdata': expTime, 'ydata': TotalError / BinnedSourceCounts,
+            'label': "Total", 'colour': colours['black'], 'ls': i+1, 'legend': not i})
 
     # Plot the saturated line
     Plotter.line(SaturatedLevel, direction='y')
