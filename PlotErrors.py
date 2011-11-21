@@ -289,7 +289,7 @@ if __name__ == '__main__':
                 metavar='PGPLOT device')
         parser.add_argument('-m', '--targetmag',
                 help="Target magnitude", default=None, 
-                type=int, metavar='magnitude',
+                type=float, metavar='magnitude',
                 required=True)
         args = parser.parse_args()
 
