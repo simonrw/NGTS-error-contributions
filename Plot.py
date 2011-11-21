@@ -80,12 +80,14 @@ class PlotClass(object):
                 'ydata': array([point, point]),
                 'colour': colour,
                 'ls': ls,
+                'legend': False,
                 })
         elif direction == 'y':
             self._extraLines.append({
                 'xdata': array([point, point]),
                 'colour': colour,
-                'ls': ls
+                'ls': ls,
+                'legend': False,
                 })
 
 
@@ -149,24 +151,25 @@ class PlotClass(object):
         pgsci(line['colour'])
         pgline(xdata, ydata)
 
-        # Only do this if the line has a label parameter
-        try:
-            label = line['label']
-        except KeyError:
-            pgsci(1)
-            pgsls(1)
-        else:
-            # plot the legend
-            xval = self._legendxmin + self._linelength + self._spacing
-            yval = self._legendymin + i * self._inc
-            pgsls(line['ls'])
-            pgsci(line['colour'])
-            pgline(array([self._legendxmin, self._legendxmin+self._linelength]),
-                    array([self._legendymin + i * self._inc, self._legendymin + i * self._inc])
-                    )
-            pgsci(1)
-            pgsls(1)
-            pgtext(xval, yval, line['label'])
+        if line['legend']:
+            # Only do this if the line has a label parameter
+            try:
+                label = line['label']
+            except KeyError:
+                pgsci(1)
+                pgsls(1)
+            else:
+                # plot the legend
+                xval = self._legendxmin + self._linelength + self._spacing
+                yval = self._legendymin + i * self._inc
+                pgsls(line['ls'])
+                pgsci(line['colour'])
+                pgline(array([self._legendxmin, self._legendxmin+self._linelength]),
+                        array([self._legendymin + i * self._inc, self._legendymin + i * self._inc])
+                        )
+                pgsci(1)
+                pgsls(1)
+                pgtext(xval, yval, line['label'])
 
     def title(self, title):
         self._labels['title'] = title
