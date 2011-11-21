@@ -1,6 +1,15 @@
 from ppgplot import *
 from numpy import *
 
+class PlotClass(object):
+    def __init__(self):
+        super(PlotClass, self).__init__()
+        self._lines = []
+
+        
+    def addLine(self, line):
+        self.lines.append(line)
+
 
 def Plot(device, lines, colours, saturlevel, log=True, characterScale=1.0,
         lineWidth=1, ymin=None, ymax=None, title=None):
