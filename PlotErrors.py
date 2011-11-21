@@ -260,6 +260,8 @@ def main(args):
         'label': "Scintillation", 'colour': colours['green'], 'ls': 1})
     Plotter.addLine({'xdata': expTime, 'ydata': TotalError / BinnedSourceCounts,
         'label': "Total", 'colour': colours['black'], 'ls': 1})
+
+    # Plot the saturated line
     Plotter.line(SaturatedLevel, direction='y')
 
     # label the graph
