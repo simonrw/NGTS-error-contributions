@@ -238,6 +238,7 @@ def main(args):
     # Pick the minimum one to find the saturation point
     SaturatedLevel = SaturatedExpTimes.min()
 
+    print "Saturation in %.2f seconds" % SaturatedLevel
 
 
 
