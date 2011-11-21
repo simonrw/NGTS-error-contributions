@@ -33,8 +33,7 @@ BiasLevel = BiasLevelADU * Gain
 # Read noise electrons have to be added in quadrature 
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
 Digitisation = 16
-SkyIn40Seconds = 1700.
-SkyExposure = 40.
+SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
@@ -197,10 +196,10 @@ def main(args):
 
 
         # Correct the sky in 40 seconds value
-        CorrectedSkyIn40Seconds = SkyIn40Seconds
+        #CorrectedSkyIn40Seconds = SkyIn40Seconds
 
-        # Get the sky counts per pixel per second
-        SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
+        ## Get the sky counts per pixel per second
+        #SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
         print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
 
         # Sky counts per second
