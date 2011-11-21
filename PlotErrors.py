@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Plot import Plot
+from Plot import *
 from numpy import *
 import pyximport; pyximport.install()
 import argparse
@@ -241,28 +241,37 @@ def main(args):
 
 
 
+    # Plotting class
+    Plotter = PlotClass(args.device)
 
+    # add the data lines
+    Plotter.addLine({'xdata': expTime, 'ydata': SourceError / BinnedSourceCounts,
+        'label': "Source", 'colour': colours['red'], 'ls': 1})
+    Plotter.addLine({'xdata': expTime, 'ydata': ReadNoiseError / BinnedSourceCounts,
+        'label': "Read noise", 'colour': colours['cyan'], 'ls': 1})
+    Plotter.addLine({'xdata': expTime, 'ydata': SkyError / BinnedSourceCounts,
+        'label': "Sky", 'colour': colours['blue'], 'ls': 1})
+    Plotter.addLine({'xdata': expTime, 'ydata': ScintillationError / BinnedSourceCounts,
+        'label': "Scintillation", 'colour': colours['green'], 'ls': 1})
+    Plotter.addLine({'xdata': expTime, 'ydata': TotalError / BinnedSourceCounts,
+        'label': "Total", 'colour': colours['black'], 'ls': 1})
+    Plotter.line(SaturatedLevel, direction='y')
+
+    # label the graph
+    Plotter.setLabels("Frames", "Fractional error", "Magnitude %.1f star" % args.targetmag)
+
+    # Set up the limits
+    Plotter.yrange(log10(1E-6), log10(3E-4))
+
+
+
+    # Set log scale
+    Plotter.log(True)
+
+    # Create the plot
+    Plotter.render()
 
     
-    # Call the plotting function
-    Plot(args.device,
-            [
-                (expTime, SourceError / BinnedSourceCounts, 'Source'),
-                (expTime, ReadNoiseError / BinnedSourceCounts, "Read"),
-                (expTime, SkyError / BinnedSourceCounts, "Sky"),
-                (expTime, ScintillationError / BinnedSourceCounts, "Scintillation"),
-                (expTime, TotalError / BinnedSourceCounts, "Total"),
-                ],
-            (colours['red'], colours['cyan'], colours['blue'], colours['green'], colours['black']),
-            saturlevel=SaturatedLevel,
-            log=True,
-            characterScale=1.,
-            lineWidth=5,
-            ymin=log10(1E-6),
-            ymax=log10(3E-4),
-            title="%d mag target" % TargetMag,
-            )
-
 
 if __name__ == '__main__':
     import warnings
