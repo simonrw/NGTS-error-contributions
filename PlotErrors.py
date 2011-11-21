@@ -241,6 +241,10 @@ def main(args):
     print "Saturation in %.2f seconds" % SaturatedLevel
 
 
+    ###############################################################################
+    #                               Plotting
+    ###############################################################################
+
 
     # Plotting class
     Plotter = PlotClass(args.device)
