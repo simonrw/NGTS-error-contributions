@@ -265,8 +265,6 @@ def main(args):
 
 
 
-    # Set log scale
-    Plotter.log(True)
 
     # Create the plot
     Plotter.render()

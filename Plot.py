@@ -19,7 +19,7 @@ class PlotClass(object):
         self._xmax = None
         self._ymin = None
         self._ymax = None
-        self._log = False
+        self._log = True
         self._extra = 0.05
 
         self._labels = {'x': "", "y": "", "title": ""}
