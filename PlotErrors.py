@@ -84,6 +84,7 @@ def ZP(etime):
 
     return zp
 
+
 def Scintillation(t):
     '''
     Scintillation function
@@ -143,15 +144,25 @@ def main(args):
     # Number of exposures that fit into an hour
     nExposures = TargetBinTime / totalFrameTime
 
+    # Airmass correction factor
+    AirmassCorrection = 10**((Extinction * (Airmass - 1.)) / 2.5)
+    print "Airmass correction factor: %.5f" % AirmassCorrection
+
     ###############################################################################
     #                               Source Error
     ###############################################################################
 
     # Zero point for a 1s exposure (true zero point)
     zp = ZP(1.)
-    print "Instrumental zero point: %.3f mag" % zp
+    print "Instrumental zero point: %.5f mag" % zp
 
-    SourceCountsPerSecond = 10**((zp - TargetMag) / 2.5)
+    # Correct the source magnitude for airmass
+    AirmassCorrectedMag = TargetMag + Extinction * Airmass
+    print "Airmass corrected magnitude: %.3f" % AirmassCorrectedMag
+
+
+    # Number of source photons
+    SourceCountsPerSecond = 10**((zp - AirmassCorrectedMag) / 2.5)
     print "Source has %.1f electrons per second" % SourceCountsPerSecond
     SourceCounts = SourceCountsPerSecond * expTime
 
@@ -186,6 +197,9 @@ def main(args):
 
     # Total sky counts per exposure
     SkyCounts = SkyPerSec * expTime
+
+    # Airmass correct the sky counts
+    SkyCounts *= AirmassCorrection
 
     # Binned sky counts
     BinnedSkyCounts = SkyCounts * nExposures
