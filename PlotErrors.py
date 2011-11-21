@@ -106,6 +106,9 @@ def Scintillation(t):
 
 
 def main(args):
+    # Plotting class
+    Plotter = PlotClass(args.device)
+
     # Print some nice stuff to the console
     print "Assuming a gain of %.1f" % Gain
     print "Bias level: %.2f electrons" % BiasLevel
