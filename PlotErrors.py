@@ -38,7 +38,7 @@ ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
 AirmassOptions = [1., 2.]
-Extinction = 0.04 # magnitudes per airmass
+Extinction = 0.06 # magnitudes per airmass
 
 r'''
 Note: errors in quadrature
