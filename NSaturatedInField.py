@@ -1,11 +1,16 @@
 #!/usr/bin/env python
 
 from ppgplot import *
-from srw.NOMADParser import NOMADParser
 import sys
 import argparse
 import numpy as np
 import cPickle
+from jg.ctx import j20002gal
+from subprocess import Popen, PIPE
+
+
+
+
 
 class App(object):
     """
@@ -16,6 +21,7 @@ class App(object):
         Constructor, sets up variables
         """
         super(App, self).__init__()
+        self.args = args
 
 
         # list of field centres
@@ -43,10 +49,47 @@ class App(object):
                 np.pi * (self.radius / 60.)**2,
                 )
 
-        # load the fits
-        print cPickle.load(open("fits.cpickle"))
+        # set up the exposure time array
+        self.exptime = np.linspace(np.log10(5.), np.log10(3600.), 100)
 
-        pgopen("1/xs")
+        # load the fits
+        fits = cPickle.load(open("fits.cpickle"))
+        self.brightFit = fits['bright']
+        self.darkFit = fits['dark']
+
+        # saturation levels
+        self.brightSaturLevel = self.brightFit(self.exptime)
+        self.darkSaturLevel = self.darkFit(self.exptime)
+
+        # plotting variables
+        self.linestyles = [1, 2, 4]
+        self.colours = [1, 2, 4]
+        self.xmin = self.exptime.min()
+        self.xmax = self.exptime.max()
+
+
+        pgopen(self.args.device)
+
+        # make a guess at the total number
+        if self.args.fraction:
+            self.ymin = 0.
+            self.ymax = 1.1
+            pgenv(self.xmin, self.xmax, self.ymin, self.ymax, 0, 10)
+            self.yspacing = 0.05
+        else:
+            self.ymin = np.log10(10.)
+            self.ymax = np.log10(20000)
+            pgenv(self.xmin, self.xmax, self.ymin, self.ymax, 0, 30)
+            self.yspacing = 0.15
+
+        self.legend = (
+                0.015 * (self.xmax - self.xmin) + self.xmin,
+                0.95 * (self.ymax - self.ymin) + self.ymin,
+                )
+        self.linelength = 0.15
+
+
+
 
 
 
@@ -56,23 +99,98 @@ class App(object):
         """
         pgclos()
 
+
+    def GetCatalogueData(self, ra, dec):
+        binary = "/home/astro/phrfbf/build/bin/finducac3"
+        cmd = [binary,
+                str(ra), str(dec), '-r', str(self.radius),
+                "-m", "1000000",
+                ]
+
+        pipe = Popen(" ".join(cmd), shell=True, stdout=PIPE, stderr=PIPE)
+        result, error = pipe.communicate()
+
+        imags = []
+        for row in result.split("\n"):
+            if "#" not in row:
+                try:
+                    imagval = float(row[221:227])
+                except ValueError:
+                    pass
+                else:
+                    imags.append(imagval)
+
+        return np.array(imags)
+
+
     def run(self):
-        for field in self.FieldCentre[:1]:
+        ii = 0
+        for i, field in enumerate(self.FieldCentre):
             print "Analysing field %d,%d" % (field[0], field[1])
+            galcoords = j20002gal(field[0], field[1])
 
             # Fetch the list of objects
-            parser = NOMADParser(field[0], field[1], self.radius)
-            print "Fetching objects, please wait... ",
-            sys.stdout.flush()
-            Objects = parser.fetch()
-            print "done. %d objects returned" % (len(Objects),)
+            imags = self.GetCatalogueData(field[0], field[1])
+            print "%d objects returned" % (imags.size,)
 
-            for exptime in self.exptimes:
-                pass
+            # Get the number of saturated stars
+            # Normalise to make fraction
+            brightNumbers = np.array([imags[imags<level].size for level in self.brightSaturLevel])
+            darkNumbers = np.array([imags[imags<level].size for level in self.darkSaturLevel])
+
+            if self.args.fraction:
+                brightNumbers = brightNumbers / float(imags.size)
+                darkNumbers = darkNumbers / float(imags.size)
+            else:
+                brightNumbers = np.log10(brightNumbers)
+                darkNumbers = np.log10(darkNumbers)
+
+            # plot the bright line, dark line
+            pgsci(self.colours[i])
+            pgsls(2)
+            pgline(self.exptime, brightNumbers)
+            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]), 
+                    np.array([self.legend[1] - ii * self.yspacing, self.legend[1] - ii * self.yspacing]))
+            pgsci(1)
+            pgtext(np.array([self.legend[0] + self.linelength + 0.05,]),
+                    np.array([self.legend[1] - ii * self.yspacing]),
+                    "Bright (%.0f,%.0f -> %.1f,%.1f)" % (field[0], field[1], galcoords[0], galcoords[1]))
+            pgsci(self.colours[i])
+
+            ii += 1
+
+            pgsls(4)
+            pgline(self.exptime, darkNumbers)
+            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]), 
+                    np.array([self.legend[1] - ii * self.yspacing, self.legend[1] - ii * self.yspacing]))
+            pgsci(1)
+            pgtext(np.array([self.legend[0] + self.linelength + 0.05,]),
+                    np.array([self.legend[1] - ii * self.yspacing]),
+                    "Dark")
+            pgsci(self.colours[i])
+            pgsls(1)
+            pgsci(1)
+
+            ii += 1
+
+        if self.args.fraction:
+            pglab("Exposure time / s", "Fraction of saturated stars", "")
+        else:
+            pglab("Exposure time / s", "Number of saturated stars", "")
+
+
+
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    args = parser.parse_args()
-    app = App(args)
-    app.run()
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", r'.*use PyArray_AsCArray.*')
+        parser = argparse.ArgumentParser()
+        parser.add_argument("-d", "--device", help="PGPLOT device",
+                default='1/xs', required=False)
+        parser.add_argument("-f", "--fraction", help="Plot as fraction", 
+                action="store_true", default=False)
+        args = parser.parse_args()
+        app = App(args)
+        app.run()
