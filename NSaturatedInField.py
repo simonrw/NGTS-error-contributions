@@ -139,17 +139,17 @@ class App(object):
             galcoords = j20002gal(field[0], field[1])
 
             # Fetch the list of objects
-            imags = self.GetCatalogueData(field[0], field[1])
-            print "%d objects returned" % (imags.size,)
+            mags = self.GetCatalogueData(field[0], field[1])
+            print "%d objects returned" % (mags.size,)
 
             # Get the number of saturated stars
             # Normalise to make fraction
-            brightNumbers = np.array([imags[imags<level].size for level in self.brightSaturLevel])
-            darkNumbers = np.array([imags[imags<level].size for level in self.darkSaturLevel])
+            brightNumbers = np.array([mags[mags<level].size for level in self.brightSaturLevel])
+            darkNumbers = np.array([mags[mags<level].size for level in self.darkSaturLevel])
 
             if self.args.fraction:
-                brightNumbers = brightNumbers / float(imags.size)
-                darkNumbers = darkNumbers / float(imags.size)
+                brightNumbers = brightNumbers / float(mags.size)
+                darkNumbers = darkNumbers / float(mags.size)
             else:
                 brightNumbers = np.log10(brightNumbers)
                 darkNumbers = np.log10(darkNumbers)
