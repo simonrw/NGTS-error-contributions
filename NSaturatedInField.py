@@ -6,6 +6,7 @@ import argparse
 import numpy as np
 import cPickle
 from jg.ctx import j20002gal
+from srw.NOMADParser import NOMADParser
 from subprocess import Popen, PIPE
 
 
@@ -78,7 +79,7 @@ class App(object):
             self.yspacing = 0.05
         else:
             self.ymin = np.log10(10.)
-            self.ymax = np.log10(20000)
+            self.ymax = np.log10(70000)
             pgenv(self.xmin, self.xmax, self.ymin, self.ymax, 0, 30)
             self.yspacing = 0.15
 
@@ -101,26 +102,34 @@ class App(object):
 
 
     def GetCatalogueData(self, ra, dec):
-        binary = "/home/astro/phrfbf/build/bin/finducac3"
-        cmd = [binary,
-                str(ra), str(dec), '-r', str(self.radius),
-                "-m", "1000000",
-                ]
+        #binary = "/home/astro/phrfbf/build/bin/finducac3"
+        #cmd = [binary,
+                #str(ra), str(dec), '-r', str(self.radius),
+                #"-m", "1000000",
+                #]
 
-        pipe = Popen(" ".join(cmd), shell=True, stdout=PIPE, stderr=PIPE)
-        result, error = pipe.communicate()
+        #pipe = Popen(" ".join(cmd), shell=True, stdout=PIPE, stderr=PIPE)
+        #result, error = pipe.communicate()
 
-        imags = []
-        for row in result.split("\n"):
-            if "#" not in row:
-                try:
-                    imagval = float(row[221:227])
-                except ValueError:
-                    pass
-                else:
-                    imags.append(imagval)
+        #imags = []
+        #for row in result.split("\n"):
+            #if "#" not in row:
+                #try:
+                    #imagval = float(row[221:227])
+                #except ValueError:
+                    #pass
+                #else:
+                    #imags.append(imagval)
 
-        return np.array(imags)
+        #return np.array(imags)
+        parser = NOMADParser(ra, dec, self.radius)
+        results = parser.fetch()
+        rmags = []
+        for row in results:
+            rmagval = row['rmag']
+            if rmagval:
+                rmags.append(rmagval)
+        return np.array(rmags)
 
 
     def run(self):
