@@ -1,11 +1,9 @@
 *.pyc
 output
 fits.cpickle
-*.ps
 *.aux
 *.bbl
 *.blg
 *.dvi
 *.log
-*.ps
 *.pdf
