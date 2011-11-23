@@ -14,6 +14,7 @@ on disk for usage later.
 '''
 
 from ppgplot import *
+import argparse
 import numpy as np
 import cPickle
 
@@ -21,11 +22,12 @@ class App(object):
     ''' 
     Main application object
     '''
-    def __init__(self):
+    def __init__(self, args):
         '''
         Constructor, sets up the data and performs the fits
         '''
         super(App, self).__init__()
+        self.args = args
 
         self.ydata = np.array([9, 9.25, 9.5, 10, 10.5, 11, 11.5, 
             12, 12.5, 13, 9.75, 10.25, 10.75, 11.25, 11.75, 12.25, 
@@ -53,7 +55,7 @@ class App(object):
         self.brightFit = np.poly1d(np.polyfit(self.brightxdata, self.ydata, 4))
         self.darkFit = np.poly1d(np.polyfit(self.darkxdata, self.ydata, 2))
 
-        pgopen("1/xs")
+        pgopen(self.args.device)
 
     def __del__(self):
         '''
@@ -85,20 +87,29 @@ class App(object):
         self.plotLine(self.darkxdata, self.darkFit, colour=3)
 
         # legend
-        xpt = 30
-        ypt = 9.0
+        xpt = 6
+        ypt = 13.5
         pgsci(2)
         pgline(np.log10([xpt, 1.1 * xpt]), np.array([ypt, ypt]))
         pgsci(3)
         pgline(np.log10([xpt, 1.1 * xpt]), np.array([ypt - 0.5, ypt - 0.5]))
         pgsci(1)
 
-        pgtext(np.log10(1.15 * xpt), ypt, r"Bright %.3f t\de\u\u2\d + %.3f t\de\u + %.3f" % (self.brightFit[0], self.brightFit[1], self.brightFit[2]))
+        pgtext(np.log10(1.15 * xpt), ypt, r"Bright %.3f t\de\u\u4\d +"
+                "%.3f t\de\u\u3\d + %.3f t\de\u\u4\d + %.3f  t\de\u +"
+                "%.3f" % (
+                self.brightFit[0], self.brightFit[1],
+                    self.brightFit[2], self.brightFit[3],
+                    self.brightFit[4]))
         pgtext(np.log10(1.15 * xpt), ypt - 0.5, r"Dark %.3f t\de\u\u2\d + %.3f t\de\u + %.3f" % (self.darkFit[0], self.darkFit[1], self.darkFit[2]))
 
         pglab(r"Exposure time (t\de\u)", r"Saturation magnitude", "")
 
 
 if __name__ == '__main__':
-    app = App()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--device", help="PGPLOT device",
+            default="1/xs", required=False)
+    args = parser.parse_args()
+    app = App(args)
     app.run()
