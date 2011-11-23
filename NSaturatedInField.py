@@ -101,35 +101,41 @@ class App(object):
         pgclos()
 
 
-    def GetCatalogueData(self, ra, dec):
-        #binary = "/home/astro/phrfbf/build/bin/finducac3"
-        #cmd = [binary,
-                #str(ra), str(dec), '-r', str(self.radius),
-                #"-m", "1000000",
-                #]
+    def GetCatalogueData(self, ra, dec, band):
+        binary = "/home/astro/phrfbf/build/bin/finducac3"
+        cmd = [binary,
+                str(ra), str(dec), '-r', str(self.radius),
+                "-m", "1000000",
+                ]
 
-        #pipe = Popen(" ".join(cmd), shell=True, stdout=PIPE, stderr=PIPE)
-        #result, error = pipe.communicate()
+        pipe = Popen(" ".join(cmd), shell=True, stdout=PIPE, stderr=PIPE)
+        result, error = pipe.communicate()
 
-        #imags = []
-        #for row in result.split("\n"):
-            #if "#" not in row:
-                #try:
-                    #imagval = float(row[221:227])
-                #except ValueError:
-                    #pass
-                #else:
-                    #imags.append(imagval)
+        imags = []
+        for row in result.split("\n"):
+            if "#" not in row:
+                try:
+                    # I band 
+                    if band == "R":
+                        imagval = float(row[221:227])
+                    elif band == "I":
+                        imagval = float(row[211:217])
+                    else: raise ValueError("Invalid band passed")
+                    # R band 
+                except ValueError:
+                    pass
+                else:
+                    imags.append(imagval)
 
-        #return np.array(imags)
-        parser = NOMADParser(ra, dec, self.radius)
-        results = parser.fetch()
-        rmags = []
-        for row in results:
-            rmagval = row['rmag']
-            if rmagval:
-                rmags.append(rmagval)
-        return np.array(rmags)
+        return np.array(imags)
+        #parser = NOMADParser(ra, dec, self.radius)
+        #results = parser.fetch()
+        #rmags = []
+        #for row in results:
+            #rmagval = row['rmag']
+            #if rmagval:
+                #rmags.append(rmagval)
+        #return np.array(rmags)
 
 
     def run(self):
@@ -139,7 +145,7 @@ class App(object):
             galcoords = j20002gal(field[0], field[1])
 
             # Fetch the list of objects
-            mags = self.GetCatalogueData(field[0], field[1])
+            mags = self.GetCatalogueData(field[0], field[1], self.args.band)
             print "%d objects returned" % (mags.size,)
 
             # Get the number of saturated stars
@@ -183,9 +189,9 @@ class App(object):
             ii += 1
 
         if self.args.fraction:
-            pglab("Exposure time / s", "Fraction of saturated stars", "")
+            pglab("Exposure time / s", "Fraction of saturated stars", "%s band" % self.args.band)
         else:
-            pglab("Exposure time / s", "Number of saturated stars", "")
+            pglab("Exposure time / s", "Number of saturated stars", "%s band" % self.args.band)
 
 
 
@@ -200,6 +206,8 @@ if __name__ == '__main__':
                 default='1/xs', required=False)
         parser.add_argument("-f", "--fraction", help="Plot as fraction", 
                 action="store_true", default=False)
+        parser.add_argument("-b", "--band", help="Filter to use",
+                default="R", type=str, required=False)
         args = parser.parse_args()
         app = App(args)
         app.run()
