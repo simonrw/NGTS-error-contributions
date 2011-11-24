@@ -416,18 +416,40 @@ If a source increases in flux by $100$ times the magnitude by definition
 decreases by $5$. This predicts linear behaviour in $\log_{10}{f}$ but
 clearly the lines are best modelled by $4$th and $2$nd order
 polynomials. This deviation is due to the extra sources of noise
-contributing. The fits are displayed on fig.~\ref{fig:satvsexpos} but 
-reproduced here for clarity:
+contributing. The least squares fits are displayed on fig.~\ref{fig:satvsexpos}, 
+and the coefficients are displayed in table~\ref{tab:coeffs} for the formula:
 
 \[
-    L_{\mathrm{sat},\mathrm{bright}} = 9.503 t_e^4 - 8.423 t_e^3 +
-    13.737 t_e^2 - 7.502 t_e + 1.54
-    \]
-
-\[
-    L_{\mathrm{sat},\mathrm{dark}} = 6.758 t_e^2 + 1.691 t_e + 0.352
+L_{\mathrm{sat},\mathrm{j}} = \sum_{i=0}^{4} a_{i,j} t_{e}^{i}
 \]
 
+where $j$ is bright or dark.
+
+%\[
+%    L_{\mathrm{sat},\mathrm{bright}} = 9.503 t_e^4 - 8.423 t_e^3 +
+%    13.737 t_e^2 - 7.502 t_e + 1.54
+%    \]
+%
+%\[
+%    L_{\mathrm{sat},\mathrm{dark}} = 6.758 t_e^2 + 1.691 t_e + 0.352
+%\]
+
+\begin{table}[htbp]
+   \centering
+   \begin{tabular}{@{} ccc @{}} % Column formatting, @{} suppresses leading/trailing space
+      \toprule
+      Coefficient & Bright value & Dark value \\
+            \midrule
+	$a_{0}$ & $1.54$ & $0.352$ \\
+      $a_{1}$ & $-7.502$ & $1.691$ \\
+      $a_{2}$ & $13.737$ & $6.758$ \\
+      $a_{3}$ & $-8.423$ & $0$ \\      
+      $a_{4}$ & $9.503$ & $0$ \\
+      \bottomrule
+   \end{tabular}
+   \caption{Remember, \emph{never} use vertical lines in tables.}
+   \label{tab:coeffs}
+\end{table}
 
 \section{Saturated stars in a field}
 
