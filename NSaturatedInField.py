@@ -103,7 +103,7 @@ class App(object):
 
     def GetCatalogueData(self, ra, dec, band):
         # Check for the existence of finducac3
-        if call("which finducac3", shell=True):
+        if call("which finducac3 > /dev/null", shell=True):
             # Can't find the binary on the users path
             binary = '/home/astro/phrfbf/build/bin/finducac3'
 
