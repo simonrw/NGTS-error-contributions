@@ -324,16 +324,24 @@ by the ratio of the integral of the psf inside that central pixel to
 the integral of the full psf. Assuming a Gaussian psf, this fraction is
 
 \[
-    F = \frac{\int_{-0.25}^{0.25}\int_{-0.25}^{0.25} G dx dy}
-    {\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} G dx dy}
+    F = \frac{\int_{-0.25}^{0.25}\int_{-0.25}^{0.25} G(x,y) dx dy}
+    {\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} G(x,y) dx dy}
     \]
 
-where $G$ is a 2D Gaussian function centered on $0$ with a width of
-$\sigma$, 
+where $G$ is a 2D Gaussian function centered on $0$ with a standard
+deviation of $\sigma$:  
+
+%\[
+%    G = e^{-0.5 ((x/\sigma) + (y/\sigma)}
+%    \]
 
 \[
-    G = e^{-0.5 ((x/\sigma) + (y/\sigma)}
-    \]
+G(x,y) = \exp \left[
+		-\frac{1}{2\sigma^{2}} \left(
+			x^{2} + y^{2}
+		\right)
+	\right]
+\]
 
 The FWHM of a Gaussian function is $\sim 2.35 \sigma$ which is used to
 convert from the psf width. This ratio was calculated through numerical
