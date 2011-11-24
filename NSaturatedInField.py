@@ -112,6 +112,14 @@ class App(object):
                 raise OSError("Cannot find binary 'finducac3' in "
                         "system path or SRW's path, contact him"
                         )
+        else:
+            # If call returns 0 then the binary is on the users
+            # path
+            binary = "finducac3"
+
+        print binary
+
+
         cmd = [binary,
                 str(ra), str(dec), '-r', str(self.radius),
                 "-m", "1000000",
