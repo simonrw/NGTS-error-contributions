@@ -6,7 +6,6 @@ import argparse
 import numpy as np
 import cPickle
 from jg.ctx import j20002gal
-from srw.NOMADParser import NOMADParser
 from subprocess import Popen, PIPE
 
 
