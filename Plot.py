@@ -108,7 +108,7 @@ class PlotClass(object):
             self._xmin = minx
             self._xmax = maxx
             self._ymin = miny
-            self._ymax = mayx
+            self._ymax = maxx
 
 
 
