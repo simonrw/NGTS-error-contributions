@@ -2,11 +2,12 @@
 
 from ppgplot import *
 import sys
+import os.path
 import argparse
 import numpy as np
 import cPickle
 from jg.ctx import j20002gal
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, call
 
 
 
@@ -101,7 +102,16 @@ class App(object):
 
 
     def GetCatalogueData(self, ra, dec, band):
-        binary = "/home/astro/phrfbf/build/bin/finducac3"
+        # Check for the existence of finducac3
+        if call("which finducac3", shell=True):
+            # Can't find the binary on the users path
+            binary = '/home/astro/phrfbf/build/bin/finducac3'
+
+            # Going to try using SRW's binary
+            if not os.path.isfile(binary):
+                raise OSError("Cannot find binary 'finducac3' in "
+                        "system path or SRW's path, contact him"
+                        )
         cmd = [binary,
                 str(ra), str(dec), '-r', str(self.radius),
                 "-m", "1000000",
