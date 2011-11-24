@@ -117,7 +117,6 @@ class App(object):
             # path
             binary = "finducac3"
 
-        print binary
 
 
         cmd = [binary,
