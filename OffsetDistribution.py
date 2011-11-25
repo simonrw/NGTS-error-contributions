@@ -18,6 +18,8 @@ def Gaussian2D(y, x, fwhm, offset):
 
 def Ratio(fwhm=1.5, offset=(0., 0.)):
     '''
+    Returns the ratio between the centre integral
+    and full integral of the psf.
     '''
     pass
 
