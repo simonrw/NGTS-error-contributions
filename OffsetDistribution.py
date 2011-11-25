@@ -23,9 +23,13 @@ class App(object):
         super(App, self).__init__()
         self.args = args
         self.fwhm = 1.5
+        self.N = 100
 
-        self.xrange = [-3.*self.fwhm, 3.*self.fwhm]
-        self.yrange = [-3.*self.fwhm, 3.*self.fwhm]
+        xRange = [-3.*self.fwhm, 3.*self.fwhm]
+        yRange = [-3.*self.fwhm, 3.*self.fwhm]
+
+        self.xvals = (xRange[1] - xRange[0]) * np.random.random(self.N) + xRange[0]
+        self.yvals = (yRange[1] - yRange[0]) * np.random.random(self.N) + yRange[0]
 
         self.run()
 
