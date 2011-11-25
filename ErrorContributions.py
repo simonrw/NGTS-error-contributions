@@ -6,7 +6,12 @@ from numpy import *
 import pyximport; pyximport.install()
 import argparse
 from scipy.integrate import dblquad
-import GaussianIntegrals as GI
+
+def Gaussian2D(y, x, fwhm, offset):
+    sigma = fwhm / 2.35
+    arg1 = (x-offset[0])**2
+    arg2 = (y - offset[1])**2
+    return exp(-(arg1 + arg2) / (2. * sigma**2))
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -133,19 +138,11 @@ def main(args):
         * The integral of flux in the central pixel
         * The integral to infinity of the psf
 
-    This is calculated using the PyIntegrate function 
-    (which is cython code), and calculates this 
-    ratio
+    This is calculated by scipy's integrate function
+    in 2 dimensions
     '''
-    # Integration constants
-    dx, dy = 0.01, 0.01
-
-    # "To infinity" limits
-    FakeInfinity = 10.
-    CentralPixelFraction = GI.PyIntegrate(FWHM, dx, dy, 0., 0.5) / \
-            GI.PyIntegrate(FWHM, dx, dy, 0, FakeInfinity)
-    #CentralPixelFraction = dblquad(Gaussian2D, -0.25, 0.25, lambda x: -0.25, lambda x: 0.25, args=(FWHM, (0., 0.)))[0] / \
-            #dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
+    CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
+            dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
     print "Central pixel fraction: %f"  %  CentralPixelFraction
 
     # science exposure time (equal in log space)
