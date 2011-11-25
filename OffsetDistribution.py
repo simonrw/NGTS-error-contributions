@@ -42,7 +42,13 @@ class App(object):
 
     def run(self):
         total = self.Integrate((-np.Inf, np.Inf, -np.Inf, np.Inf), (0., 0.))[0]
-        print total
+
+        fractions = []
+        for y in self.yvals:
+            for x in self.xvals:
+                fractions.append(Integrate((-0.5, 0.5, -0.5, 0.5), (x, y)) / total)
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
