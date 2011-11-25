@@ -29,7 +29,13 @@ class App(object):
     def __init__(self):
         super(App, self).__init__()
 
+
+        pgopen("1/xs")
+
         self.run()
+
+    def __del__(self):
+        pgclos()
 
     def run(self):
         pass
