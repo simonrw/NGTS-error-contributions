@@ -64,6 +64,8 @@ class App(object):
         pgsci(1)
         pgbin(centres, vals, True)
 
+        pglab("Fraction", "N", "Probability distribution")
+
 
 
 
