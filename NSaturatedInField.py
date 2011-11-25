@@ -223,7 +223,7 @@ if __name__ == '__main__':
         parser.add_argument("-f", "--fraction", help="Plot as fraction", 
                 action="store_true", default=False)
         parser.add_argument("-b", "--band", help="Filter to use",
-                default="R", type=str, required=False)
+                default="I", type=str, required=False)
         args = parser.parse_args()
         app = App(args)
         app.run()

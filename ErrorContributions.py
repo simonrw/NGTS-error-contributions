@@ -5,7 +5,13 @@ from Plot import *
 from numpy import *
 import pyximport; pyximport.install()
 import argparse
-import GaussianIntegrals as GI
+from scipy.integrate import dblquad
+
+def Gaussian2D(y, x, fwhm, offset):
+    sigma = fwhm / 2.35
+    arg1 = (x-offset[0])**2
+    arg2 = (y - offset[1])**2
+    return exp(-(arg1 + arg2) / (2. * sigma**2))
 
 # The colours
 colours = {
@@ -33,7 +39,8 @@ BiasLevel = BiasLevelADU * Gain
 # Read noise electrons have to be added in quadrature 
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
 Digitisation = 16
-SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
+
+Moon = 'bright'  # options are bright or dark
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
@@ -127,17 +134,11 @@ def main(args):
         * The integral of flux in the central pixel
         * The integral to infinity of the psf
 
-    This is calculated using the PyIntegrate function 
-    (which is cython code), and calculates this 
-    ratio
+    This is calculated by scipy's integrate function
+    in 2 dimensions
     '''
-    # Integration constants
-    dx, dy = 0.01, 0.01
-
-    # "To infinity" limits
-    FakeInfinity = 10.
-    CentralPixelFraction = GI.PyIntegrate(FWHM, dx, dy, 0., 0.5) / \
-            GI.PyIntegrate(FWHM, dx, dy, 0, FakeInfinity)
+    CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
+            dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
     print "Central pixel fraction: %f"  %  CentralPixelFraction
 
     # science exposure time (equal in log space)
@@ -200,6 +201,8 @@ def main(args):
 
         ## Get the sky counts per pixel per second
         #SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
+        if Moon.lower() == "bright": SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
+        elif Moon.lower() == "dark": SkyPerSecPerPix = 50.
         print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
 
         # Sky counts per second
