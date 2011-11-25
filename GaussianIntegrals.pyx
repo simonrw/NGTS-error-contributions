@@ -27,3 +27,6 @@ cdef float Integrate(float fwhm, float dx, float dy, float low, float high):
 def PyIntegrate(fwhm, dx, dy, low, high):
     return Integrate(fwhm, dx, dy, low, high)
 
+
+def PyDistribution(fwhm, dx, offset):
+    pass
