@@ -22,6 +22,12 @@ class App(object):
     def __init__(self, args):
         super(App, self).__init__()
         self.args = args
+        self.fwhm = 1.5
+
+        self.xrange = [-3.*self.fwhm, 3.*self.fwhm]
+        self.yrange = [-3.*self.fwhm, 3.*self.fwhm]
+
+        self.run()
 
     def Integrate(self, lims, offset):
         return dblquad(Gaussian2D, lims[0], lims[1], lambda x: lims[2], lambda x: lims[3], args=(self.fwhm, offset))
