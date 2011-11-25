@@ -6,6 +6,7 @@ given size as the psf is moved away from the centre pixel
 '''
 
 import argparse
+from scipy.integrate import dblquad
 import numpy as np
 
 def Gaussian2D(y, x, fwhm, offset):
@@ -21,6 +22,10 @@ class App(object):
     def __init__(self, args):
         super(App, self).__init__()
         self.args = args
+
+    def Integrate(self, lims, offset):
+        return dblquad(Gaussian2D, lims[0], lims[1], lambda x: lims[2], lambda x: lims[3], args=(self.fwhm, offset))
+
 
     def __del__(self):
         pass
