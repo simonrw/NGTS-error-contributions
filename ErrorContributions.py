@@ -13,10 +13,6 @@ def Gaussian2D(y, x, fwhm, offset):
     arg2 = (y - offset[1])**2
     return exp(-(arg1 + arg2) / (2. * sigma**2))
 
-def Gaussian2D(y, x, fwhm, offset):
-    sigma = fwhm / 2.35
-    return exp(-(1./2. * sigma**2) * ((x - offset[0])**2 + (y-offset[1])**2))
-
 # The colours
 colours = {
         'red': 2,
