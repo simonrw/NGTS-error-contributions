@@ -5,12 +5,14 @@ Calculate the distribution of fractions in the centre pixel for a psf of
 given size as the psf is moved away from the centre pixel
 '''
 
+import argparse
+import numpy as np
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
     arg1 = (x-offset[0])**2
     arg2 = (y - offset[1])**2
-    return exp(-(arg1 + arg2) / (2. * sigma**2))
+    return np.exp(-(arg1 + arg2) / (2. * sigma**2))
 
 
 
