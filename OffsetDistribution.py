@@ -37,7 +37,8 @@ class App(object):
         pass
 
     def run(self):
-        pass
+        total = self.Integrate((-np.Inf, np.Inf, -np.Inf, np.Inf), (0., 0.))[0]
+        print total
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
