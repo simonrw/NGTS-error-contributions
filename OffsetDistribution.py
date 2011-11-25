@@ -10,4 +10,22 @@ from ppgplot import *
 from scipy.integrate import *
 
 
+def Ratio(fwhm=1.5, offset=(0., 0.)):
+    '''
+    '''
+    pass
+
+class App(object):
+    """docstring for App"""
+    def __init__(self):
+        super(App, self).__init__()
+
+        self.run()
+
+    def run(self):
+        pass
+        
+
+if __name__ == '__main__':
+    app = App()
 
