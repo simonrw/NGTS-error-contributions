@@ -9,6 +9,12 @@ from pylab import *
 from ppgplot import *
 from scipy.integrate import *
 
+def Gaussian2D(y, x, fwhm, offset):
+    sigma = fwhm / 2.35
+    arg1 = (x-offset[0])**2
+    arg2 = (y - offset[1])**2
+    return exp(-(arg1 + arg2) / (2. * sigma**2))
+
 
 def Ratio(fwhm=1.5, offset=(0., 0.)):
     '''
