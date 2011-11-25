@@ -21,7 +21,8 @@ def Ratio(fwhm=1.5, offset=(0., 0.)):
     Returns the ratio between the centre integral
     and full integral of the psf.
     '''
-    pass
+    return dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(fwhm, offset))[0] / \
+            dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(fwhm, offset))[0] 
 
 class App(object):
     """docstring for App"""
