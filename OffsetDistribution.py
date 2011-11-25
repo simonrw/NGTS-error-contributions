@@ -8,6 +8,7 @@ given size as the psf is moved away from the centre pixel
 import argparse
 from scipy.integrate import dblquad
 import numpy as np
+from ppgplot import *
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
