@@ -49,7 +49,7 @@ class App(object):
         for y in self.yvals:
             for x in self.xvals:
                 Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
-                print "%.1f %.1f => %.3f" % (x, y, Fraction)
+                print "%.1f %.1f => %.3f (log)" % (x, y, np.log10(Fraction))
                 fractions.append(Fraction)
 
         fractions = np.log10(fractions)
