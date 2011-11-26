@@ -6,6 +6,7 @@ given size as the psf is moved away from the centre pixel
 '''
 
 import sys
+from jg.subs import progressbarClass
 import argparse
 from scipy.integrate import dblquad
 import numpy as np
@@ -47,14 +48,14 @@ class App(object):
         total = self.Integrate((-np.Inf, np.Inf, -np.Inf, np.Inf), (0., 0.))[0]
 
         fractions = []
-        counter = 0
+        pb = progressbarClass((self.yvals.size)*(self.xvals.size))
+        counter = 1
         for y in self.yvals:
             for x in self.xvals:
                 Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
-                if not counter % 10:
-                    print "\r%.1f %.1f => %.3f (log)" % (x, y, np.log10(Fraction)),
                 sys.stdout.flush()
                 fractions.append(Fraction)
+                pb.progress(counter)
                 counter += 1
 
         fractions = np.log10(fractions)
