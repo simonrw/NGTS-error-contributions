@@ -65,9 +65,6 @@ class App(object):
         centres = edges[:-1] + np.diff(edges)[0] / 2.
         pgenv(fractions.min(), 0, 0, 1.1*vals.max(), 0, 10)
 
-        pgsci(15)
-        pgerrb(6, centres, vals, np.sqrt(vals), 1.0)
-        pgsci(1)
         pgbin(centres, vals, True)
 
         pglab("Fraction", "N", "Probability distribution")
