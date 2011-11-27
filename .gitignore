@@ -8,3 +8,4 @@ fits.cpickle
 *.log
 *.pdf
 *.synctex.gz
+data.txt
