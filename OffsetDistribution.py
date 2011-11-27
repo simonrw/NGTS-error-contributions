@@ -28,11 +28,9 @@ class App(object):
         self.fwhm = 1.5
         self.N = self.args.niter
 
-        xRange = [-2.*self.fwhm, 2.*self.fwhm]
-        yRange = [-2.*self.fwhm, 2.*self.fwhm]
+        self.xRange = [-2.*self.fwhm, 2.*self.fwhm]
+        self.yRange = [-2.*self.fwhm, 2.*self.fwhm]
 
-        self.xvals = (xRange[1] - xRange[0]) * np.random.random(self.N) + xRange[0]
-        self.yvals = (yRange[1] - yRange[0]) * np.random.random(self.N) + yRange[0]
 
         pgopen(self.args.device)
         self.run()
@@ -48,15 +46,16 @@ class App(object):
         total = self.Integrate((-np.Inf, np.Inf, -np.Inf, np.Inf), (0., 0.))[0]
 
         fractions = []
-        pb = progressbarClass((self.yvals.size)*(self.xvals.size))
-        counter = 1
-        for y in self.yvals:
-            for x in self.xvals:
-                Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
-                sys.stdout.flush()
-                fractions.append(Fraction)
-                pb.progress(counter)
-                counter += 1
+        pb = progressbarClass(self.N)
+        counter = 0
+        while counter < self.N:
+            x = (self.xRange[1] - self.xRange[0]) * np.random.ranf() + self.xRange[0]
+            y = (self.yRange[1] - self.yRange[0]) * np.random.ranf() + self.yRange[0]
+            Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
+            sys.stdout.flush()
+            fractions.append(Fraction)
+            pb.progress(counter+1)
+            counter += 1
 
         fractions = np.log10(fractions)
 
