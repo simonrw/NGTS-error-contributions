@@ -103,13 +103,23 @@ class App(object):
         #pgerrb(6, centres, normalisedVals, normalisedErrs, 1.0)
         #pgsci(1)
 
+
+        # Print a line at the most probable value
+        MostProbable = centres[normalisedVals==normalisedVals.max()][0]
+
+        pgsls(2)
+        pgsci(15)
+        pgline(np.array([MostProbable, MostProbable]), np.array([0, 1.1*normalisedVals.max()]))
+        pgsci(1)
+        pgsls(1)
+
         # Plot the histogram
         pgbin(centres, normalisedVals, True)
 
         if self.N > 1000:
-            pglab("Fraction", "Probability", "%.0e iterations" % (self.N,))
+            pglab("Fraction", "Probability", "%.0e iterations, mp: %f" % (self.N, 10**MostProbable))
         else:
-            pglab("Fraction", "Probability", "%d iterations" % (self.N,))
+            pglab("Fraction", "Probability", "%d iterations, mp: %f" % (self.N, 10**MostProbable))
 
 
 
