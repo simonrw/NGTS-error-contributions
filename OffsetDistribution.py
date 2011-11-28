@@ -77,8 +77,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--device", help="PGPLOT device",
             required=False, type=str, default="1/xs")
-    parser.add_argument("-N", "--niter", help="Number of iterations",
-            required=False, type=int, default=50)
+    parser.add_argument("-N", "--niter", help="Number of iterations (use > 5000)",
+            required=False, type=int, default=5000)
     args = parser.parse_args()
     app = App(args)
 
