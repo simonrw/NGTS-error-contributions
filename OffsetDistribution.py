@@ -106,9 +106,11 @@ class App(object):
         # Plot the histogram
         pgbin(centres, normalisedVals, True)
 
-        pgbin(centres, vals, True)
+        if self.N > 1000:
+            pglab("Fraction", "Probability", "%.0e iterations" % (self.N,))
+        else:
+            pglab("Fraction", "Probability", "%d iterations" % (self.N,))
 
-        pglab("Fraction", "N", "Probability distribution")
 
 
 
