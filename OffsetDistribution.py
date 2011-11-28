@@ -62,7 +62,6 @@ class App(object):
 
             # Integrate the new offset Gaussian in the centre pixel and take the fraction
             Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
-            sys.stdout.flush()
 
             # Add the result to the list
             fractions.append(Fraction)
