@@ -43,26 +43,69 @@ class App(object):
         pgclos()
 
     def run(self):
+        # The total integral of a 2d Gaussian to infinity in each direction
         total = self.Integrate((-np.Inf, np.Inf, -np.Inf, np.Inf), (0., 0.))[0]
 
         fractions = []
         pb = progressbarClass(self.N)
         counter = 0
+
+
+        # Main loop
         while counter < self.N:
+            # Pick two random coordinates
             x = (self.xRange[1] - self.xRange[0]) * np.random.ranf() + self.xRange[0]
             y = (self.yRange[1] - self.yRange[0]) * np.random.ranf() + self.yRange[0]
+
+
+
+
+            # Integrate the new offset Gaussian in the centre pixel and take the fraction
             Fraction = self.Integrate((-0.5, 0.5, -0.5, 0.5), (x, y))[0] / total
             sys.stdout.flush()
+
+            # Add the result to the list
             fractions.append(Fraction)
             pb.progress(counter+1)
             counter += 1
 
+
+        # Log the fractions
+        # Makes the plot easier to read
         fractions = np.log10(fractions)
 
 
-        vals, edges = np.histogram(fractions, bins=50, range=(fractions.min(), 0), density=True)
-        centres = edges[:-1] + np.diff(edges)[0] / 2.
-        pgenv(fractions.min(), 0, 0, 1.1*vals.max(), 0, 10)
+        # Create the histogram 
+        vals, edges = np.histogram(fractions, bins=50, range=(fractions.min(), 0))
+
+        # Counting errors
+        errs = np.sqrt(vals)
+
+        # Width of a bin
+        binWidth = np.diff(edges)[0]
+
+        # Normalise the histogram 
+        # I realise that the numpy.histogram function inclues a density parameter which 
+        # achieves the same thing but I need the errors from the raw values
+        Integral = float(np.sum(vals) * binWidth)
+
+        # Divide the values by the integral of the system
+        normalisedVals = vals / Integral
+        normalisedErrs = errs / Integral
+
+        # Get the bin centres
+        centres = edges[:-1] + binWidth / 2.
+
+        pgenv(fractions.min(), 0, 0, 1.1*normalisedVals.max(), 0, 10)
+
+
+        # Plot the errorbars
+        #pgsci(15)
+        #pgerrb(6, centres, normalisedVals, normalisedErrs, 1.0)
+        #pgsci(1)
+
+        # Plot the histogram
+        pgbin(centres, normalisedVals, True)
 
         pgbin(centres, vals, True)
 
