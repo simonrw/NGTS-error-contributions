@@ -315,7 +315,12 @@ if __name__ == '__main__':
                             help="Target magnitude", default=None, 
                             type=float, metavar='magnitude',
                             required=True)
+        parser.add_argument("-s", "--skylevel", help="Sky type (bright "
+                            "or dark", choices=["bright", "dark"],
+                            type=lambda val: val.lower(),
+                            required=False, default="dark")
         args = parser.parse_args()
+
 
 
         main(args)
