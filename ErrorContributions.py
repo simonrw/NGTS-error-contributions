@@ -40,7 +40,6 @@ BiasLevel = BiasLevelADU * Gain
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
 Digitisation = 16
 
-Moon = 'bright'  # options are bright or dark
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
@@ -113,6 +112,8 @@ def Scintillation(t, Airmass):
 def main(args):
     # Plotting class
     Plotter = PlotClass(args.device)
+
+    Moon = args.skylevel  # options are bright or dark
 
     # Print some nice stuff to the console
     print "Assuming a gain of %.1f" % Gain
