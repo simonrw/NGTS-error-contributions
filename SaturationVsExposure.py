@@ -16,7 +16,50 @@ on disk for usage later.
 from ppgplot import *
 import argparse
 import numpy as np
+import os.path
 import cPickle
+import subprocess
+from jg.subs import progressbarClass
+import re
+
+def GetData():
+    MagRange = (8.25, 13, 0.25)
+    mags = np.arange(*MagRange)
+    brighttimes, darktimes = [], []
+    pb = progressbarClass(2. * mags.size)
+    counter = 1
+    for mag in mags:
+        cmd = [os.path.join(os.path.dirname(__file__),
+                            "ErrorContributions.py"),
+                '-m', str(mag), "-d", "/null",
+                "-s", "bright",
+                ]
+
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result, error = p.communicate()
+
+        result = float(re.search(r"Saturation in (\d+\.*\d+) seconds", result).group(1))
+        brighttimes.append(result)
+        pb.progress(counter)
+        counter += 1
+
+    for mag in mags:
+        cmd = [os.path.join(os.path.dirname(__file__),
+                            "ErrorContributions.py"),
+                '-m', str(mag), "-d", "/null",
+                "-s", "dark",
+                ]
+
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result, error = p.communicate()
+
+        result = float(re.search(r"Saturation in (\d+\.*\d+) seconds", result).group(1))
+        darktimes.append(result)
+
+        pb.progress(counter)
+        counter += 1
+
+    return mags, np.log10(brighttimes), np.log10(darktimes)
 
 class App(object):
     ''' 
@@ -29,21 +72,22 @@ class App(object):
         super(App, self).__init__()
         self.args = args
 
-        self.ydata = np.array([9, 9.25, 9.5, 10, 10.5, 11, 11.5, 
-            12, 12.5, 13, 9.75, 10.25, 10.75, 11.25, 11.75, 12.25, 
-            12.75, 8.75, 8.5, 8.25,
-            ])
+        #self.ydata = np.array([9, 9.25, 9.5, 10, 10.5, 11, 11.5, 
+            #12, 12.5, 13, 9.75, 10.25, 10.75, 11.25, 11.75, 12.25, 
+            #12.75, 8.75, 8.5, 8.25,
+            #])
 
-        self.brightxdata = np.log10([11.1, 13.55, 17.67, 26.33, 36.71, 
-            54.70, 71.36, 93.09, 113.63, 129.78, 21.57, 32.14, 44.81,
-            62.48, 81.5, 99.48, 121.43, 9.09, 7.45, 5.71,
-            ])
+        #self.brightxdata = np.log10([11.1, 13.55, 17.67, 26.33, 36.71, 
+            #54.70, 71.36, 93.09, 113.63, 129.78, 21.57, 32.14, 44.81,
+            #62.48, 81.5, 99.48, 121.43, 9.09, 7.45, 5.71,
+            #])
 
 
-        self.darkxdata = np.log10([11.86, 14.48, 18.89, 28.14, 44.81,
-            66.77, 99.48, 138.70, 193.36, 269.58, 23.06, 36.71, 54.7,
-            81.5, 121.43, 169.30, 236.03, 9.72, 7.45, 6.1,
-            ])
+        #self.darkxdata = np.log10([11.86, 14.48, 18.89, 28.14, 44.81,
+            #66.77, 99.48, 138.70, 193.36, 269.58, 23.06, 36.71, 54.7,
+            #81.5, 121.43, 169.30, 236.03, 9.72, 7.45, 6.1,
+            #])
+        self.ydata, self.brightxdata, self.darkxdata = GetData()
 
         assert self.ydata.size == self.brightxdata.size
         assert self.ydata.size == self.darkxdata.size
