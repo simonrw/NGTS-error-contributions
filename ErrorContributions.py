@@ -40,7 +40,6 @@ BiasLevel = BiasLevelADU * Gain
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
 Digitisation = 16
 
-Moon = 'bright'  # options are bright or dark
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
 FullWellDepth = 150000
@@ -113,6 +112,8 @@ def Scintillation(t, Airmass):
 def main(args):
     # Plotting class
     Plotter = PlotClass(args.device)
+
+    Moon = args.skylevel  # options are bright or dark
 
     # Print some nice stuff to the console
     print "Assuming a gain of %.1f" % Gain
@@ -308,14 +309,19 @@ if __name__ == '__main__':
         warnings.filterwarnings("ignore", r'.*use PyArray_AsCArray.*')
         parser = argparse.ArgumentParser()
         parser.add_argument('-d', '--device', 
-                help='Plotting device', default='1/xs',
-                required=False, type=str,
-                metavar='PGPLOT device')
+                            help='Plotting device', default='1/xs',
+                            required=False, type=str,
+                            metavar='PGPLOT device')
         parser.add_argument('-m', '--targetmag',
-                help="Target magnitude", default=None, 
-                type=float, metavar='magnitude',
-                required=True)
+                            help="Target magnitude", default=None, 
+                            type=float, metavar='magnitude',
+                            required=True)
+        parser.add_argument("-s", "--skylevel", help="Sky type (bright "
+                            "or dark", choices=["bright", "dark"],
+                            type=lambda val: val.lower(),
+                            required=False, default="dark")
         args = parser.parse_args()
+
 
 
         main(args)
