@@ -28,8 +28,6 @@ class App(object):
         # list of field centres
         self.FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
 
-        # set up exposure times to be equal in log space
-        self.exptimes = 10**np.linspace(np.log10(5.), np.log10(3600.), 100)
 
         # NGTS instrument field of view
         '''
