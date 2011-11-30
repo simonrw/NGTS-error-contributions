@@ -68,7 +68,7 @@ class App(object):
         self.scin = np.log10(self.scin)
         self.total = np.log10(self.total)
 
-        pgopen("2/xs")
+        pgopen(self.args.device)
         pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
 
         # Draw the 1mmag line
@@ -165,6 +165,8 @@ if __name__ == '__main__':
                                 "or dark", choices=["bright", "dark"],
                                 type=lambda val: val.lower(),
                                 required=False, default="dark")
+            parser.add_argument("-d", "--device", help="PGPLOT device",
+                    required=False, default="/xs")
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
