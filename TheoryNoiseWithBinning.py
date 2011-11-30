@@ -165,6 +165,8 @@ if __name__ == '__main__':
                                 "or dark", choices=["bright", "dark"],
                                 type=lambda val: val.lower(),
                                 required=False, default="dark")
+            parser.add_argument("-d", "--device", help="PGPLOT device",
+                    required=False, default="/xs")
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
