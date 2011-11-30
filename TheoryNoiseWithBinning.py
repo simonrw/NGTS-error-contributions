@@ -7,7 +7,7 @@ import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
 import numpy as np
-#import srw
+import srw
 #import pyfits
 from ppgplot import *
 import NGTSErrors as nge
@@ -46,6 +46,7 @@ class App(object):
         apsize = 0.2
         airmass = 1.
         readnoise = 11.7
+        zp = srw.ZP(exptime)
 
         if self.args.skylevel == "dark": skypersecperpix = 50.
         elif self.args.skylevel == "bright": skypersecperpix = 160. 
@@ -54,7 +55,7 @@ class App(object):
 
         for mag in self.mag:
             errob = nge.ErrorContribution(mag, npix, exptime, readtime,
-                    extinction, targettime, height, apsize)
+                    extinction, targettime, height, apsize, zp)
             self.source.append(errob.sourceError(airmass))
             self.sky.append(errob.skyError(airmass, skypersecperpix))
             self.read.append(errob.readError(airmass, readnoise))

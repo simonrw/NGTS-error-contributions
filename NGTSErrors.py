@@ -10,7 +10,7 @@ import numpy as np
 from srw import ZP
 
 
-def sourceError(expTime, mag, readTime, totalTime, airmass,
+def sourceError(expTime, mag, zp, readTime, totalTime, airmass,
         extinction):
     '''
     Function takes a magnitude mag object and calculates
@@ -19,7 +19,6 @@ def sourceError(expTime, mag, readTime, totalTime, airmass,
     value
     '''
     nExposures = totalTime / (expTime + readTime)
-    zp = ZP(expTime)
 
     fluxPerImage = 10**((zp - mag)/2.5) + extinction * airmass
     totalFlux = fluxPerImage * nExposures
@@ -27,7 +26,7 @@ def sourceError(expTime, mag, readTime, totalTime, airmass,
 
     return fluxError / totalFlux
 
-def scintillationError(mag, npix, readTime, airmass, extinction, height, expTime, targetTime, apsize):
+def scintillationError(mag, zp, npix, readTime, airmass, extinction, height, expTime, targetTime, apsize):
     '''
     Returns the extinction as per Southworth 2008
     '''
@@ -35,7 +34,6 @@ def scintillationError(mag, npix, readTime, airmass, extinction, height, expTime
     errorPerImage = 0.004 * apsize**(-2./3.) * airmass**(7./4.) * \
             np.exp(-height / 8000.) * (2. * expTime)**(-1./2.)
 
-    zp = ZP(expTime)
     flux = 10**((zp - mag)/2.5) + extinction * airmass
     totalErrorPerImage = errorPerImage * flux
 
@@ -47,13 +45,12 @@ def scintillationError(mag, npix, readTime, airmass, extinction, height, expTime
     result = totalError / totalFlux
     return result
 
-def readError(mag, readTime, readNoise, npix, expTime, targetTime, extinction,
+def readError(mag, zp, readTime, readNoise, npix, expTime, targetTime, extinction,
         airmass):
     """
     Returns the read error
     """
     nExposures = targetTime / (expTime + readTime)
-    zp = ZP(expTime)
     flux = 10**((zp - mag)/2.5) + extinction * airmass
     totalFlux = flux * nExposures
 
@@ -62,13 +59,12 @@ def readError(mag, readTime, readNoise, npix, expTime, targetTime, extinction,
 
     return totalError / totalFlux
 
-def skyError(mag, readTime, skypersecperpix, npix, expTime, targetTime, airmass, extinction):
+def skyError(mag, zp, readTime, skypersecperpix, npix, expTime, targetTime, airmass, extinction):
     nExposures = targetTime / (expTime + readTime)
     skyPerSec = npix * skypersecperpix
     skyCounts = skyPerSec * expTime
     skyError = np.sqrt(skyCounts * nExposures)
 
-    zp = ZP(expTime)
     flux = 10**((zp - mag)/2.5) + extinction * airmass
     totalFlux = flux * nExposures
 
@@ -77,7 +73,7 @@ def skyError(mag, readTime, skypersecperpix, npix, expTime, targetTime, airmass,
 
 class ErrorContribution(object):
     def __init__(self, mag, npix, exptime, readtime, extinction,
-            targettime, height, apsize):
+            targettime, height, apsize, zp):
         super(ErrorContribution, self).__init__()
         self.mag = mag
         self.npix = npix
@@ -87,23 +83,24 @@ class ErrorContribution(object):
         self.targettime = targettime
         self.height = height
         self.apsize = apsize
+        self.zp = zp
 
 
     def sourceError(self, airmass):
-        return sourceError(self.exptime, self.mag, self.readtime,
+        return sourceError(self.exptime, self.mag, self.zp, self.readtime,
                 self.targettime, airmass, self.extinction)
 
     def scintillationError(self, airmass):
-        return scintillationError(self.mag, self.npix, self.readtime, 
+        return scintillationError(self.mag, self.zp, self.npix, self.readtime, 
                 airmass, self.extinction, self.height, self.exptime, 
                 self.targettime, self.apsize)
 
     def readError(self, airmass, readnoise):
-        return readError(self.mag, self.readtime, readnoise, self.npix,
+        return readError(self.mag, self.zp, self.readtime, readnoise, self.npix,
                 self.exptime, self.targettime, self.extinction, airmass)
 
     def skyError(self, airmass, skypersecperpix):
-        return skyError(self.mag, self.readtime, skypersecperpix, 
+        return skyError(self.mag, self.zp, self.readtime, skypersecperpix, 
                 self.npix, self.exptime, self.targettime, airmass, 
                 self.extinction)
 
@@ -128,10 +125,11 @@ class _TestingClass(unittest2.TestCase):
         height = 2400.
         apsize = 0.2
         self.airmass = [1., 2.]
+        zp = ZP(exptime)
 
         self.errclass = ErrorContribution(
                 mag, npix, exptime, readtime, extinction,
-                targettime, height, apsize)
+                targettime, height, apsize, zp)
 
     def test_source_error(self):
         for airmass in self.airmass:
@@ -199,12 +197,13 @@ class _Testing(unittest2.TestCase):
         self.totalTime = 3600.
         self.expTime = 1000.
         self.extinction = 0.06
+        self.zp = ZP(self.expTime)
 
     def test_source_error(self):
         mag = 9.
         airmass = 1.
 
-        result = sourceError(self.expTime, mag, self.readTime, self.totalTime,
+        result = sourceError(self.expTime, mag, self.zp, self.readTime, self.totalTime,
                 airmass, self.extinction)
         lowLim = 8E-5
         upLim = 9E-5
@@ -213,7 +212,7 @@ class _Testing(unittest2.TestCase):
 
         airmass = 2.
 
-        result = sourceError(self.expTime, mag, self.readTime, self.totalTime,
+        result = sourceError(self.expTime, mag, self.zp, self.readTime, self.totalTime,
                 airmass, self.extinction)
         lowLim = 8E-5
         upLim = 9E-5
@@ -226,7 +225,7 @@ class _Testing(unittest2.TestCase):
         mag = 9.
 
         airmass = 1.
-        result = scintillationError(mag, apsize, self.readTime, airmass, 
+        result = scintillationError(mag, self.zp, apsize, self.readTime, airmass, 
                 self.extinction, height, self.expTime, self.totalTime,
                 apsize)
 
@@ -236,7 +235,7 @@ class _Testing(unittest2.TestCase):
         self.assertLess(result, upLim)
 
         airmass = 2.
-        result = scintillationError(mag, apsize, self.readTime, airmass, 
+        result = scintillationError(mag, self.zp, apsize, self.readTime, airmass, 
                 self.extinction, height, self.expTime, self.totalTime,
                 apsize)
 
@@ -250,7 +249,7 @@ class _Testing(unittest2.TestCase):
         readNoise = 11.7
         npix = 1.5**4 * np.pi
         airmass = 1.
-        result = readError(mag, self.readTime, readNoise, npix, 100., self.totalTime,
+        result = readError(mag, ZP(100.), self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
         lowLim = 1.5E-6
@@ -260,7 +259,7 @@ class _Testing(unittest2.TestCase):
 
 
         airmass = 2.
-        result = readError(mag, self.readTime, readNoise, npix, 100., self.totalTime,
+        result = readError(mag, ZP(100.), self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
         lowLim = 1.5E-6
@@ -274,14 +273,14 @@ class _Testing(unittest2.TestCase):
         npix = 1.5**4 * np.pi
 
         airmass = 1.
-        result = skyError(mag, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
+        result = skyError(mag, self.zp, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
         lowLim = 1E-5
         upLim = 2E-5
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
         airmass = 2.
-        result = skyError(mag, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
+        result = skyError(mag, self.zp, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
         lowLim = 1E-5
         upLim = 2E-5
         self.assertGreater(result, lowLim)
