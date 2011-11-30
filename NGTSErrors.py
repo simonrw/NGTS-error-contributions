@@ -21,6 +21,7 @@ def sourceError(expTime, mag, zp, readTime, totalTime, airmass,
     nExposures = totalTime / (expTime + readTime)
 
     fluxPerImage = 10**((zp - mag)/2.5) + extinction * airmass
+    fluxPerImage *= expTime
     totalFlux = fluxPerImage * nExposures
     fluxError = np.sqrt(totalFlux)
 
@@ -35,6 +36,7 @@ def scintillationError(mag, zp, npix, readTime, airmass, extinction, height, exp
             np.exp(-height / 8000.) * (2. * expTime)**(-1./2.)
 
     flux = 10**((zp - mag)/2.5) + extinction * airmass
+    flux *= expTime
     totalErrorPerImage = errorPerImage * flux
 
 
@@ -52,6 +54,7 @@ def readError(mag, zp, readTime, readNoise, npix, expTime, targetTime, extinctio
     """
     nExposures = targetTime / (expTime + readTime)
     flux = 10**((zp - mag)/2.5) + extinction * airmass
+    flux *= expTime
     totalFlux = flux * nExposures
 
     readNoisePerAperture = np.sqrt(npix) * readNoise
@@ -66,6 +69,7 @@ def skyError(mag, zp, readTime, skypersecperpix, npix, expTime, targetTime, airm
     skyError = np.sqrt(skyCounts * nExposures)
 
     flux = 10**((zp - mag)/2.5) + extinction * airmass
+    flux *= expTime
     totalFlux = flux * nExposures
 
     result = skyError / totalFlux
@@ -125,7 +129,7 @@ class _TestingClass(unittest2.TestCase):
         height = 2400.
         apsize = 0.2
         self.airmass = [1., 2.]
-        zp = ZP(exptime)
+        zp = ZP(1.)
 
         self.errclass = ErrorContribution(
                 mag, npix, exptime, readtime, extinction,
@@ -197,7 +201,7 @@ class _Testing(unittest2.TestCase):
         self.totalTime = 3600.
         self.expTime = 1000.
         self.extinction = 0.06
-        self.zp = ZP(self.expTime)
+        self.zp = ZP(1.)
 
     def test_source_error(self):
         mag = 9.
@@ -249,7 +253,7 @@ class _Testing(unittest2.TestCase):
         readNoise = 11.7
         npix = 1.5**4 * np.pi
         airmass = 1.
-        result = readError(mag, ZP(100.), self.readTime, readNoise, npix, 100., self.totalTime,
+        result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
         lowLim = 1.5E-6
@@ -259,7 +263,7 @@ class _Testing(unittest2.TestCase):
 
 
         airmass = 2.
-        result = readError(mag, ZP(100.), self.readTime, readNoise, npix, 100., self.totalTime,
+        result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
         lowLim = 1.5E-6

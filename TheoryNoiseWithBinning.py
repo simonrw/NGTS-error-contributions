@@ -40,13 +40,13 @@ class App(object):
         npix = 1.5**4 * np.pi
         exptime = self.args.exptime
         readtime = 2048. * (38E-6 + 2048. / 3E6)
-        extinction = 0.04
+        extinction = 0.06
         targettime = self.args.totaltime
         height = 2400.
         apsize = 0.2
         airmass = 1.
         readnoise = 11.7
-        zp = srw.ZP(exptime)
+        zp = srw.ZP(1.)
 
         if self.args.skylevel == "dark": skypersecperpix = 50.
         elif self.args.skylevel == "bright": skypersecperpix = 160. 
