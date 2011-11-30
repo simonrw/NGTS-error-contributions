@@ -28,8 +28,8 @@ class App(object):
         self.fwhm = 1.5
         self.N = self.args.niter
 
-        self.xRange = [-2.*self.fwhm, 2.*self.fwhm]
-        self.yRange = [-2.*self.fwhm, 2.*self.fwhm]
+        self.xRange = [-0.5, 0.5]
+        self.yRange = [-0.5, 0.5]
 
 
         pgopen(self.args.device)
@@ -75,7 +75,7 @@ class App(object):
 
 
         # Create the histogram 
-        vals, edges = np.histogram(fractions, bins=50, range=(fractions.min(), 0))
+        vals, edges = np.histogram(fractions, bins=50, range=(-1, 0))
 
         # Counting errors
         errs = np.sqrt(vals)
@@ -86,7 +86,7 @@ class App(object):
         # Normalise the histogram 
         # I realise that the numpy.histogram function inclues a density parameter which 
         # achieves the same thing but I need the errors from the raw values
-        Integral = float(np.sum(vals) * binWidth)
+        Integral = float(np.sum(vals))
 
         # Divide the values by the integral of the system
         normalisedVals = vals / Integral
@@ -95,7 +95,8 @@ class App(object):
         # Get the bin centres
         centres = edges[:-1] + binWidth / 2.
 
-        pgenv(fractions.min(), 0, 0, 1.1*normalisedVals.max(), 0, 10)
+        pgenv(-1, 0, 0, 1.1*normalisedVals.max(), 0, 10)
+
 
 
         # Plot the errorbars
