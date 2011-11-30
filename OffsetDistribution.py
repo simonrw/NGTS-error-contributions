@@ -28,8 +28,8 @@ class App(object):
         self.fwhm = 1.5
         self.N = self.args.niter
 
-        self.xRange = [-2.*self.fwhm, 2.*self.fwhm]
-        self.yRange = [-2.*self.fwhm, 2.*self.fwhm]
+        self.xRange = [-0.5, 0.5]
+        self.yRange = [-0.5, 0.5]
 
 
         pgopen(self.args.device)
