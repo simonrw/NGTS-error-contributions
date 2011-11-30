@@ -68,7 +68,7 @@ class App(object):
         self.scin = np.log10(self.scin)
         self.total = np.log10(self.total)
 
-        pgopen("2/xs")
+        pgopen(self.args.device)
         pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
 
         # Draw the 1mmag line
