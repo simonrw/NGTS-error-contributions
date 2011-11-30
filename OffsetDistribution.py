@@ -86,7 +86,7 @@ class App(object):
         # Normalise the histogram 
         # I realise that the numpy.histogram function inclues a density parameter which 
         # achieves the same thing but I need the errors from the raw values
-        Integral = float(np.sum(vals) * binWidth)
+        Integral = float(np.sum(vals))
 
         # Divide the values by the integral of the system
         normalisedVals = vals / Integral
