@@ -75,7 +75,7 @@ class App(object):
 
 
         # Create the histogram 
-        vals, edges = np.histogram(fractions, bins=50, range=(fractions.min(), 0))
+        vals, edges = np.histogram(fractions, bins=50, range=(-1, 0))
 
         # Counting errors
         errs = np.sqrt(vals)
@@ -95,7 +95,8 @@ class App(object):
         # Get the bin centres
         centres = edges[:-1] + binWidth / 2.
 
-        pgenv(fractions.min(), 0, 0, 1.1*normalisedVals.max(), 0, 10)
+        pgenv(-1, 0, 0, 1.1*normalisedVals.max(), 0, 10)
+
 
 
         # Plot the errorbars
