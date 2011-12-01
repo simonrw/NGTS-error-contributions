@@ -254,8 +254,20 @@ class _TestingClass(unittest2.TestCase):
         self.assertLess(result, upLim)
 
     def test_flux(self):
-        for airmass in self.airmass:
-            result = self.errclass.flux(airmass, self.exptime)
+        exptime = 1.
+        airmass = 1.
+        result = self.errclass.flux(airmass, exptime)
+        lowLim = 42261.022
+        upLim = 442261.024
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+        airmass = 2.
+        result = self.errclass.flux(airmass, exptime)
+        lowLim = 44662.188
+        upLim = 44662.190
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
 
 
 
