@@ -54,13 +54,13 @@ class App(object):
 
 
         for mag in self.mag:
-            errob = nge.ErrorContribution(mag, npix, exptime, readtime,
-                    extinction, targettime, height, apsize, zp)
-            self.source.append(errob.sourceError(airmass))
-            self.sky.append(errob.skyError(airmass, skypersecperpix))
-            self.read.append(errob.readError(airmass, readnoise))
-            self.scin.append(errob.scintillationError(airmass)) 
-            self.total.append(errob.totalError(airmass, readnoise, skypersecperpix))
+            errob = nge.ErrorContribution(mag, npix, readtime, extinction,
+                    targettime, height, apsize, zp, readnoise)
+            self.source.append(errob.sourceError(airmass, exptime))
+            self.sky.append(errob.skyError(airmass, exptime, skypersecperpix))
+            self.read.append(errob.readError(airmass, exptime))
+            self.scin.append(errob.scintillationError(airmass, exptime)) 
+            self.total.append(errob.totalError(airmass, exptime, skypersecperpix))
 
         self.source = np.log10(self.source)
         self.sky = np.log10(self.sky)
