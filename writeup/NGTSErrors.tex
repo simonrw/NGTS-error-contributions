@@ -139,6 +139,25 @@ second is given by:
     f = 10^{(m_0 - m) / 2.5}
     \]
 
+To include the extinction from the atmosphere, a constant correction
+term is added to the magnitude value so that 
+
+\[
+    m = m_0 - 2.5 \log_{10}{f} - k X
+    \]
+
+where $k$ is the extinction coefficient ($\sim 0.06$ for NGTS), and $X$
+the airmass. This assumes a measured flux $f$ and corrects for the atmosphere to give
+the magnitude as would be observed from space. For this analysis the
+magnitude specified at the program start is the magnitude that would be
+observed from space and the flux recieved through the atmosphere at
+airmass $X$ is what's needed. Therefore the last term is inverted, and
+the final flux value is given by 
+
+\[
+    f = 10^{(m_0 + k X - m) / 2.5}
+    \]
+
 
 \subsection{Method}
 \label{sec:method}
