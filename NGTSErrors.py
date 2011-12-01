@@ -215,7 +215,7 @@ class _TestingClass(unittest2.TestCase):
 
     def test_sky_error(self):
         for airmass in self.airmass:
-            result = self.errclass.skyError(airmass, 50.)
+            result = self.errclass.skyError(airmass, self.exptime, 50.)
             lowLim = 1E-5
             upLim = 2E-5
             self.assertGreater(result, lowLim)
