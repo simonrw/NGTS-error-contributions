@@ -100,6 +100,13 @@ class ErrorContribution(object):
                     level in photons per pixel per second
         * readError - Error from reading the frame
         * totalError - Combined errors from each source in quadrature
+
+    Each method requires the airmass and exposure time for a given observation,
+    and the sky and total methods require the sky background level in sky
+    photons per second per pixel.
+
+    As each method returns the fractional value, the flux recieved for a single
+    exposure is given by the flux method.
     '''
     def __init__(self, mag, npix, readtime, extinction,
             targettime, height, apsize, zp, readnoise):
