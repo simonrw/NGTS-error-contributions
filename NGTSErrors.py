@@ -76,8 +76,12 @@ def skyError(mag, zp, readTime, skypersecperpix, npix, expTime, targetTime, airm
     return result
 
 class ErrorContribution(object):
+    '''
+    '''
     def __init__(self, mag, npix, exptime, readtime, extinction,
             targettime, height, apsize, zp):
+        '''
+        '''
         super(ErrorContribution, self).__init__()
         self.mag = mag
         self.npix = npix
@@ -91,24 +95,34 @@ class ErrorContribution(object):
 
 
     def sourceError(self, airmass):
+        '''
+        '''
         return sourceError(self.exptime, self.mag, self.zp, self.readtime,
                 self.targettime, airmass, self.extinction)
 
     def scintillationError(self, airmass):
+        '''
+        '''
         return scintillationError(self.mag, self.zp, self.npix, self.readtime, 
                 airmass, self.extinction, self.height, self.exptime, 
                 self.targettime, self.apsize)
 
     def readError(self, airmass, readnoise):
+        '''
+        '''
         return readError(self.mag, self.zp, self.readtime, readnoise, self.npix,
                 self.exptime, self.targettime, self.extinction, airmass)
 
     def skyError(self, airmass, skypersecperpix):
+        '''
+        '''
         return skyError(self.mag, self.zp, self.readtime, skypersecperpix, 
                 self.npix, self.exptime, self.targettime, airmass, 
                 self.extinction)
 
     def totalError(self, airmass, readnoise, skypersecperpix):
+        '''
+        '''
         source = self.sourceError(airmass)
         scin = self.scintillationError(airmass)
         read = self.readError(airmass, readnoise)
