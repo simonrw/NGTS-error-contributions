@@ -1,0 +1,3 @@
+[submodule "AstErrors"]
+	path = AstErrors
+	url = git@github.com:mindriot101/AstErrors.git
