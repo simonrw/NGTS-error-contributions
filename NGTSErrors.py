@@ -117,12 +117,20 @@ class ErrorContribution(object):
         self.readnoise = readnoise
 
     def flux(self, airmass, exptime):
-        """
+        '''
         Returns the flux for a given magnitude
-        """
+        '''
         fluxPerImage = 10**((self.zp - mag)/2.5) + self.extinction * airmass
         fluxPerImage *= exptime
         return fluxPerImage
+
+    def totalFlux(self, airmass, exptime):
+        '''
+        Returns the total flux binned up to targettime for a 
+        given observation
+        '''
+        nExposures = self.targettime / (exptime + self.readtime)
+        return self.flux(airmass, exptime) * nExposures
 
 
 
