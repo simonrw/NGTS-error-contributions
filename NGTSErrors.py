@@ -49,9 +49,9 @@ def scintillationError(mag, zp, npix, readTime, airmass, extinction, height, exp
 
 def readError(mag, zp, readTime, readNoise, npix, expTime, targetTime, extinction,
         airmass):
-    """
+    '''
     Returns the read error
-    """
+    '''
     nExposures = targetTime / (expTime + readTime)
     flux = 10**((zp - mag)/2.5) + extinction * airmass
     flux *= expTime
