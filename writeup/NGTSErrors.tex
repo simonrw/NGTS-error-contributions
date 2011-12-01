@@ -550,9 +550,33 @@ Figure~\ref{fig:fractiondistribution} shows the resulting distribution.
 
 \chapter{Sky background}
 
-%TODO finish this
-%The sky background is plotted in fig.~\ref{}
+The sky background level is very dependant on the amount of light due to
+the Moon is visible in the image. This is loosely related to the phase
+of the Moon, but not completely since the chosen field might not be
+within the Moon avoidance area.
 
+The median image level for each image of the NGTS prototype data set was
+used to estimate the sky background level, and the value divided by the
+exposure time to give the ADU per second. This was scaled by the gain
+$1.2 e^{-1} \mathrm{ADU}$ to give electrons per second per pixel for
+each image. The JD was also recorded and used to calculate the phase of
+the Moon for each image. 
+
+The Moon avoidance angle describes the angular distance from the Moon in
+which the Moon light is present. The Moon phase therefore is not the
+only indicator: the Moon could be full but the field being observed may
+be outside the Moon avoidance angle. Therefore there is some scatter, as
+can be seen in fig.~\ref{fig:skyvsmoon}.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/skyvsmoon}
+    \end{center}
+    \caption{Sky background level per pixel per second for the NGTS
+    prototype data plotted against Moon phase. A linear fit is made only to
+indicate the trend.}
+    \label{fig:skyvsmoon}
+\end{figure}
 
 
 \end{appendices}
