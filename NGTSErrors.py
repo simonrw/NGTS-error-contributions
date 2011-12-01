@@ -207,7 +207,7 @@ class _TestingClass(unittest2.TestCase):
 
     def test_read_error(self):
         for airmass in self.airmass:
-            result = self.errclass.readError(airmass, 11.7)
+            result = self.errclass.readError(airmass, self.exptime)
             lowLim = 1.5E-6
             upLim = 3E-6
             self.assertGreater(result, lowLim)
