@@ -223,6 +223,25 @@ class _Testing(unittest2.TestCase):
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
+        mag = 12.
+        airmass = 1.
+
+        result = sourceError(self.expTime, mag, self.zp, self.readTime, self.totalTime,
+                airmass, self.extinction)
+        lowLim = 3E-4
+        upLim = 4E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
+        airmass = 2.
+
+        result = sourceError(self.expTime, mag, self.zp, self.readTime, self.totalTime,
+                airmass, self.extinction)
+        lowLim = 3E-4
+        upLim = 4E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
     def test_scintillation_error(self):
         apsize = 0.2
         height = 2400.
@@ -248,10 +267,32 @@ class _Testing(unittest2.TestCase):
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
+        mag = 12.
+
+        airmass = 1.
+        result = scintillationError(mag, self.zp, apsize, self.readTime, airmass, 
+                self.extinction, height, self.expTime, self.totalTime,
+                apsize)
+
+        lowLim = 9E-5
+        upLim = 2E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
+        airmass = 2.
+        result = scintillationError(mag, self.zp, apsize, self.readTime, airmass, 
+                self.extinction, height, self.expTime, self.totalTime,
+                apsize)
+
+        lowLim = 3E-4
+        upLim = 4E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
     def test_readnoise(self):
-        mag = 9.
         readNoise = 11.7
         npix = 1.5**4 * np.pi
+        mag = 9.
         airmass = 1.
         result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
@@ -268,14 +309,34 @@ class _Testing(unittest2.TestCase):
 
         lowLim = 1.5E-6
         upLim = 3E-6
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
+        mag = 12.
+        airmass = 1.
+        result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
+                self.extinction, airmass)
+
+        lowLim = 3E-5
+        upLim = 4E-5
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
+
+        airmass = 2.
+        result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
+                self.extinction, airmass)
+
+        lowLim = 3E-5
+        upLim = 4E-5
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
     def test_skyerror(self):
-        mag = 9.
         skypersec = 50.
         npix = 1.5**4 * np.pi
 
+        mag = 9.
         airmass = 1.
         result = skyError(mag, self.zp, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
         lowLim = 1E-5
@@ -291,6 +352,20 @@ class _Testing(unittest2.TestCase):
         self.assertLess(result, upLim)
 
 
+        mag = 12.
+        airmass = 1.
+        result = skyError(mag, self.zp, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
+        lowLim = 1E-4
+        upLim = 2E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
+
+        airmass = 2.
+        result = skyError(mag, self.zp, self.readTime, skypersec, npix, self.expTime, self.totalTime, airmass, self.extinction)
+        lowLim = 1E-4
+        upLim = 2E-4
+        self.assertGreater(result, lowLim)
+        self.assertLess(result, upLim)
 
 
 if __name__ == '__main__':
