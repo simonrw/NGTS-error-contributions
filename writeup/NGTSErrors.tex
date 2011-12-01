@@ -1,4 +1,5 @@
 \documentclass[11pt,a4paper]{report}
+\usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{amsmath}
 \usepackage{setspace}
@@ -520,12 +521,69 @@ analysis was performed for bright and dark time.
 \end{figure}
 
 
-\begin{appendices}
 
 \section{Noise for a given magnitude}
 \label{sec:noisepermag}
 
+As can be seen from fig.~\ref{fig:brightnoise} and
+fig.~\ref{fig:faintnoise}, the noise levels change dramatically when
+going from a magnitude $9$ object to a magnitude $15$ object. For
+bright objects, the scintillation is the dominant source of noise,
+whereas for faint objects the sky background is the domniant source of
+noise. The fractional noise level also changes in absolute terms, 
+for example with the sky noise error changing from
+$\sim 0.025$ mmag  to $\sim 6$ mmag.
 
+
+\begin{figure}[p]
+  \centering
+  \subfloat[$5$s exposure, dark time]{\label{fig:5sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/5sdark}}                
+  \subfloat[$5$s exposure, bright time]{\label{fig:5sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/5sbright}} \\               
+  \subfloat[$10$s exposure, dark time]{\label{fig:10sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/10sdark}}                
+  \subfloat[$10$s exposure, bright time]{\label{fig:10sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/10sbright}} \\               
+  \subfloat[$30$s exposure, dark time]{\label{fig:30sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/30sdark}}                
+  \subfloat[$30$s exposure, bright time]{\label{fig:30sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/30sbright}}
+  \caption{Theoretical error curves for the NGTS instrument. Each line represents a different
+  error source, with the combined error shown in black. The plots are
+  for $5$, $10$ and $30$ seconds of science exposure, both in dark and
+  bright time, and include the
+  $\sim 1.5$s frame read time. The horizontal
+  line shows the target $1$mmag level, and the vertical line where the
+  total error value intercepts the $1$mmag line. The value is quoted in
+  the title for each figure.}
+  \label{fig:rmsmagplots}
+\end{figure}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccc}
+        \toprule
+        Exposure time (s) & Sky type & $1$mmag point \\
+        \midrule
+        5 & dark & $13.210$ \\
+        5 & bright & $12.836$ \\
+        10 & dark & $13.384$ \\
+        10 & bright & $12.946$ \\
+        30 & dark & $13.496$ \\
+        30 & bright & $13.023$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Predicted $1$mmag points for the NGTS instrument}
+    \label{tab:1mmagpoints}
+\end{table}
+
+
+To investigate this, the noise levels were calculated for a range of
+magnitudes covering the NGTS visible range. As a theoretical
+investigation the range goes brighter than the saturation limit of NGTS
+and fainter than the detection limit, and each error contribution has
+been combined up to an hour as in previous investigations to ascertain
+the error expected on transit-like timescales.
+Figure~\ref{fig:rmsmagplots} shows the results, and the magnitude at
+which the precision is $1$mmag  is listed in table~\ref{tab:1mmagpoints}
+
+
+\begin{appendices}
 \section{Flux fraction}
 \label{sec:ffraction}
 
