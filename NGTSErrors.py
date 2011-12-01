@@ -223,14 +223,14 @@ class _TestingClass(unittest2.TestCase):
 
     def test_scintillation_error(self):
         airmass = 1.
-        result = self.errclass.scintillationError(airmass)
+        result = self.errclass.scintillationError(airmass, self.exptime)
         lowLim = 1E-4
         upLim = 2E-4
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
         airmass = 2.
-        result = self.errclass.scintillationError(airmass)
+        result = self.errclass.scintillationError(airmass, self.exptime)
         lowLim = 3E-4
         upLim = 4E-4
         self.assertGreater(result, lowLim)
@@ -238,7 +238,7 @@ class _TestingClass(unittest2.TestCase):
 
     def test_total_error(self):
         airmass = 1.
-        result = self.errclass.totalError(airmass, 11.7, 50.)
+        result = self.errclass.totalError(airmass, self.exptime, 50.)
         lowLim = 1E-4
         upLim = 2E-4
         self.assertGreater(result, lowLim)
@@ -246,7 +246,7 @@ class _TestingClass(unittest2.TestCase):
         
 
         airmass = 2.
-        result = self.errclass.totalError(airmass, 11.7, 50.)
+        result = self.errclass.totalError(airmass, self.exptime, 50.)
         lowLim = 3E-4
         upLim = 4E-4
         self.assertGreater(result, lowLim)
