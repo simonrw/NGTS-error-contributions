@@ -9,6 +9,12 @@ import unittest2
 import numpy as np
 from srw import ZP
 
+def fluxFromMag(zp, k, x, mag, exptime):
+    '''
+    Calculates the flux for a given magnitude
+    '''
+    return 10**((zp + (k*x) - mag) / 2.5) * exptime
+
 
 def sourceError(expTime, mag, zp, readTime, totalTime, airmass,
         extinction):
@@ -20,8 +26,7 @@ def sourceError(expTime, mag, zp, readTime, totalTime, airmass,
     '''
     nExposures = totalTime / (expTime + readTime)
 
-    fluxPerImage = 10**((zp - mag)/2.5) + extinction * airmass
-    fluxPerImage *= expTime
+    fluxPerImage = fluxFromMag(zp, extinction, airmass, mag, expTime)
     totalFlux = fluxPerImage * nExposures
     fluxError = np.sqrt(totalFlux)
 
@@ -35,8 +40,7 @@ def scintillationError(mag, zp, npix, readTime, airmass, extinction, height, exp
     errorPerImage = 0.004 * apsize**(-2./3.) * airmass**(7./4.) * \
             np.exp(-height / 8000.) * (2. * expTime)**(-1./2.)
 
-    flux = 10**((zp - mag)/2.5) + extinction * airmass
-    flux *= expTime
+    flux = fluxFromMag(zp, extinction, airmass, mag, expTime)
     totalErrorPerImage = errorPerImage * flux
 
 
@@ -53,8 +57,7 @@ def readError(mag, zp, readTime, readNoise, npix, expTime, targetTime, extinctio
     Returns the read error
     '''
     nExposures = targetTime / (expTime + readTime)
-    flux = 10**((zp - mag)/2.5) + extinction * airmass
-    flux *= expTime
+    flux = fluxFromMag(zp, extinction, airmass, mag, expTime)
     totalFlux = flux * nExposures
 
     readNoisePerAperture = np.sqrt(npix) * readNoise
@@ -68,8 +71,7 @@ def skyError(mag, zp, readTime, skypersecperpix, npix, expTime, targetTime, airm
     skyCounts = skyPerSec * expTime
     skyError = np.sqrt(skyCounts * nExposures)
 
-    flux = 10**((zp - mag)/2.5) + extinction * airmass
-    flux *= expTime
+    flux = fluxFromMag(zp, extinction, airmass, mag, expTime)
     totalFlux = flux * nExposures
 
     result = skyError / totalFlux
@@ -127,9 +129,8 @@ class ErrorContribution(object):
         '''
         Returns the flux for a given magnitude
         '''
-        fluxPerImage = 10**((self.zp - mag)/2.5) + self.extinction * airmass
-        fluxPerImage *= exptime
-        return fluxPerImage
+        flux = fluxFromMag(self.zp, self.extinction, airmass, self.mag, exptime)
+        return flux
 
     def totalFlux(self, airmass, exptime):
         '''
@@ -200,7 +201,7 @@ class _TestingClass(unittest2.TestCase):
     def test_source_error(self):
         for airmass in self.airmass:
             result = self.errclass.sourceError(airmass, self.exptime)
-            lowLim = 8E-5
+            lowLim = 7E-5
             upLim = 9E-5
             self.assertGreater(result, lowLim)
             self.assertLess(result, upLim)
@@ -252,7 +253,9 @@ class _TestingClass(unittest2.TestCase):
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
-
+    def test_flux(self):
+        for airmass in self.airmass:
+            result = self.errclass.flux(airmass, self.exptime)
 
 
 
@@ -280,8 +283,8 @@ class _Testing(unittest2.TestCase):
 
         result = sourceError(self.expTime, mag, self.zp, self.readTime, self.totalTime,
                 airmass, self.extinction)
-        lowLim = 8E-5
-        upLim = 9E-5
+        lowLim = 7E-5
+        upLim = 8E-5
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
@@ -379,8 +382,8 @@ class _Testing(unittest2.TestCase):
         result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
-        lowLim = 3E-5
-        upLim = 4E-5
+        lowLim = 2E-5
+        upLim = 3E-5
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
@@ -389,8 +392,8 @@ class _Testing(unittest2.TestCase):
         result = readError(mag, self.zp, self.readTime, readNoise, npix, 100., self.totalTime,
                 self.extinction, airmass)
 
-        lowLim = 3E-5
-        upLim = 4E-5
+        lowLim = 2E-5
+        upLim = 3E-5
         self.assertGreater(result, lowLim)
         self.assertLess(result, upLim)
 
