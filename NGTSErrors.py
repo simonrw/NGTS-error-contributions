@@ -116,6 +116,15 @@ class ErrorContribution(object):
         self.zp = zp
         self.readnoise = readnoise
 
+    def flux(self, airmass, exptime):
+        """
+        Returns the flux for a given magnitude
+        """
+        fluxPerImage = 10**((self.zp - mag)/2.5) + self.extinction * airmass
+        fluxPerImage *= exptime
+        return fluxPerImage
+
+
 
     def sourceError(self, airmass, exptime):
         '''
