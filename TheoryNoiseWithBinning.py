@@ -10,7 +10,7 @@ import numpy as np
 import srw
 #import pyfits
 from ppgplot import *
-import NGTSErrors as nge
+import AstErrors as ae
 
 
 class App(object):
@@ -54,7 +54,7 @@ class App(object):
 
 
         for mag in self.mag:
-            errob = nge.ErrorContribution(mag, npix, readtime, extinction,
+            errob = ae.ErrorContribution(mag, npix, readtime, extinction,
                     targettime, height, apsize, zp, readnoise)
             self.source.append(errob.sourceError(airmass, exptime))
             self.sky.append(errob.skyError(airmass, exptime, skypersecperpix))
