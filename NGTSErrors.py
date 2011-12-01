@@ -101,55 +101,55 @@ class ErrorContribution(object):
         * readError - Error from reading the frame
         * totalError - Combined errors from each source in quadrature
     '''
-    def __init__(self, mag, npix, exptime, readtime, extinction,
-            targettime, height, apsize, zp):
+    def __init__(self, mag, npix, readtime, extinction,
+            targettime, height, apsize, zp, readnoise):
         '''
         '''
         super(ErrorContribution, self).__init__()
         self.mag = mag
         self.npix = npix
-        self.exptime = exptime
         self.readtime = readtime
         self.extinction = extinction
         self.targettime = targettime
         self.height = height
         self.apsize = apsize
         self.zp = zp
+        self.readnoise = readnoise
 
 
-    def sourceError(self, airmass):
+    def sourceError(self, airmass, exptime):
         '''
         '''
-        return sourceError(self.exptime, self.mag, self.zp, self.readtime,
+        return sourceError(exptime, self.mag, self.zp, self.readtime,
                 self.targettime, airmass, self.extinction)
 
-    def scintillationError(self, airmass):
+    def scintillationError(self, airmass, exptime):
         '''
         '''
         return scintillationError(self.mag, self.zp, self.npix, self.readtime, 
-                airmass, self.extinction, self.height, self.exptime, 
+                airmass, self.extinction, self.height, exptime, 
                 self.targettime, self.apsize)
 
-    def readError(self, airmass, readnoise):
+    def readError(self, airmass, exptime):
         '''
         '''
-        return readError(self.mag, self.zp, self.readtime, readnoise, self.npix,
-                self.exptime, self.targettime, self.extinction, airmass)
+        return readError(self.mag, self.zp, self.readtime, self.readnoise, self.npix,
+                exptime, self.targettime, self.extinction, airmass)
 
-    def skyError(self, airmass, skypersecperpix):
+    def skyError(self, airmass, exptime, skypersecperpix):
         '''
         '''
         return skyError(self.mag, self.zp, self.readtime, skypersecperpix, 
-                self.npix, self.exptime, self.targettime, airmass, 
+                self.npix, exptime, self.targettime, airmass, 
                 self.extinction)
 
-    def totalError(self, airmass, readnoise, skypersecperpix):
+    def totalError(self, airmass, exptime, skypersecperpix):
         '''
         '''
-        source = self.sourceError(airmass)
-        scin = self.scintillationError(airmass)
-        read = self.readError(airmass, readnoise)
-        sky = self.skyError(airmass, skypersecperpix)
+        source = self.sourceError(airmass, exptime)
+        scin = self.scintillationError(airmass, exptime)
+        read = self.readError(airmass, exptime)
+        sky = self.skyError(airmass, exptime, skypersecperpix)
 
         return np.sqrt(source**2 + scin**2 + read**2 + sky**2)
 
