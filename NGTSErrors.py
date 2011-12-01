@@ -77,6 +77,29 @@ def skyError(mag, zp, readTime, skypersecperpix, npix, expTime, targetTime, airm
 
 class ErrorContribution(object):
     '''
+    Error class
+
+    Create with the following parameters:
+
+        * Magnitude of object of interest
+        * Number of pixels in the aperture
+        * Exposure time of the image
+        * Time it takes to read the frame, can be 0
+        * Extinction coefficient for your filter, can be 0
+        * Target time: total coadding time
+        * Observatory altitude
+        * Aperture (of telescope)
+        * Instrumental zero point
+
+    Then the following sources of noise can be calculated for a given 
+    airmass, and the fractional errors returned:
+
+        * sourceError - Error from the source
+        * scintillationError - Error from scintillation 
+        * skyError - Error from the sky background, requires sky background
+                    level in photons per pixel per second
+        * readError - Error from reading the frame
+        * totalError - Combined errors from each source in quadrature
     '''
     def __init__(self, mag, npix, exptime, readtime, extinction,
             targettime, height, apsize, zp):
