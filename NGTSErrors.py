@@ -183,7 +183,7 @@ class _TestingClass(unittest2.TestCase):
     def setUp(self):
         mag = 9.
         npix = 1.5**4 * np.pi
-        exptime = 100.
+        self.exptime = 100.
         readtime = 2048. * (38E-6 + 2048. / 3E6)
         extinction = 0.06
         targettime = 3600.
@@ -191,14 +191,15 @@ class _TestingClass(unittest2.TestCase):
         apsize = 0.2
         self.airmass = [1., 2.]
         zp = ZP(1.)
+        readnoise = 11.7
 
         self.errclass = ErrorContribution(
-                mag, npix, exptime, readtime, extinction,
-                targettime, height, apsize, zp)
+                    mag, npix, readtime, extinction, 
+                    targettime, height, apsize, zp, readnoise)
 
     def test_source_error(self):
         for airmass in self.airmass:
-            result = self.errclass.sourceError(airmass)
+            result = self.errclass.sourceError(airmass, self.exptime)
             lowLim = 8E-5
             upLim = 9E-5
             self.assertGreater(result, lowLim)
