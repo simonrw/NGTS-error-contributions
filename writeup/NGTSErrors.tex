@@ -3,6 +3,8 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{natbib}
+\usepackage[toc,page]{appendix}
+
 \usepackage[font=footnotesize,margin=15pt,textfont=sl]{caption}
 
 \title{NGTS error budget}
@@ -511,13 +513,25 @@ analysis was performed for bright and dark time.
 
 \section{Noise contributions for a given magnitude}
 
-\appendix
-\section{Sky background}
+%TODO finish this
+
+\begin{appendices}
+\chapter{Flux fraction}
+\label{sec:ffraction}
+
+When a psf is centred on a pixel, the largest amount of flux enters that
+pixel. This is a very pessimistic aproach since this will cause more
+stars to saturate than is realistic due to the nature of the placement
+of the stars. 
+
+\chapter{Sky background}
 
 %TODO finish this
 %The sky background is plotted in fig.~\ref{}
 
 
+
+\end{appendices}
 
 \bibliographystyle{mn_new}
 \bibliography{bibliography}
