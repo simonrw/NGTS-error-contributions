@@ -524,7 +524,23 @@ analysis was performed for bright and dark time.
 When a psf is centred on a pixel, the largest amount of flux enters that
 pixel. This is a very pessimistic aproach since this will cause more
 stars to saturate than is realistic due to the nature of the placement
-of the stars. 
+of the stars. To find the most likely value of this fraction, a Gaussian
+psf was simulated at a random offset within the pixel value.
+$1\times10^6$ offsets were chosen within a range $-0.5 < x < 0.5$ and
+$-0.5 < y < 0.5$ and the integral recalculated. The fractional values
+were binned up and the bin values were divided by the total number of
+iterations giving the probability density. The most likely value was
+calculated from this and used in the analysis in the main text.
+Figure~\ref{fig:fractiondistribution} shows the resulting distribution.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/fractiondistribution}
+    \end{center}
+    \caption{Distribution of the flux fraction in the central pixel as
+    an aperture is randomly offset. The most likely value is plotted.}
+    \label{fig:fractiondistribution}
+\end{figure}
 
 \chapter{Sky background}
 
