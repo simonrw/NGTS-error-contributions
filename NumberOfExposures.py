@@ -59,15 +59,29 @@ class App(object):
         self.doCalculation()
         self.printResults()
 
+    def daysInYear(self):
+        return 365.25
+
+    def MB(self):
+        return 1024**2
+
+    def TB(self):
+        return self.MB()**2
+
     def setUpAssumptions(self):
         # Doing exposures per hour
         self.targettime = 3600.
 
         # Number of years
-        self.nYears = 1
+        self.nYears = self.args.years
 
         # Exposure time of science exposures
         self.exptime = self.args.exptime
+
+        if self.exptime <= 0.:
+            raise RuntimeError("Exposure time cannot be <= 0")
+
+        # Detector object
         self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
 
         # Number of bias/dark frames per day
@@ -93,7 +107,7 @@ class App(object):
         self.nTelescopes = 12
 
         # Total number of hours per year
-        self.nTotalHours = 0.5 * 24. * 365.25
+        self.nTotalHours = 0.5 * 24. * self.daysInYear()
 
     def doCalculation(self):
         self.readtime = self.NGTSDetector.readTime()
@@ -111,21 +125,21 @@ class App(object):
         self.nScienceImages = np.ceil(self.nOpenHours * self.nExposures * self.nTelescopes * self.nYears)
 
         # Each image is this many bytes
-        self.imageSizeBytes = self.imageSize * 1024 * 1024
+        self.imageSizeBytes = self.imageSize * self.MB()
 
         # Image storage requirements
         self.scienceStorageBytes = self.nScienceImages * self.imageSizeBytes
 
         # Number of TB the science images will take up
-        self.scienceStorage = self.scienceStorageBytes / 1024**4
+        self.scienceStorage = self.scienceStorageBytes / self.TB()
 
         # Add in the calibration frames
-        self.nTotalBias = self.nBiasPerDay * 365.25 * self.nTelescopes * self.nYears
-        self.nTotalDark = self.nDarkPerDay * 365.25 * self.nTelescopes * self.nYears
+        self.nTotalBias = self.nBiasPerDay * self.daysInYear() * self.nTelescopes * self.nYears
+        self.nTotalDark = self.nDarkPerDay * self.daysInYear() * self.nTelescopes * self.nYears
 
         # Flat fields are only taken during observable conditions so
         # this needs to be multiplied by the number of open nights
-        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * 365.25 * self.nTelescopes * self.nYears
+        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * self.daysInYear() * self.nTelescopes * self.nYears
 
 
         # Total number of calibration frames
@@ -133,14 +147,14 @@ class App(object):
 
         # Calibration storage amount
         self.calibStorageBytes = self.nCalibFrames * self.imageSizeBytes
-        self.calibStorage = self.calibStorageBytes / 1024**4
+        self.calibStorage = self.calibStorageBytes / self.TB()
 
         # Total number of frames
         self.nTotalFrames = self.nCalibFrames + self.nScienceImages
 
         # Convert total frames to total TB
         self.totalStorageBytes = self.nTotalFrames * self.imageSizeBytes
-        self.totalStorage = self.totalStorageBytes / 1024**4
+        self.totalStorage = self.totalStorageBytes / self.TB()
 
 
     def printResults(self):
@@ -150,7 +164,8 @@ class App(object):
         print "---------------"
         print 
 
-        print "Calculating for %d year(s)" % (self.nYears,)
+        print "Exposure time: %.2fs" % (self.exptime,)
+        print "Calculating for %.1f year(s)" % (self.nYears,)
         print "%d bias frames per day" % (self.nBiasPerDay,)
         print "%d dark frames per day" % (self.nDarkPerDay,)
         print "Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,)
@@ -172,10 +187,10 @@ class App(object):
         print "Fraction of observable nights per year: %f" % (self.nOpenNights,)
         print "%d science images per year" % (self.nScienceImages)
         print "Science images will take up %.2fTB" % (self.scienceStorage,)
-        print "%d bias frames taken" % (self.nTotalBias,)
-        print "%d dark frames taken" % (self.nTotalDark,)
-        print "%d flat frames taken" % (self.nTotalFlat,)
-        print "%d total calibration frames" % (self.nCalibFrames,)
+        print "%d bias frames taken" % (np.ceil(self.nTotalBias),)
+        print "%d dark frames taken" % (np.ceil(self.nTotalDark),)
+        print "%d flat frames taken" % (np.ceil(self.nTotalFlat),)
+        print "%d total calibration frames" % (np.ceil(self.nCalibFrames),)
         print "Calibration frames will take up %.2fTB" % (self.calibStorage,)
 
         print 
@@ -184,8 +199,7 @@ class App(object):
         print "-----------"
         print 
 
-        print "Exposure time: %.2fs" % (self.exptime,)
-        print "%d total frames" % (self.nTotalFrames)
+        print "%d total frames" % (np.ceil(self.nTotalFrames),)
         print "Total storage requirement: %.3fTB" % (self.totalStorage)
 
 
@@ -201,11 +215,15 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(epilog=helpstr)
         parser.add_argument("exptime", help="Science exposure time",
                 type=float)
-        parser.add_argument("-c", "--nocolours", help="Do not use coloured output",
-                action="store_true", default=False)
+        parser.add_argument("-y", "--years", help="Number of years to simulate",
+                required=False, default=1, type=float)
 
         args = parser.parse_args()
         app = App(args)
+    except RuntimeError as e:
+        print >> sys.stderr, "Error:", e
+        sys.exit(1)
+
     except KeyboardInterrupt:
         print >> sys.stderr, "Interrupt caught, exiting..."
         sys.exit(0)
