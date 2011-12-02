@@ -13,7 +13,6 @@ import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
 import numpy as np
-import srw
 #import pyfits
 #from ppgplot import *
 
@@ -42,8 +41,6 @@ class App(object):
         '''
         super(App, self).__init__()
         self.args = args
-        self.colours = srw.bcolours()
-        if self.args.nocolours: self.colours.disable()
 
 
         # Doing exposures per hour
@@ -53,8 +50,6 @@ class App(object):
         self.exptime = self.args.exptime
         self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
 
-        print "Exposure time: %s%.2fs%s" % (self.colours.FAIL,
-                self.exptime, self.colours.ENDC)
 
         # Number of bias/dark frames per day
         # These can be taken during the day so dark time is not needed
@@ -134,14 +129,15 @@ class App(object):
         print "Calibration frames will take up %.2fTB (%.2f%% of science capacity)" % (
                 calibStorage, calibStorage * 100. / scienceStorage)
 
+        print "------------------------------------------------------------------------"
+        print "Exposure time: %.2fs" % (self.exptime,)
+
         nTotalFrames = nCalibFrames + nScienceImages
-        print "%s%d%s total frames" % (self.colours.FAIL, nTotalFrames,
-                self.colours.ENDC)
+        print "%d total frames" % (nTotalFrames)
 
         totalStorageBytes = nTotalFrames * imageSizeBytes
         totalStorage = totalStorageBytes / 1024**4
-        print "Total storage requirement: %s%.3fTB%s" % (self.colours.FAIL,
-                totalStorage, self.colours.ENDC)
+        print "Total storage requirement: %.3fTB" % (totalStorage)
 
 
 
