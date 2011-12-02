@@ -87,7 +87,7 @@ class App(object):
         pgopen(self.args.device)
         pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
 
-        self.plotWASPData()
+        if self.args.plotwasp: self.plotWASPData()
 
         # Draw the 1mmag line
         pgsls(2)
@@ -185,6 +185,8 @@ if __name__ == '__main__':
                                 required=False, default="dark")
             parser.add_argument("-d", "--device", help="PGPLOT device",
                     required=False, default="/xs")
+            parser.add_argument("-w", "--plotwasp", help="Overlay some WASP staring data",
+                    action="store_true", default=False)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
