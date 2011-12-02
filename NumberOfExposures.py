@@ -187,10 +187,10 @@ class App(object):
         print "Fraction of observable nights per year: %f" % (self.nOpenNights,)
         print "%d science images per year" % (self.nScienceImages)
         print "Science images will take up %.2fTB" % (self.scienceStorage,)
-        print "%d bias frames taken" % (self.nTotalBias,)
-        print "%d dark frames taken" % (self.nTotalDark,)
-        print "%d flat frames taken" % (self.nTotalFlat,)
-        print "%d total calibration frames" % (self.nCalibFrames,)
+        print "%d bias frames taken" % (np.ceil(self.nTotalBias),)
+        print "%d dark frames taken" % (np.ceil(self.nTotalDark),)
+        print "%d flat frames taken" % (np.ceil(self.nTotalFlat),)
+        print "%d total calibration frames" % (np.ceil(self.nCalibFrames),)
         print "Calibration frames will take up %.2fTB" % (self.calibStorage,)
 
         print 
@@ -199,7 +199,7 @@ class App(object):
         print "-----------"
         print 
 
-        print "%d total frames" % (self.nTotalFrames)
+        print "%d total frames" % (np.ceil(self.nTotalFrames),)
         print "Total storage requirement: %.3fTB" % (self.totalStorage)
 
 
