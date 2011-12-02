@@ -164,6 +164,7 @@ class App(object):
         print "---------------"
         print 
 
+        print "Exposure time: %.2fs" % (self.exptime,)
         print "Calculating for %d year(s)" % (self.nYears,)
         print "%d bias frames per day" % (self.nBiasPerDay,)
         print "%d dark frames per day" % (self.nDarkPerDay,)
@@ -198,7 +199,6 @@ class App(object):
         print "-----------"
         print 
 
-        print "Exposure time: %.2fs" % (self.exptime,)
         print "%d total frames" % (self.nTotalFrames)
         print "Total storage requirement: %.3fTB" % (self.totalStorage)
 
