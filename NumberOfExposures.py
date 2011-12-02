@@ -31,10 +31,11 @@ class Detector(object):
         return self.ccdsize[1] * (self.verttime + self.ccdsize[0] / self.horizspeed)
 
     def __str__(self):
-        text = "\n          %dx%d pix\n" % (self.ccdsize[0], self.ccdsize[1],)
-        text +="Detector: %dMHz horizontal speed\n" % (self.horizspeed /
+        text = "\n"
+        text +="          %dx%d pix\n" % (self.ccdsize[0], self.ccdsize[1],)
+        text +="Detector: %.1fMHz horizontal speed\n" % (self.horizspeed /
                 1E6,)
-        text +="          %dus vertical time\n" % (self.verttime /
+        text +="          %.1fus vertical time\n" % (self.verttime /
                 1E-6,)
 
         return text
