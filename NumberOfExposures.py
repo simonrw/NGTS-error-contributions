@@ -73,7 +73,7 @@ class App(object):
         self.targettime = 3600.
 
         # Number of years
-        self.nYears = 1
+        self.nYears = self.args.years
 
         # Exposure time of science exposures
         self.exptime = self.args.exptime
@@ -215,8 +215,8 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(epilog=helpstr)
         parser.add_argument("exptime", help="Science exposure time",
                 type=float)
-        parser.add_argument("-c", "--nocolours", help="Do not use coloured output",
-                action="store_true", default=False)
+        parser.add_argument("-y", "--years", help="Number of years to simulate",
+                required=False, default=1, type=float)
 
         args = parser.parse_args()
         app = App(args)
