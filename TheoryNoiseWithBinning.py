@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-#import os
-#import os.path
+import os
+import os.path
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
@@ -11,6 +11,7 @@ import srw
 #import pyfits
 from ppgplot import *
 import AstErrors as ae
+import cPickle
 
 
 class App(object):
