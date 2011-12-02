@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-#import os
-#import os.path
+import os
+import os.path
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
@@ -11,6 +11,7 @@ import srw
 #import pyfits
 from ppgplot import *
 import AstErrors as ae
+import cPickle
 
 
 class App(object):
@@ -32,6 +33,21 @@ class App(object):
         self.mag = np.linspace(7, 18., 1000)
 
         self.run()
+
+    def plotWASPData(self):
+        '''
+        Overlays the wasp data from Joao
+        '''
+        waspdata = cPickle.load(open(
+            os.path.join(os.path.dirname(__file__), 
+            "JoaoData", "data.cpickle")
+            ))
+
+        # Convert I to V
+        imagCorrection = 0.27
+        pgsci(15)
+        pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
+        pgsci(1)
 
     def run(self):
         '''
@@ -70,6 +86,8 @@ class App(object):
 
         pgopen(self.args.device)
         pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
+
+        self.plotWASPData()
 
         # Draw the 1mmag line
         pgsls(2)

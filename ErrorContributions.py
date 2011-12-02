@@ -135,11 +135,12 @@ def main(args):
         * The integral of flux in the central pixel
         * The integral to infinity of the psf
 
-    This is calculated by scipy's integrate function
-    in 2 dimensions
+    This is calculated by rastering a psf across a pixel and 
+    picking the most common value.
     '''
-    CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
-            dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
+    #CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
+            #dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
+    CentralPixelFraction = 0.281838
     print "Central pixel fraction: %f"  %  CentralPixelFraction
 
     # science exposure time (equal in log space)
