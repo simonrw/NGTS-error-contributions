@@ -77,6 +77,10 @@ class App(object):
 
         # Exposure time of science exposures
         self.exptime = self.args.exptime
+
+        if self.exptime <= 0.:
+            raise RuntimeError("Exposure time cannot be <= 0")
+
         self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
 
         # Number of bias/dark frames per day
@@ -215,6 +219,10 @@ if __name__ == '__main__':
 
         args = parser.parse_args()
         app = App(args)
+    except RuntimeError as e:
+        print >> sys.stderr, "Error:", e
+        sys.exit(1)
+
     except KeyboardInterrupt:
         print >> sys.stderr, "Interrupt caught, exiting..."
         sys.exit(0)
