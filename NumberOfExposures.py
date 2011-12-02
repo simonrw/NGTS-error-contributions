@@ -165,7 +165,7 @@ class App(object):
         print 
 
         print "Exposure time: %.2fs" % (self.exptime,)
-        print "Calculating for %d year(s)" % (self.nYears,)
+        print "Calculating for %.1f year(s)" % (self.nYears,)
         print "%d bias frames per day" % (self.nBiasPerDay,)
         print "%d dark frames per day" % (self.nDarkPerDay,)
         print "Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,)
