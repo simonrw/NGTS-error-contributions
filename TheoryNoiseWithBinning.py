@@ -34,6 +34,21 @@ class App(object):
 
         self.run()
 
+    def plotWASPData(self):
+        '''
+        Overlays the wasp data from Joao
+        '''
+        waspdata = cPickle.load(open(
+            os.path.join(os.path.dirname(__file__), 
+            "JoaoData", "data.cpickle")
+            ))
+
+        # Convert I to V
+        imagCorrection = 0.27
+        pgsci(15)
+        pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
+        pgsci(1)
+
     def run(self):
         '''
         Main function
@@ -71,6 +86,8 @@ class App(object):
 
         pgopen(self.args.device)
         pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
+
+        self.plotWASPData()
 
         # Draw the 1mmag line
         pgsls(2)
