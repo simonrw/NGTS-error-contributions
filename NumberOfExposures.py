@@ -81,6 +81,7 @@ class App(object):
         if self.exptime <= 0.:
             raise RuntimeError("Exposure time cannot be <= 0")
 
+        # Detector object
         self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
 
         # Number of bias/dark frames per day
