@@ -151,6 +151,7 @@ class App(object):
         print "Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,)
         print "Calculated observable hours: %d" % (self.nOpenHours,)
         print "Simulating for %d telescopes" % (self.nTelescopes,)
+        print "Each image is %d bytes, %.1fMB" % (self.imageSizeBytes, self.imageSize,)
         print "%s" % (self.NGTSDetector,)
 
         print 
@@ -165,7 +166,6 @@ class App(object):
         print "Total night hours in a year: %d" % (self.nTotalHours,)
         print "Fraction of observable nights per year: %f" % (self.nOpenNights,)
         print "%d science images per year" % (self.nScienceImages)
-        print "Each image is %d bytes, %.1fMB" % (self.imageSizeBytes, self.imageSize,)
         print "Science images will take up %.2fTB" % (self.scienceStorage,)
         print "%d bias frames taken" % (self.nTotalBias,)
         print "%d dark frames taken" % (self.nTotalDark,)
