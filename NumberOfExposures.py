@@ -59,6 +59,15 @@ class App(object):
         self.doCalculation()
         self.printResults()
 
+    def daysInYear(self):
+        return 365.25
+
+    def MB(self):
+        return 1024**2
+
+    def TB(self):
+        return self.MB()**2
+
     def setUpAssumptions(self):
         # Doing exposures per hour
         self.targettime = 3600.
@@ -93,7 +102,7 @@ class App(object):
         self.nTelescopes = 12
 
         # Total number of hours per year
-        self.nTotalHours = 0.5 * 24. * 365.25
+        self.nTotalHours = 0.5 * 24. * self.daysInYear()
 
     def doCalculation(self):
         self.readtime = self.NGTSDetector.readTime()
@@ -111,21 +120,21 @@ class App(object):
         self.nScienceImages = np.ceil(self.nOpenHours * self.nExposures * self.nTelescopes * self.nYears)
 
         # Each image is this many bytes
-        self.imageSizeBytes = self.imageSize * 1024 * 1024
+        self.imageSizeBytes = self.imageSize * self.MB()
 
         # Image storage requirements
         self.scienceStorageBytes = self.nScienceImages * self.imageSizeBytes
 
         # Number of TB the science images will take up
-        self.scienceStorage = self.scienceStorageBytes / 1024**4
+        self.scienceStorage = self.scienceStorageBytes / self.TB()
 
         # Add in the calibration frames
-        self.nTotalBias = self.nBiasPerDay * 365.25 * self.nTelescopes * self.nYears
-        self.nTotalDark = self.nDarkPerDay * 365.25 * self.nTelescopes * self.nYears
+        self.nTotalBias = self.nBiasPerDay * self.daysInYear() * self.nTelescopes * self.nYears
+        self.nTotalDark = self.nDarkPerDay * self.daysInYear() * self.nTelescopes * self.nYears
 
         # Flat fields are only taken during observable conditions so
         # this needs to be multiplied by the number of open nights
-        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * 365.25 * self.nTelescopes * self.nYears
+        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * self.daysInYear() * self.nTelescopes * self.nYears
 
 
         # Total number of calibration frames
@@ -133,14 +142,14 @@ class App(object):
 
         # Calibration storage amount
         self.calibStorageBytes = self.nCalibFrames * self.imageSizeBytes
-        self.calibStorage = self.calibStorageBytes / 1024**4
+        self.calibStorage = self.calibStorageBytes / self.TB()
 
         # Total number of frames
         self.nTotalFrames = self.nCalibFrames + self.nScienceImages
 
         # Convert total frames to total TB
         self.totalStorageBytes = self.nTotalFrames * self.imageSizeBytes
-        self.totalStorage = self.totalStorageBytes / 1024**4
+        self.totalStorage = self.totalStorageBytes / self.TB()
 
 
     def printResults(self):
