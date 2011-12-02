@@ -63,6 +63,9 @@ class App(object):
         # Doing exposures per hour
         self.targettime = 3600.
 
+        # Number of years
+        self.nYears = 1
+
         # Exposure time of science exposures
         self.exptime = self.args.exptime
         self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
@@ -104,8 +107,8 @@ class App(object):
         # Fraction of observable nights
         self.nOpenNights = float(self.nOpenHours) / float(self.nTotalHours)
 
-        # Number of science images per year
-        self.nScienceImages = np.ceil(self.nOpenHours * self.nExposures * self.nTelescopes)
+        # Number of science images
+        self.nScienceImages = np.ceil(self.nOpenHours * self.nExposures * self.nTelescopes * self.nYears)
 
         # Each image is this many bytes
         self.imageSizeBytes = self.imageSize * 1024 * 1024
@@ -117,12 +120,12 @@ class App(object):
         self.scienceStorage = self.scienceStorageBytes / 1024**4
 
         # Add in the calibration frames
-        self.nTotalBias = self.nBiasPerDay * 365.25 * self.nTelescopes
-        self.nTotalDark = self.nDarkPerDay * 365.25 * self.nTelescopes
+        self.nTotalBias = self.nBiasPerDay * 365.25 * self.nTelescopes * self.nYears
+        self.nTotalDark = self.nDarkPerDay * 365.25 * self.nTelescopes * self.nYears
 
         # Flat fields are only taken during observable conditions so
         # this needs to be multiplied by the number of open nights
-        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * 365.25 * self.nTelescopes
+        self.nTotalFlat = self.nFlatPerDay * self.nOpenNights * 365.25 * self.nTelescopes * self.nYears
 
 
         # Total number of calibration frames
@@ -147,6 +150,7 @@ class App(object):
         print "---------------"
         print 
 
+        print "Calculating for %d year(s)" % (self.nYears,)
         print "%d bias frames per day" % (self.nBiasPerDay,)
         print "%d dark frames per day" % (self.nDarkPerDay,)
         print "Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,)
