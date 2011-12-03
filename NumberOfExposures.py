@@ -47,27 +47,6 @@ class App(object):
     '''
     Main application object for the project
     '''
-    def __init__(self, args):
-        '''
-        Constructor
-        '''
-        super(App, self).__init__()
-        self.args = args
-
-        # Call the calculation functions
-        self.setUpAssumptions()
-        self.doCalculation()
-        self.printResults()
-
-    def daysInYear(self):
-        return 365.25
-
-    def MB(self):
-        return 1024**2
-
-    def TB(self):
-        return self.MB()**2
-
     def setUpAssumptions(self):
         # Doing exposures per hour
         self.targettime = 3600.
@@ -108,6 +87,28 @@ class App(object):
 
         # Total number of hours per year
         self.nTotalHours = 0.5 * 24. * self.daysInYear()
+    
+    def __init__(self, args):
+        '''
+        Constructor
+        '''
+        super(App, self).__init__()
+        self.args = args
+
+        # Call the calculation functions
+        self.setUpAssumptions()
+        self.doCalculation()
+        self.printResults()
+
+    def daysInYear(self):
+        return 365.25
+
+    def MB(self):
+        return 1024**2
+
+    def TB(self):
+        return self.MB()**2
+
 
     def doCalculation(self):
         self.readtime = self.NGTSDetector.readTime()
