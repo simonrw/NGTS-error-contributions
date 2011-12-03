@@ -159,6 +159,9 @@ class App(object):
         self.totalStorageBytes = self.nTotalFrames * self.imageSizeBytes
         self.totalStorage = self.totalStorageBytes / self.TB()
 
+        # Calibration frames fraction
+        self.calibFraction = self.calibStorageBytes / self.totalStorageBytes
+
 
     def printResults(self):
         print 
@@ -195,6 +198,8 @@ class App(object):
         print "%d flat frames taken" % (np.ceil(self.nTotalFlat),)
         print "%d total calibration frames" % (np.ceil(self.nCalibFrames),)
         print "Calibration frames will take up %.2fTB" % (self.calibStorage,)
+        print "Calibration frames make up %.3f%% of the total storage" % (
+                self.calibFraction * 100.,)
 
         print 
         print "-----------"
