@@ -1,4 +1,5 @@
 \documentclass[11pt,a4paper]{report}
+\usepackage{listings}
 \usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{amsmath}
@@ -7,6 +8,12 @@
 \usepackage{warwickthesis}
 \usepackage{natbib}
 \usepackage[toc,page]{appendix}
+
+% Configure listings
+\lstset{
+frame=tblr,
+basicstyle=\small,
+}
 
 %\usepackage[font=footnotesize,margin=15pt,textfont=sl]{caption}
 
@@ -669,6 +676,12 @@ which the precision is $1$mmag  is listed in table~\ref{tab:1mmagpoints}
 
 
 \section{Storage requirements}
+
+For financial reasons, the number of images taken per year must be
+estimated as hard disk storage is expensive in large quantities. The
+number of calibration frames (assuming only dark, bias and flat frames
+are required) and science frames for a given exposure time are
+calculated. 
 
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
