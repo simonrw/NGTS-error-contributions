@@ -44,6 +44,31 @@ class Detector(object):
     def __unicode__(self):
         return __str__()
 
+# Create some set Detector objects
+class NGTSDetector(Detector):
+    '''
+    Proposed NGTS final instrument
+    '''
+    def __init__(self):
+        super(NGTSDetector, self).__init__((2048, 2048), 38E-6, 3E6)
+
+class NGTSPrototypeDetector(Detector):
+    '''
+    NGTS prototype
+    '''
+    def __init__(self):
+        super(NGTSPrototypeDetector, self).__init__(
+                (1024, 1024), 5.775E-6, 1E6)
+
+class WASPDetector(Detector):
+    '''
+    Superwasp camera
+    '''
+    def __init__(self):
+        super(WASPDetector, self).__init__(
+                (2048, 2048), 16E-6, 1E6)
+
+
 
 class App(object):
     '''
@@ -63,7 +88,7 @@ class App(object):
             raise RuntimeError("Exposure time cannot be <= 0")
 
         # Detector object
-        self.NGTSDetector = Detector([2048, 2048], 38E-6, 3E6)
+        self.NGTSDetector = NGTSDetector()
 
         # Number of bias/dark frames per day
         # These can be taken during the day so dark time is not needed
