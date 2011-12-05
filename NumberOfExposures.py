@@ -68,6 +68,14 @@ class WASPDetector(Detector):
         super(WASPDetector, self).__init__(
                 (2048, 2048), 16E-6, 1E6)
 
+def Banner(text):
+    printText = text.upper()
+    width = len(text) + 4
+    print "-" * width
+    print "| %s |" % (printText,)
+    print "-" * width
+
+
 
 
 class App(object):
@@ -196,9 +204,7 @@ class App(object):
 
     def printResults(self):
         print 
-        print "---------------"
-        print "| ASSUMPTIONS |"
-        print "---------------"
+        Banner("assumptions")
         print 
 
         print "Exposure time: %.2fs" % (self.exptime,)
@@ -212,9 +218,7 @@ class App(object):
         print "%s" % (self.NGTSDetector,)
 
         print 
-        print "---------------"
-        print "| CALCULATION |"
-        print "---------------"
+        Banner("Calculation")
         print 
 
 
@@ -233,9 +237,7 @@ class App(object):
                 self.calibFraction * 100.,)
 
         print 
-        print "-----------"
-        print "| RESULTS |"
-        print "-----------"
+        Banner("results")
         print 
 
         print "%d total frames" % (np.ceil(self.nTotalFrames),)
