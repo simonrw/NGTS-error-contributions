@@ -114,6 +114,12 @@ class App(object):
 
         # Total number of hours per year
         self.nTotalHours = 0.5 * 24. * self.daysInYear()
+
+        # Number of slews per telescope per night
+        self.nSlews = 1.
+
+        # Slew time (seconds)
+        self.slewTime = 90.
     
     def __init__(self, args):
         '''
