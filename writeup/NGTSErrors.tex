@@ -682,10 +682,16 @@ For financial reasons, the number of images taken per year must be
 estimated as hard disk storage is expensive in large quantities. The
 number of calibration frames (assuming only dark, bias and flat frames
 are required) and science frames for a given exposure time are
-calculated. 
+calculated. A calculation program was written to estimate the storage
+requirements using
+\texttt{Python}\footnote{\url{http://www.python.org}}.
 
+The number of hours the enclosure is open for was calculated
+\citep{bento11} to be $3264$ which gives the fraction of days the
+enclosure is open. 
 
 \subsection{Calibration frames}
+\label{sec:calibframes}
 
 Using the SuperWASP project as an starting point for the number of
 calibration frames taken, $30$ bias and dark frames will be taken every
@@ -693,14 +699,37 @@ day, during the day while the enclosure is shut. This allows for high
 quality reduction of the image data and representative quality control
 statistics. 
 
+The flat frames are only taken during twighlight so the enclosure must
+be open. The number of open days is multiplied by the assumed number of flats per
+day ($45$) to give the number of flat frames per year. 
+
+
+
 \subsection{Science images}
+
+The number of science images is set by the exposure time and readout
+time as described in section~\ref{sec:method}. The number of hours the
+enclosure is open per year is given by \citep{bento11} and multiplying
+these gives the number of science images taken while the enclosure is
+open.
 
 \subsection{Total}
 
 
-Example output from the simulation software is shown in
+Example output from the calculation software is shown in
 lst.~\ref{lst:progoutput} and shows clearly the sections for
-assumptions, calculations and results. 
+assumptions, calculations and results. The calculation was run 
+for one year assuming an exposure time of $5$ seconds and the
+calibration assumptions outlined in section~\ref{sec:calibframes}. The
+image size is taken from a typical SuperWASP image and the full
+instrument will consist of $12$ telescopes observing all the time the
+enclosure is open. 
+
+The current observing strategy involves observing a field continuously
+while it is visible, and if it sets switch to another field. The
+calculation does not include this slew time but as it only occurs
+once per night for only a handful of exposures-worth of time this
+contribution to the calculation is not required.
 
 
 
