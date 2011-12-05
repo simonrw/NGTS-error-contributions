@@ -697,6 +697,59 @@ statistics.
 \subsection{Total}
 
 
+Example output from the simulation software is shown in
+lst.~\ref{lst:progoutput} and shows clearly the sections for
+assumptions, calculations and results. 
+
+
+
+\begin{lstlisting}[caption=Example output from the simulation software.
+    The exposure time is set to $5$ seconds and the NGTS detector was
+    chosen.,
+label=lst:progoutput]
+---------------
+| ASSUMPTIONS |
+---------------
+
+Exposure time: 5.00s
+Calculating for 1.0 year(s)
+30 bias frames per day
+30 dark frames per day
+Average of 45 flat frames per day (on observable nights)
+Calculated observable hours: 3264
+Simulating for 12 telescopes
+Each image is 8912896 bytes, 8.5MB
+
+          2048x2048 pix
+Detector: 3.0MHz horizontal speed
+          38.0us vertical time
+
+
+---------------
+| CALCULATION |
+---------------
+
+Read time: 1.4759s
+555.905112 exposures per hour
+Total night hours in a year: 4383
+Fraction of observable nights per year: 0.744695
+21773692 science images per year
+Science images will take up 176.50TB
+131490 bias frames taken
+131490 dark frames taken
+146881 flat frames taken
+409860 total calibration frames
+Calibration frames will take up 3.32TB
+Calibration frames make up 1.848% of the total storage
+
+-----------
+| RESULTS |
+-----------
+
+22183552 total frames
+Total storage requirement: 179.825TB
+\end{lstlisting}
+
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
 \end{document}
