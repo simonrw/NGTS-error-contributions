@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import sys
-#import os
-#import os.path
+import os
+import os.path
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
@@ -11,6 +11,7 @@ import srw
 #import pyfits
 from ppgplot import *
 import AstErrors as ae
+import cPickle
 
 
 class App(object):
@@ -28,17 +29,55 @@ class App(object):
         '''
         super(App, self).__init__()
         self.args = args
+        self.exptime = self.args.exptime
+
+        self.fileDir = os.path.dirname(__file__)
 
         self.mag = np.linspace(7, 18., 1000)
 
+        self.plotLimits = (self.mag.max(), self.mag.min(),
+                -6, -1)
+
         self.run()
+
+    def plotWASPData(self):
+        '''
+        Overlays the wasp data from Joao
+        '''
+        waspdata = cPickle.load(open(
+            os.path.join(self.fileDir, 
+            "JoaoData", "data.cpickle")
+            ))
+
+        # Convert I to V
+        imagCorrection = 0.27
+        pgsci(15)
+        pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
+        pgsci(1)
+
+    def saturationLimit(self):
+        fits = cPickle.load(
+                open(os.path.join(self.fileDir,
+                    "fits.cpickle"))
+                )
+        brightLimit = fits['bright'](np.log10(self.exptime))
+        darkLimit = fits['dark'](np.log10(self.exptime))
+
+        # Get the plot limits
+        pgsci(15)
+        pgline(np.array([brightLimit, brightLimit]),
+                np.array([self.plotLimits[2], self.plotLimits[3]]))
+        pgline(np.array([darkLimit, darkLimit]),
+                np.array([self.plotLimits[2], self.plotLimits[3]]))
+        pgsci(1)
+
+
 
     def run(self):
         '''
         Main function
         '''
         npix = 1.5**4 * np.pi
-        exptime = self.args.exptime
         readtime = 2048. * (38E-6 + 2048. / 3E6)
         extinction = 0.06
         targettime = self.args.totaltime
@@ -56,11 +95,11 @@ class App(object):
         for mag in self.mag:
             errob = ae.ErrorContribution(mag, npix, readtime, extinction,
                     targettime, height, apsize, zp, readnoise)
-            self.source.append(errob.sourceError(airmass, exptime))
-            self.sky.append(errob.skyError(airmass, exptime, skypersecperpix))
-            self.read.append(errob.readError(airmass, exptime))
-            self.scin.append(errob.scintillationError(airmass, exptime)) 
-            self.total.append(errob.totalError(airmass, exptime, skypersecperpix))
+            self.source.append(errob.sourceError(airmass, self.exptime))
+            self.sky.append(errob.skyError(airmass, self.exptime, skypersecperpix))
+            self.read.append(errob.readError(airmass, self.exptime))
+            self.scin.append(errob.scintillationError(airmass, self.exptime)) 
+            self.total.append(errob.totalError(airmass, self.exptime, skypersecperpix))
 
         self.source = np.log10(self.source)
         self.sky = np.log10(self.sky)
@@ -69,7 +108,11 @@ class App(object):
         self.total = np.log10(self.total)
 
         pgopen(self.args.device)
-        pgenv(self.mag.max(), self.mag.min(), -6, -1, 0, 20)
+        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], self.plotLimits[3], 0, 20)
+
+        if self.args.plotwasp: self.plotWASPData()
+
+        if self.args.satlimit: self.saturationLimit()
 
         # Draw the 1mmag line
         pgsls(2)
@@ -143,7 +186,7 @@ class App(object):
 
 
         pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
-                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (exptime, targettime/3600.,
+                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
                     self.args.skylevel, crossPoint))
         pgclos()
 
@@ -167,6 +210,10 @@ if __name__ == '__main__':
                                 required=False, default="dark")
             parser.add_argument("-d", "--device", help="PGPLOT device",
                     required=False, default="/xs")
+            parser.add_argument("-w", "--plotwasp", help="Overlay some WASP staring data",
+                    action="store_true", default=False)
+            parser.add_argument("-S", "--satlimit", help="Do not plot saturation limit",
+                    action="store_false", default=True)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
