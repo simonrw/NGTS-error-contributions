@@ -30,6 +30,8 @@ class App(object):
         super(App, self).__init__()
         self.args = args
 
+        self.fileDir = os.path.dirname(__file__)
+
         self.mag = np.linspace(7, 18., 1000)
 
         self.run()
@@ -39,7 +41,7 @@ class App(object):
         Overlays the wasp data from Joao
         '''
         waspdata = cPickle.load(open(
-            os.path.join(os.path.dirname(__file__), 
+            os.path.join(self.fileDir, 
             "JoaoData", "data.cpickle")
             ))
 
