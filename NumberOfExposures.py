@@ -107,7 +107,9 @@ class App(object):
         self.nOpenHours = 3264.
 
         # Image size (MB)
-        self.imageSize = 8.5
+        # Taken from the modal value of a wasp frame which has the same 
+        # number of pixels
+        self.imageSize = 3.75
 
         # Number of telescopes
         self.nTelescopes = 12
