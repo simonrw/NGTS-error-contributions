@@ -9,3 +9,4 @@ fits.cpickle
 *.pdf
 *.synctex.gz
 data.txt
+writeup/NGTSErrors.out

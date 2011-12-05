@@ -1,19 +1,36 @@
-\documentclass[a4paper]{article}
+\documentclass[11pt,a4paper]{report}
+\usepackage{listings}
+\usepackage{subfig}
 \usepackage{booktabs}
 \usepackage{amsmath}
+\usepackage{setspace}
 \usepackage{graphicx}
+\usepackage{warwickthesis}
 \usepackage{natbib}
-\usepackage[font=footnotesize,margin=15pt,textfont=sl]{caption}
+\usepackage[toc,page]{appendix}
+\usepackage{hyperref}
 
-\title{NGTS error budget}
-\author{S. R. Walker}
+% Configure listings
+\lstset{
+frame=tblr,
+basicstyle=\small,
+}
+
+%\usepackage[font=footnotesize,margin=15pt,textfont=sl]{caption}
+
+
+% These come from warwickthesis.sty
+\phdthesis
+\thesisdraft
+\leftchapter
+\onehalfspacing
 
 
 \begin{document}
 
-\maketitle
+%\maketitle
 
-\section{Introduction}
+\chapter{NGTS error budget}
 
 The NGTS instrument is a new robotic telescope under construction at
 Paranal in Chile. It is a system of 12 automated telescopes which survey
@@ -108,6 +125,71 @@ These noise sources can be reduced by two methods:
 Estimating which method is preferable is the subject of the next
 section.
 
+
+
+\section{Flux fraction}
+\label{sec:ffraction}
+
+When a psf is centred on a pixel, the largest amount of flux enters that
+pixel. This is a very pessimistic aproach since this will cause more
+stars to saturate than is realistic due to the nature of the placement
+of the stars. To find the most likely value of this fraction, a Gaussian
+psf was simulated at a random offset within the pixel value.
+$1\times10^6$ offsets were chosen within a range $-0.5 < x < 0.5$ and
+$-0.5 < y < 0.5$ and the integral recalculated. The fractional values
+were binned up and the bin values were divided by the total number of
+iterations giving the probability density. The most likely value was
+calculated from this and used in the analysis in the main text.
+Figure~\ref{fig:fractiondistribution} shows the resulting distribution.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/fractiondistribution}
+    \end{center}
+    \caption{Distribution of the flux fraction in the central pixel as
+    an aperture is randomly offset. The most likely value is plotted.}
+    \label{fig:fractiondistribution}
+\end{figure}
+
+\section{Sky background}
+
+The sky background level is very dependant on the amount of light due to
+the Moon is visible in the image. This is loosely related to the phase
+of the Moon, but not completely since the chosen field might not be
+within the Moon avoidance area.
+
+The median image level for each image of the NGTS prototype data set was
+used to estimate the sky background level, and the value divided by the
+exposure time to give the ADU per second. This was scaled by the gain
+$1.2 e^{-1} \mathrm{ADU}$ to give electrons per second per pixel for
+each image. The JD was also recorded and used to calculate the phase of
+the Moon for each image. 
+
+The Moon avoidance angle describes the angular distance from the Moon in
+which the Moon light is present. The Moon phase therefore is not the
+only indicator: the Moon could be full but the field being observed may
+be outside the Moon avoidance angle. Therefore there is some scatter, as
+can be seen in fig.~\ref{fig:skyvsmoon}.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/skyvsmoon}
+    \end{center}
+    \caption{Sky background level per pixel per second for the NGTS
+    prototype data plotted against Moon phase. A linear fit is made only to
+indicate the trend.}
+    \label{fig:skyvsmoon}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
 \section{Noise on transit timescales}
 
 The noise sources were combined using the methods outlined in section
@@ -128,6 +210,25 @@ second is given by:
 
 \[
     f = 10^{(m_0 - m) / 2.5}
+    \]
+
+To include the extinction from the atmosphere, a constant correction
+term is added to the magnitude value so that 
+
+\[
+    m = m_0 - 2.5 \log_{10}{f} - k X
+    \]
+
+where $k$ is the extinction coefficient ($\sim 0.06$ for NGTS), and $X$
+the airmass. This assumes a measured flux $f$ and corrects for the atmosphere to give
+the magnitude as would be observed from space. For this analysis the
+magnitude specified at the program start is the magnitude that would be
+observed from space and the flux recieved through the atmosphere at
+airmass $X$ is what's needed. Therefore the last term is inverted, and
+the final flux value is given by 
+
+\[
+    f = 10^{(m_0 + k X - m) / 2.5}
     \]
 
 
@@ -324,7 +425,7 @@ by the ratio of the integral of the psf inside that central pixel to
 the integral of the full psf. Assuming a Gaussian psf, this fraction is
 
 \[
-    F = \frac{\int_{-0.25}^{0.25}\int_{-0.25}^{0.25} G(x,y) dx dy}
+    F = \frac{\int_{-0.5}^{0.5}\int_{-0.5}^{0.5} G(x,y) dx dy}
     {\int_{-\infty}^{\infty}\int_{-\infty}^{\infty} G(x,y) dx dy}
     \]
 
@@ -346,7 +447,9 @@ G(x,y) = \exp \left[
 The FWHM of a Gaussian function is $\sim 2.35 \sigma$ which is used to
 convert from the psf width. This ratio was calculated through numerical
 integration with the trapezium method on a computer and equates to $\sim
-0.31$ for a FWHM of 1.5 pixels.
+0.32$ for a FWHM of 1.5 pixels. This value is the worst case, so for an
+explanation of a more realistic assessment, see appendix \ref{sec:ffraction}.
+
 
 To calculate the saturation point, the total number of photons comes
 from three sources: the source, the sky and the bias level. The bias
@@ -368,7 +471,7 @@ The saturation level is therefore given by
 
 At low sky exposure times the readout time becomes a significant fraction of the total exposure time so the number of photons collected is lower, which leads to a higher than usual fractional noise level shown in fig.~\ref{fig:brightnoise} at exposures of less than $10$s.
 
-\begin{figure}
+\begin{figure}[h]
     \begin{center}
         \includegraphics[angle=270,width=0.9\textwidth]{images/bright}
     \end{center}
@@ -390,7 +493,7 @@ object is the sky background, though at low exposure times the read
 noise increases to above the source noise.
 
 
-\begin{figure}
+\begin{figure}[h]
     \begin{center}
         \includegraphics[angle=270,width=0.9\textwidth]{images/faint}
     \end{center}
@@ -408,10 +511,10 @@ From the previous analysis the saturation level for a given exposure
 time can be calculated and modelled. The simulation was run for multiple
 exposure times and the saturation level calculated and plotted in
 fig.~\ref{fig:satvsexpos}. The simulation was run for bright time and
-dark time (based on estimations of the background at differing moon
+dark time (based on estimations of the background at differing Moon
 phases) and a separate fit was made to each.
 
-\begin{figure}
+\begin{figure}[h]
     \begin{center}
         \includegraphics[angle=270,width=0.9\textwidth]{images/satvsexpos}
     \end{center}
@@ -492,7 +595,7 @@ to $3600$ seconds, and the number of objects in the field with
 magnitudes higher or equal to this level were counted. Again this
 analysis was performed for bright and dark time.
 
-\begin{figure}
+\begin{figure}[h]
     \begin{center}
         \includegraphics[angle=270,width=0.9\columnwidth]{images/totalsaturated}
     \end{center}
@@ -501,7 +604,7 @@ analysis was performed for bright and dark time.
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[h]
     \begin{center}
         \includegraphics[angle=270,width=0.9\columnwidth]{images/fractionsaturated}
     \end{center}
@@ -509,19 +612,174 @@ analysis was performed for bright and dark time.
     \label{fig:fractionsaturated}
 \end{figure}
 
-\appendix
-\section{Sky background}
-
-%TODO finish this
-%The sky background is plotted in fig.~\ref{}
 
 
+\section{Noise for a given magnitude}
+\label{sec:noisepermag}
 
-\bibliographystyle{mn_new}
+As can be seen from fig.~\ref{fig:brightnoise} and
+fig.~\ref{fig:faintnoise}, the noise levels change dramatically when
+going from a magnitude $9$ object to a magnitude $15$ object. For
+bright objects, the scintillation is the dominant source of noise,
+whereas for faint objects the sky background is the domniant source of
+noise. The fractional noise level also changes in absolute terms, 
+for example with the sky noise error changing from
+$\sim 0.025$ mmag  to $\sim 6$ mmag.
+
+
+\begin{figure}[p]
+  \centering
+  \subfloat[$5$s exposure, dark time]{\label{fig:5sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/5sdark}}                
+  \subfloat[$5$s exposure, bright time]{\label{fig:5sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/5sbright}} \\               
+  \subfloat[$10$s exposure, dark time]{\label{fig:10sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/10sdark}}                
+  \subfloat[$10$s exposure, bright time]{\label{fig:10sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/10sbright}} \\               
+  \subfloat[$30$s exposure, dark time]{\label{fig:30sdark}\includegraphics[angle=270,width=0.4\textwidth]{images/30sdark}}                
+  \subfloat[$30$s exposure, bright time]{\label{fig:30sbright}\includegraphics[angle=270,width=0.4\textwidth]{images/30sbright}}
+  \caption{Theoretical error curves for the NGTS instrument. Each line represents a different
+  error source, with the combined error shown in black. The plots are
+  for $5$, $10$ and $30$ seconds of science exposure, both in dark and
+  bright time, and include the
+  $\sim 1.5$s frame read time. The horizontal
+  line shows the target $1$mmag level, and the vertical line where the
+  total error value intercepts the $1$mmag line. The value is quoted in
+  the title for each figure.}
+  \label{fig:rmsmagplots}
+\end{figure}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{ccc}
+        \toprule
+        Exposure time (s) & Sky type & $1$mmag point \\
+        \midrule
+        5 & dark & $13.210$ \\
+        5 & bright & $12.836$ \\
+        10 & dark & $13.384$ \\
+        10 & bright & $12.946$ \\
+        30 & dark & $13.496$ \\
+        30 & bright & $13.023$ \\
+        \bottomrule
+    \end{tabular}
+    \caption{Predicted $1$mmag points for the NGTS instrument}
+    \label{tab:1mmagpoints}
+\end{table}
+
+
+To investigate this, the noise levels were calculated for a range of
+magnitudes covering the NGTS visible range. As a theoretical
+investigation the range goes brighter than the saturation limit of NGTS
+and fainter than the detection limit, and each error contribution has
+been combined up to an hour as in previous investigations to ascertain
+the error expected on transit-like timescales.
+Figure~\ref{fig:rmsmagplots} shows the results, and the magnitude at
+which the precision is $1$mmag  is listed in table~\ref{tab:1mmagpoints}
+
+
+
+\section{Storage requirements}
+
+For financial reasons, the number of images taken per year must be
+estimated as hard disk storage is expensive in large quantities. The
+number of calibration frames (assuming only dark, bias and flat frames
+are required) and science frames for a given exposure time are
+calculated. A calculation program was written to estimate the storage
+requirements using
+\texttt{Python}\footnote{\url{http://www.python.org}}.
+
+The number of hours the enclosure is open for was calculated
+\citep{bento11} to be $3264$ which gives the fraction of days the
+enclosure is open. 
+
+\subsection{Calibration frames}
+\label{sec:calibframes}
+
+Using the SuperWASP project as an starting point for the number of
+calibration frames taken, $30$ bias and dark frames will be taken every
+day, during the day while the enclosure is shut. This allows for high
+quality reduction of the image data and representative quality control
+statistics. 
+
+The flat frames are only taken during twighlight so the enclosure must
+be open. The number of open days is multiplied by the assumed number of flats per
+day ($45$) to give the number of flat frames per year. 
+
+
+
+\subsection{Science images}
+
+The number of science images is set by the exposure time and readout
+time as described in section~\ref{sec:method}. The number of hours the
+enclosure is open per year is given by \citep{bento11} and multiplying
+these gives the number of science images taken while the enclosure is
+open.
+
+\subsection{Total}
+
+
+Example output from the calculation software is shown in
+lst.~\ref{lst:progoutput} and shows clearly the sections for
+assumptions, calculations and results. The calculation was run 
+for one year assuming an exposure time of $5$ seconds and the
+calibration assumptions outlined in section~\ref{sec:calibframes}. The
+image size is taken from a typical SuperWASP image and the full
+instrument will consist of $12$ telescopes observing all the time the
+enclosure is open. 
+
+The current observing strategy involves observing a field continuously
+while it is visible, and if it sets switch to another field. The
+calculation does not include this slew time but as it only occurs
+once per night for only a handful of exposures-worth of time this
+contribution to the calculation is not required.
+
+
+
+\begin{lstlisting}[caption=Example output from the simulation software.
+    The exposure time is set to $5$ seconds and the NGTS detector was
+    chosen.,
+label=lst:progoutput]
+---------------
+| ASSUMPTIONS |
+---------------
+
+Exposure time: 5.00s
+Calculating for 1.0 year(s)
+30 bias frames per day
+30 dark frames per day
+Average of 45 flat frames per day (on observable nights)
+Calculated observable hours: 3264
+Simulating for 12 telescopes
+Each image is 8912896 bytes, 8.5MB
+
+          2048x2048 pix
+Detector: 3.0MHz horizontal speed
+          38.0us vertical time
+
+
+---------------
+| CALCULATION |
+---------------
+
+Read time: 1.4759s
+555.905112 exposures per hour
+Total night hours in a year: 4383
+Fraction of observable nights per year: 0.744695
+21773692 science images per year
+Science images will take up 176.50TB
+131490 bias frames taken
+131490 dark frames taken
+146881 flat frames taken
+409860 total calibration frames
+Calibration frames will take up 3.32TB
+Calibration frames make up 1.848% of the total storage
+
+-----------
+| RESULTS |
+-----------
+
+22183552 total frames
+Total storage requirement: 179.825TB
+\end{lstlisting}
+
+\bibliographystyle{plainnat}
 \bibliography{bibliography}
-
-
-
-
-
 \end{document}
