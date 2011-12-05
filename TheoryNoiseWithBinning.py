@@ -51,6 +51,9 @@ class App(object):
         pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
         pgsci(1)
 
+    def saturationLimit(self):
+        pass
+
     def run(self):
         '''
         Main function
