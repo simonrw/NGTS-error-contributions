@@ -117,6 +117,71 @@ These noise sources can be reduced by two methods:
 Estimating which method is preferable is the subject of the next
 section.
 
+
+
+\section{Flux fraction}
+\label{sec:ffraction}
+
+When a psf is centred on a pixel, the largest amount of flux enters that
+pixel. This is a very pessimistic aproach since this will cause more
+stars to saturate than is realistic due to the nature of the placement
+of the stars. To find the most likely value of this fraction, a Gaussian
+psf was simulated at a random offset within the pixel value.
+$1\times10^6$ offsets were chosen within a range $-0.5 < x < 0.5$ and
+$-0.5 < y < 0.5$ and the integral recalculated. The fractional values
+were binned up and the bin values were divided by the total number of
+iterations giving the probability density. The most likely value was
+calculated from this and used in the analysis in the main text.
+Figure~\ref{fig:fractiondistribution} shows the resulting distribution.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/fractiondistribution}
+    \end{center}
+    \caption{Distribution of the flux fraction in the central pixel as
+    an aperture is randomly offset. The most likely value is plotted.}
+    \label{fig:fractiondistribution}
+\end{figure}
+
+\section{Sky background}
+
+The sky background level is very dependant on the amount of light due to
+the Moon is visible in the image. This is loosely related to the phase
+of the Moon, but not completely since the chosen field might not be
+within the Moon avoidance area.
+
+The median image level for each image of the NGTS prototype data set was
+used to estimate the sky background level, and the value divided by the
+exposure time to give the ADU per second. This was scaled by the gain
+$1.2 e^{-1} \mathrm{ADU}$ to give electrons per second per pixel for
+each image. The JD was also recorded and used to calculate the phase of
+the Moon for each image. 
+
+The Moon avoidance angle describes the angular distance from the Moon in
+which the Moon light is present. The Moon phase therefore is not the
+only indicator: the Moon could be full but the field being observed may
+be outside the Moon avoidance angle. Therefore there is some scatter, as
+can be seen in fig.~\ref{fig:skyvsmoon}.
+
+\begin{figure}[h]
+    \begin{center}
+        \includegraphics[angle=270,width=0.9\columnwidth]{images/skyvsmoon}
+    \end{center}
+    \caption{Sky background level per pixel per second for the NGTS
+    prototype data plotted against Moon phase. A linear fit is made only to
+indicate the trend.}
+    \label{fig:skyvsmoon}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
 \section{Noise on transit timescales}
 
 The noise sources were combined using the methods outlined in section
@@ -600,65 +665,6 @@ been combined up to an hour as in previous investigations to ascertain
 the error expected on transit-like timescales.
 Figure~\ref{fig:rmsmagplots} shows the results, and the magnitude at
 which the precision is $1$mmag  is listed in table~\ref{tab:1mmagpoints}
-
-
-\begin{appendices}
-\section{Flux fraction}
-\label{sec:ffraction}
-
-When a psf is centred on a pixel, the largest amount of flux enters that
-pixel. This is a very pessimistic aproach since this will cause more
-stars to saturate than is realistic due to the nature of the placement
-of the stars. To find the most likely value of this fraction, a Gaussian
-psf was simulated at a random offset within the pixel value.
-$1\times10^6$ offsets were chosen within a range $-0.5 < x < 0.5$ and
-$-0.5 < y < 0.5$ and the integral recalculated. The fractional values
-were binned up and the bin values were divided by the total number of
-iterations giving the probability density. The most likely value was
-calculated from this and used in the analysis in the main text.
-Figure~\ref{fig:fractiondistribution} shows the resulting distribution.
-
-\begin{figure}[h]
-    \begin{center}
-        \includegraphics[angle=270,width=0.9\columnwidth]{images/fractiondistribution}
-    \end{center}
-    \caption{Distribution of the flux fraction in the central pixel as
-    an aperture is randomly offset. The most likely value is plotted.}
-    \label{fig:fractiondistribution}
-\end{figure}
-
-\section{Sky background}
-
-The sky background level is very dependant on the amount of light due to
-the Moon is visible in the image. This is loosely related to the phase
-of the Moon, but not completely since the chosen field might not be
-within the Moon avoidance area.
-
-The median image level for each image of the NGTS prototype data set was
-used to estimate the sky background level, and the value divided by the
-exposure time to give the ADU per second. This was scaled by the gain
-$1.2 e^{-1} \mathrm{ADU}$ to give electrons per second per pixel for
-each image. The JD was also recorded and used to calculate the phase of
-the Moon for each image. 
-
-The Moon avoidance angle describes the angular distance from the Moon in
-which the Moon light is present. The Moon phase therefore is not the
-only indicator: the Moon could be full but the field being observed may
-be outside the Moon avoidance angle. Therefore there is some scatter, as
-can be seen in fig.~\ref{fig:skyvsmoon}.
-
-\begin{figure}[h]
-    \begin{center}
-        \includegraphics[angle=270,width=0.9\columnwidth]{images/skyvsmoon}
-    \end{center}
-    \caption{Sky background level per pixel per second for the NGTS
-    prototype data plotted against Moon phase. A linear fit is made only to
-indicate the trend.}
-    \label{fig:skyvsmoon}
-\end{figure}
-
-
-\end{appendices}
 
 \bibliographystyle{plainnat}
 \bibliography{bibliography}
