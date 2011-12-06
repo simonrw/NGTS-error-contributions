@@ -55,6 +55,19 @@ class App(object):
         pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
         pgsci(1)
 
+    def plotNGTSData(self):
+        '''
+        Overlays the NGTS data
+        '''
+        ngtsdata = cPickle.load(open(
+            os.path.join(self.fileDir,
+                "NGTSData", "NGTSData.cpickle")
+            ))
+
+        pgsci(15)
+        pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
+        pgsci(1)
+
     def saturationLimit(self):
         fits = cPickle.load(
                 open(os.path.join(self.fileDir,
@@ -111,6 +124,7 @@ class App(object):
         pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], self.plotLimits[3], 0, 20)
 
         if self.args.plotwasp: self.plotWASPData()
+        if self.args.plotngts: self.plotNGTSData()
 
         if self.args.satlimit: self.saturationLimit()
 
@@ -211,6 +225,8 @@ if __name__ == '__main__':
             parser.add_argument("-d", "--device", help="PGPLOT device",
                     required=False, default="/xs")
             parser.add_argument("-w", "--plotwasp", help="Overlay some WASP staring data",
+                    action="store_true", default=False)
+            parser.add_argument("-n", "--plotngts", help="Overlay some NGTS prototype data",
                     action="store_true", default=False)
             parser.add_argument("-S", "--satlimit", help="Do not plot saturation limit",
                     action="store_false", default=True)
