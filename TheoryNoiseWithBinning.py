@@ -78,8 +78,10 @@ class App(object):
 
         # Get the plot limits
         pgsci(15)
+        pgsls(4)
         pgline(np.array([brightLimit, brightLimit]),
                 np.array([self.plotLimits[2], self.plotLimits[3]]))
+        pgsls(1)
         pgline(np.array([darkLimit, darkLimit]),
                 np.array([self.plotLimits[2], self.plotLimits[3]]))
         pgsci(1)
