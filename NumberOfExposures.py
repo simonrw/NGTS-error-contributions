@@ -16,57 +16,10 @@ import argparse
 #import matplotlib.pyplot as plt
 import numpy as np
 #import pyfits
+import AstErrors as ae
 #from ppgplot import *
 
-class Detector(object):
-    ccdsize = None
-    verttime = None
-    horizspeed = None
 
-    def __init__(self, ccdsize, verttime, horizspeed):
-        super(Detector, self).__init__()
-        self.ccdsize = ccdsize
-        self.verttime = verttime
-        self.horizspeed = horizspeed
-
-    def readTime(self):
-        return self.ccdsize[1] * (self.verttime + self.ccdsize[0] / self.horizspeed)
-
-    def __str__(self):
-        text = "\n"
-        text +="          %dx%d pix\n" % (self.ccdsize[0], self.ccdsize[1],)
-        text +="Detector: %.1fMHz horizontal speed\n" % (self.horizspeed /
-                1E6,)
-        text +="          %.1fus vertical time\n" % (self.verttime /
-                1E-6,)
-
-        return text
-    def __unicode__(self):
-        return __str__()
-
-# Create some set Detector objects
-class NGTSDetector(Detector):
-    '''
-    Proposed NGTS final instrument
-    '''
-    def __init__(self):
-        super(NGTSDetector, self).__init__((2048, 2048), 38E-6, 3E6)
-
-class NGTSPrototypeDetector(Detector):
-    '''
-    NGTS prototype
-    '''
-    def __init__(self):
-        super(NGTSPrototypeDetector, self).__init__(
-                (1024, 1024), 5.775E-6, 1E6)
-
-class WASPDetector(Detector):
-    '''
-    Superwasp camera
-    '''
-    def __init__(self):
-        super(WASPDetector, self).__init__(
-                (2048, 2048), 16E-6, 1E6)
 
 def Banner(text):
     printText = text.upper()
@@ -96,7 +49,7 @@ class App(object):
             raise RuntimeError("Exposure time cannot be <= 0")
 
         # Detector object
-        self.NGTSDetector = NGTSDetector()
+        self.NGTSDetector = ae.NGTSDetector()
 
         # Number of bias/dark frames per day
         # These can be taken during the day so dark time is not needed
