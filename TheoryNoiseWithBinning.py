@@ -91,7 +91,7 @@ class App(object):
         Main function
         '''
         npix = 1.5**4 * np.pi
-        readtime = 2048. * (38E-6 + 2048. / 3E6)
+        detector = ae.NGTSDetector()
         extinction = 0.06
         targettime = self.args.totaltime
         height = 2400.
@@ -106,7 +106,7 @@ class App(object):
 
 
         for mag in self.mag:
-            errob = ae.ErrorContribution(mag, npix, readtime, extinction,
+            errob = ae.ErrorContribution(mag, npix, detector.readTime(), extinction,
                     targettime, height, apsize, zp, readnoise)
             self.source.append(errob.sourceError(airmass, self.exptime))
             self.sky.append(errob.skyError(airmass, self.exptime, skypersecperpix))
