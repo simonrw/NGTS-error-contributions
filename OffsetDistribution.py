@@ -11,6 +11,7 @@ import argparse
 from scipy.integrate import dblquad
 import numpy as np
 from ppgplot import *
+from Config import *
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -25,7 +26,7 @@ class App(object):
     def __init__(self, args):
         super(App, self).__init__()
         self.args = args
-        self.fwhm = 1.5
+        self.fwhm = FWHM
         self.N = self.args.niter
 
         self.xRange = [-0.5, 0.5]

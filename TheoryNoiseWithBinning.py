@@ -12,6 +12,7 @@ import srw
 from ppgplot import *
 import AstErrors as ae
 import cPickle
+from Config import *
 
 
 class App(object):
@@ -99,7 +100,7 @@ class App(object):
         height = 2400.
         apsize = 0.2
         airmass = 1.
-        readnoise = 11.7
+        readnoise = ReadNoise
         zp = srw.ZP(1.)
 
         if self.args.skylevel == "dark": skypersecperpix = 50.

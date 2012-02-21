@@ -8,6 +8,7 @@ import numpy as np
 import cPickle
 from jg.ctx import j20002gal
 from subprocess import Popen, PIPE, call
+from Config import *
 
 
 
@@ -26,7 +27,7 @@ class App(object):
 
 
         # list of field centres
-        self.FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
+        self.FieldCentre = FieldCentre
 
 
         # NGTS instrument field of view
@@ -36,8 +37,8 @@ class App(object):
         \pi r^2 = x y
         r = sqrt(x * y / pi)
         '''
-        npix = 2048
-        pixscale = 4.97
+        npix = NAXIS1
+        pixscale = PixScale
 
         # get the dimensions in arcminutes
         x = npix * pixscale / 60.

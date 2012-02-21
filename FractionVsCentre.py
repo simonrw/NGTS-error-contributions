@@ -10,6 +10,7 @@ from ppgplot import *
 import argparse
 from multiprocessing import Pool
 from scipy.integrate import *
+from Config import *
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -31,7 +32,7 @@ class App(object):
     def __init__(self, args):
         super(App, self).__init__()
         self.args = args
-        self.fwhm = 1.5
+        self.fwhm = FWHM
         N = 50
         self.xvals = 10**linspace(-2, log10(3.*self.fwhm), N)
 
@@ -50,7 +51,6 @@ class App(object):
         y1data = []
         y2data = []
         for x in self.xvals:
-            print x
             y = 0.
             ratio = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(self.fwhm, (x, y)))[0] / \
                     self.totalIntegral

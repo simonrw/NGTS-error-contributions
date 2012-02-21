@@ -6,6 +6,7 @@ from numpy import *
 import pyximport; pyximport.install()
 import argparse
 from scipy.integrate import dblquad
+from Config import *
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -23,26 +24,9 @@ colours = {
         }
 
 # Some constants
-Gain = 3.
-HorizontalSpeed = 3E6
-VerticalTime = 38E-6
-NAXIS1 = 2048
-NAXIS2 = 2048
-ReadTime = NAXIS2 * (VerticalTime + NAXIS1 / HorizontalSpeed) # seconds
-ReadNoise = 11.7 # e- per pix
-FWHM = 1.5
-Radius = 1.5 * FWHM # pixels
-Area = pi * Radius**2
-BiasLevelADU = 300 # ADU
-BiasLevel = BiasLevelADU * Gain
 
 # Read noise electrons have to be added in quadrature 
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
-Digitisation = 16
-
-ElectronicSatur = ((2**Digitisation - 1)) * Area
-TargetBinTime = 3600.
-FullWellDepth = 150000
 AirmassOptions = [1., 2.]
 Extinction = 0.06 # magnitudes per airmass
 
