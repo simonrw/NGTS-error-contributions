@@ -75,7 +75,13 @@ class App(object):
         """
         self._args = args
 
+        # If output argument given, generate the plots 
+        if self._args.output:
+            self.plotData()
+        else:
+            self.updateFits()
 
+    def updateFits(self):
         hash_before = generate_hash("fits.cpickle")
 
         # Update the saturation vs exposure plot
@@ -91,9 +97,7 @@ class App(object):
         else:
             print "Fits updated"
 
-        # If output argument given, generate the plots 
-        if self._args.output:
-            self.plotData()
+
 
     def plotData(self):
         # First create the output directory
@@ -105,27 +109,30 @@ class App(object):
 
 
         self.scripts = [
-                {'bin': os.path.join(BASEDIR, 'ErrorContributions.py'),
-                    'args': ["-m", "9", "-d",
-                    os.path.join(self._args.output, "ErrorContributions_bright.ps/cps")],
-                    },
-                {'bin': os.path.join(BASEDIR, 'ErrorContributions.py'),
-                    'args': ["-m", "15", "-d",
-                    os.path.join(self._args.output, "ErrorContributions_faint.ps/cps")],
-                    },
-                {'bin': os.path.join(BASEDIR, 'TheoryNoiseWithBinning.py'),
-                    'args': ["-e", "5", "-d", 
-                    os.path.join(self._args.output, "TheoryNoiseWithBinning_5s.ps/cps")],
-                    },
-                {'bin': os.path.join(BASEDIR, 'TheoryNoiseWithBinning.py'),
-                    'args': ["-e", "30", "-d", 
-                    os.path.join(self._args.output, "TheoryNoiseWithBinning_30s.ps/cps")],
-                    },
-                {'bin': os.path.join(BASEDIR, 'NSaturatedInField.py'),
-                    'args': ["-d",
-                    os.path.join(self._args.output, "NSaturatedInField.ps/cps")],
-                    },
-                ]
+                {'bin': os.path.join(BASEDIR, "SaturationVsExposure.py"),
+                    'args': ["-d", os.path.join(self._args.output, "SaturationVsExposure.ps/cps")],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'ErrorContributions.py'),
+                        'args': ["-m", "9", "-d",
+                            os.path.join(self._args.output, "ErrorContributions_bright.ps/cps")],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'ErrorContributions.py'),
+                        'args': ["-m", "15", "-d",
+                            os.path.join(self._args.output, "ErrorContributions_faint.ps/cps")],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'TheoryNoiseWithBinning.py'),
+                        'args': ["-e", "5", "-d", 
+                            os.path.join(self._args.output, "TheoryNoiseWithBinning_5s.ps/cps")],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'TheoryNoiseWithBinning.py'),
+                        'args': ["-e", "30", "-d", 
+                            os.path.join(self._args.output, "TheoryNoiseWithBinning_30s.ps/cps")],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'NSaturatedInField.py'),
+                        'args': ["-d",
+                            os.path.join(self._args.output, "NSaturatedInField.ps/cps")],
+                        },
+                    ]
         
         for s in self.scripts:
             key = s['bin']
