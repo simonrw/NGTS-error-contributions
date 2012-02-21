@@ -1,6 +1,5 @@
 *.pyc
 output
-fits.cpickle
 *.aux
 *.bbl
 *.blg
@@ -11,3 +10,4 @@ fits.cpickle
 data.txt
 writeup/NGTSErrors.out
 *.swp
+*.cpickle
