@@ -161,6 +161,17 @@ class App(object):
             #print cmd
             sp.call(cmd, stdout=open(logoutname, 'w'), stderr=open(logerrname, 'w'))
 
+        # Finally combine all of the plots into one Combined.pdf
+        outputImages = filter(lambda name: ".ps" in name,
+                map(lambda path: os.path.join(self._args.output, path), os.listdir(self._args.output))
+                )
+
+        CombineCommand = ['gs', '-o', os.path.join(self._args.output, "Combined.pdf"),
+                "-sDEVICE=pdfwrite", "-dPDFSettings=/Screen"]
+        CombineCommand.extend(outputImages)
+
+        sp.call(CombineCommand, stdout=sp.PIPE, stderr=sp.PIPE)
+
 
 
 if __name__ == '__main__':
