@@ -74,16 +74,16 @@ class App(object):
                 open(os.path.join(self.fileDir,
                     "fits.cpickle"))
                 )
-        brightLimit = fits['bright'](np.log10(self.exptime))
-        darkLimit = fits['dark'](np.log10(self.exptime))
+        self.brightLimit = fits['bright'](np.log10(self.exptime))
+        self.darkLimit = fits['dark'](np.log10(self.exptime))
 
         # Get the plot limits
         pgsci(15)
         pgsls(4)
-        pgline(np.array([brightLimit, brightLimit]),
+        pgline(np.array([self.brightLimit, self.brightLimit]),
                 np.array([self.plotLimits[2], self.plotLimits[3]]))
         pgsls(1)
-        pgline(np.array([darkLimit, darkLimit]),
+        pgline(np.array([self.darkLimit, self.darkLimit]),
                 np.array([self.plotLimits[2], self.plotLimits[3]]))
         pgsci(1)
 
@@ -189,12 +189,12 @@ class App(object):
         # the 1mmag line
         distFrom1mmag = np.abs(self.total + 3.)
         ind = distFrom1mmag==distFrom1mmag.min()
-        crossPoint = self.mag[ind][0]
+        self.crossPoint = self.mag[ind][0]
 
 
         pgsls(2)
         pgsci(15)
-        pgline(np.array([crossPoint, crossPoint]),
+        pgline(np.array([self.crossPoint, self.crossPoint]),
                 np.array([-6, -1])
                 )
         pgsci(1)
@@ -204,8 +204,21 @@ class App(object):
 
         pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
                 "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
-                    self.args.skylevel, crossPoint))
+                    self.args.skylevel, self.crossPoint))
         pgclos()
+
+        if self.args.verbose:
+            if self.darkLimit:
+                print "SATLEVEL DARK: %f" % self.darkLimit
+
+            if self.brightLimit:
+                print "SATLEVEL BRIGHT: %f" % self.brightLimit
+
+            print "CROSSPOINT: %f" % self.crossPoint
+
+
+            
+
 
 
 
@@ -233,6 +246,8 @@ if __name__ == '__main__':
                     action="store_true", default=False)
             parser.add_argument("-S", "--satlimit", help="Do not plot saturation limit",
                     action="store_false", default=True)
+            parser.add_argument("-v", "--verbose", default=False, help="Print extra information",
+                    action="store_true")
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
