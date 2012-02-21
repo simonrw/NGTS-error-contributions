@@ -3,13 +3,15 @@ This file contains the initial assumptions
 passed throughout the analysis
 '''
 from numpy import pi
+from AstErrors import NGTSDetector
+
+_detector = NGTSDetector()
 
 Gain = 2.1
-HorizontalSpeed = 3E6
-VerticalTime = 38E-6
-NAXIS1 = 2048
-NAXIS2 = 2048
-ReadTime = NAXIS2 * (VerticalTime + NAXIS1 / HorizontalSpeed) # seconds
+HorizontalSpeed = _detector.horizspeed
+VerticalTime = _detector.verttime
+NAXIS1, NAXIS2 = _detector.ccdsize
+ReadTime = _detector.readTime()
 ReadNoise = 4.7 # e- per pix
 FWHM = 1.5
 Radius = 1.5 * FWHM # pixels
