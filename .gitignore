@@ -10,3 +10,4 @@ fits.cpickle
 *.synctex.gz
 data.txt
 writeup/NGTSErrors.out
+*.swp
