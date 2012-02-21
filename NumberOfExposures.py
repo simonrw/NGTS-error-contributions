@@ -16,6 +16,7 @@ import argparse
 #import matplotlib.pyplot as plt
 import numpy as np
 #import pyfits
+from Config import *
 import AstErrors as ae
 #from ppgplot import *
 
@@ -37,7 +38,7 @@ class App(object):
     '''
     def setUpAssumptions(self):
         # Doing exposures per hour
-        self.targettime = 3600.
+        self.targettime = TargetBinTime
 
         # Number of years
         self.nYears = self.args.years
@@ -105,7 +106,8 @@ class App(object):
 
 
     def doCalculation(self):
-        self.readtime = self.NGTSDetector.readTime()
+        #self.readtime = self.NGTSDetector.readTime()
+        self.readtime = ReadTime
 
 
 
