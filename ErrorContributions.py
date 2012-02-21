@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Plot import *
+from Plot.PGPLOTPlotClass import *
 from numpy import *
 import pyximport; pyximport.install()
 import argparse
@@ -111,7 +111,7 @@ def Scintillation(t, Airmass):
 
 def main(args):
     # Plotting class
-    Plotter = PlotClass(args.device)
+    Plotter = PGPLOTPlotClass(args.device)
 
     Moon = args.skylevel  # options are bright or dark
 
