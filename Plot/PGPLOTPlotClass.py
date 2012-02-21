@@ -1,22 +1,15 @@
+from Plot import PlotClass
 from ppgplot import *
 from numpy import *
 
-
-
-class PlotClass(object):
-    _reqKeys = ['xdata', 'ydata', 'label',
-            'colour', 'ls']
-
-    class PlotClassError(Exception):
-        "Exception class"
-
+class PGPLOTPlotClass(PlotClass):
     def __init__(self, device):
-        super(PlotClass, self).__init__()
+        super(PGPLOTPlotClass, self).__init__()
         self._lines = []
         self._extraLines = []
-        self._device = device
         self._xmin = None
         self._xmax = None
+        self._device = device
         self._ymin = None
         self._ymax = None
         self._log = True
@@ -33,16 +26,6 @@ class PlotClass(object):
 
         pgopen(self._device)
 
-    def log(self, boolval):
-        self._log = boolval
-
-    def _validateLine(self, line):
-        valid = True
-        linekeys = line.keys()
-        for key in self._reqKeys:
-            valid &= (key in linekeys)
-
-        return valid
 
 
     def __del__(self):
@@ -229,6 +212,8 @@ class PlotClass(object):
                 self._plotLine(line)
 
         self._renderlabels()
+
+
 
 
 def Plot(device, lines, colours, saturlevel, log=True, characterScale=1.0,
