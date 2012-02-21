@@ -132,6 +132,12 @@ class App(object):
                         'args': ["-d",
                             os.path.join(self._args.output, "NSaturatedInField.ps/cps")],
                         },
+                    {'bin': os.path.join(BASEDIR, 'NumberOfExposures.py'),
+                        'args': ["5"],
+                        },
+                    {'bin': os.path.join(BASEDIR, 'NumberOfExposures.py'),
+                        'args': ["30"],
+                        },
                     ]
         
         for s in self.scripts:
