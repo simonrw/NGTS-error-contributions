@@ -121,9 +121,7 @@ class NOMADDataStore(DataStore):
 
     def fetch(self):
         self.data = self.parser.getTable("/fields", "field%d" % self.currentField).cols.vmagnitude[:]
-        #self.parser = NOMADParser(field[0], field[1], 240.)
-        ##self.data = filter(None, [result['vmag'] for result in self.parser.fetch()])
-        #self.data = np.array(filter(None, [result['vmag'] for result in self.parser.fetch()]))
+        self.data = self.data[self.data != 0]
 
 
 
