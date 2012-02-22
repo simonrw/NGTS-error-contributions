@@ -35,7 +35,7 @@ def main():
 
 
     # Invert the y axis
-    ax.set_xscale("log")
+    #ax.set_xscale("log")
     ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
 
     ax.set_xlabel("Exposure time / s")
