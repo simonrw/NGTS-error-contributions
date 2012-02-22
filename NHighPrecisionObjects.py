@@ -10,7 +10,6 @@ from NOMADFields import NOMADFieldsParser
 import matplotlib.pyplot as plt
 import BesanconParser
 
-from jg.subs import progressbarClass
 
 exptimes, crosspoints, satpoints = cPickle.load(open("precisiondata.cpickle"))
 
@@ -29,17 +28,6 @@ def rangeAtExptime(t):
     '''
     return float(interpsat(t)), float(interpcross(t))
 
-def highPrecision(mag, t):
-    '''
-    Returns if the object has a high precision
-    '''
-    currentRange = rangeAtExptime(t)
-    returnval = False
-    if (mag > currentRange[0]) & (mag <= currentRange[1]):
-        returnval = True
-
-
-    return returnval
 
 class DataStore(object):
     """
