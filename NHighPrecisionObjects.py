@@ -90,7 +90,7 @@ class DataStore(object):
         raise NotImplementedError()
 
     def close(self):
-        pass
+        self.parser.close()
         
 
 class NOMADDataStore(DataStore):
@@ -138,8 +138,6 @@ class BesanconDataStore(DataStore):
             self.data = node.cols.imagnitude[:]
 
 
-    def close(self):
-        self.parser.close()
         
 
 
