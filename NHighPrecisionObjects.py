@@ -147,6 +147,7 @@ if __name__ == '__main__':
 
     visibleMags = {}
     fields = [1, 2, 3]
+    linestyles = ['-', '--', ':']
 
     # Select only the main sequence objects
     ModelRestrictions = "((typ == 5) | (typ == 6) | (typ == 7)) & (cl == 5)"
@@ -157,7 +158,7 @@ if __name__ == '__main__':
     for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
             #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
         print parser['name']
-        for field in fields:
+        for i, field in enumerate(fields):
             print "\tField %d" % field
             parser['parser'].setField(field)
 
@@ -169,7 +170,7 @@ if __name__ == '__main__':
                 ls = "--"
 
             profileAx.plot(exptimes, [parser['parser'].percentage(e) for e in exptimes], label="%s %d" % (parser['name'], field),
-                    ls=ls)
+                    color='k', ls=linestyles[i])
 
                 
 
