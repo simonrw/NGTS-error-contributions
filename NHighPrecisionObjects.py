@@ -5,7 +5,8 @@ from Config import *
 import cPickle
 import numpy as np
 from scipy.interpolate import interp1d
-from srw.NOMADParser import NOMADParser
+#from srw.NOMADParser import NOMADParser
+from NOMADFields import NOMADFieldsParser
 import matplotlib.pyplot as plt
 import BesanconParser
 
@@ -114,14 +115,15 @@ class NOMADDataStore(DataStore):
         
         super(NOMADDataStore, self).__init__()
 
+        self.parser = NOMADFieldsParser()
 
 
 
     def fetch(self):
-        field = self.fields[self.currentField]
-        self.parser = NOMADParser(field[0], field[1], 60.)
-        #self.data = filter(None, [result['vmag'] for result in self.parser.fetch()])
-        self.data = np.array(filter(None, [result['vmag'] for result in self.parser.fetch()]))
+        self.data = self.parser.getTable("/fields", "field%d" % self.currentField).cols.vmagnitude[:]
+        #self.parser = NOMADParser(field[0], field[1], 240.)
+        ##self.data = filter(None, [result['vmag'] for result in self.parser.fetch()])
+        #self.data = np.array(filter(None, [result['vmag'] for result in self.parser.fetch()]))
 
 
 
@@ -177,68 +179,22 @@ if __name__ == '__main__':
 
             visibleMags[parser['name']] = parser['parser'].visible()
 
-            #data[parser['name']][field] = [parser['parser'].percentage(e) for e in exptimes]
-            profileAx.plot(exptimes, [parser['parser'].percentage(e) for e in exptimes], label="NOMAD %d" % field)
+            if parser['name'] == "NOMAD":
+                ls = "-"
+            elif parser['name'] == "Besancon":
+                ls = "--"
+
+            profileAx.plot(exptimes, [parser['parser'].percentage(e) for e in exptimes], label="%s %d" % (parser['name'], field),
+                    ls=ls)
 
                 
 
         parser['parser'].close()
 
-        #data[parser['name']] = fractionHist
-
-
-    #for field in fields:
-        #profileAx.plot(exptimes, data['NOMAD'][field], ls='-', label='NOMAD %d' % field)
-    #profileAx.plot(exptimes, data['Besancon'], 'r-', label='Besancon')
 
     profileAx.legend(loc='best')
-    #print "Saving figure as NHighPrecision.pdf"
     profileAx.set_xlabel("Exposure time / s")
     profileAx.set_ylabel("Percentage of high precision stars / %")
-    #plt.savefig("NHighPrecision.pdf")
-
-    #histAllAx = fig.add_subplot(212)
-    ##histAllAx.hist([visibleMags[k] for k in visibleMags], 50,
-            ##label=visibleMags.keys(), log=True)
-    #histAllAx.hist(visibleMags['NOMAD'], 50, label="NOMAD", fc='0.7')
-    #histAllAx.set_xlabel("I magnitude")
-    #histAllAx.legend(loc='best')
     plt.show()
-
-
-
-#xpoints = np.linspace(5, 50, 100)
-#pb = progressbarClass(xpoints.size * len(FieldCentre))
-#counter = 1
-#fieldcounter = 1
-#for fc in FieldCentre:
-    #parser = NOMADParser(fc[0], fc[1], 60.)
-    #results = parser.fetch()
-
-
-    #vmags = filter(lambda mag: mag != None, [result['vmag'] for result in results])
-
-    #nVisible = len(filter(lambda mag: mag < 17, vmags))
-    
-    #nTotal = len(vmags)
-
-    ##print "Field:", fc, " total: %d, visible: %d" % (nTotal, nVisible)
-    #fraction = []
-    #for e in xpoints:
-        #nSelected = len(filter(lambda mag: highPrecision(mag, e), vmags))
-        #fraction.append(nSelected * 100. / float(nVisible))
-        ##print "%.2fs = %d / %d = %f%%" % (e, nSelected, nVisible, float(nSelected) * 100./ nVisible)
-        #pb.progress(counter)
-
-        #counter += 1
-
-
-    #plt.plot(xpoints, fraction, label="Field (%d, %d)" % (fc[0], fc[1]))
-
-#plt.xlabel("Exposure time / s")
-#plt.ylabel("Percentage of high precision stars / %")
-
-#plt.legend(loc='best')
-#plt.show()
 
 
