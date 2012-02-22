@@ -40,6 +40,7 @@ def main():
 
     ax.set_xlabel("Exposure time / s")
     ax.set_ylabel("I magnitude")
+    ax.set_title("High precision (>1mmag precision, not saturating)")
 
 
 
