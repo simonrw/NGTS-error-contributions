@@ -68,55 +68,9 @@ class App(object):
         self.crosspoints = np.array(crosspoints)
         self.satpoints = np.array(satpoints)
 
-
-        self.ax.plot(self._exptimes, self.crosspoints, 'k--')
-        self.ax.plot(self._exptimes, self.satpoints, 'k--')
-
-
-        #################################################################################
-        # Now set up the fill
-        fillxdata = list(self._exptimes)
-        fillxdata.append(self._exptimes[-1])
-
-        tmp = list(self._exptimes)[:]
-        tmp.reverse()
-        fillxdata.extend(tmp)
-        fillxdata.append(fillxdata[0])
-
-        #################################################################################
-
-        fillydata = list(self.crosspoints)
-        fillydata.append(self.satpoints[-1])
-
-
-        tmp = list(self.satpoints)[:]
-        tmp.reverse()
-        fillydata.extend(tmp)
-        fillydata.append(self.crosspoints[0])
-
-        #################################################################################
-
-
-        self.ax.fill(fillxdata, fillydata, color='0.9', hatch='/')
-
-        self.ax.set_xlabel("Exposure time / s")
-        self.ax.set_ylabel("I magnitude")
-
-
-        # Use log scale on x axis
-        self.ax.set_xscale("log")
-
-        # set limits
-        #self.ax.set_xlim(self._exptimes.min() - 1, self._exptimes.max() + 1)
-        ylims = self.ax.get_ylim()
-        self.ax.set_ylim(ylims[1], ylims[0])
-
         self.dumpData()
 
-        if self._args.output:
-            plt.savefig(self._args.output)
-        else:
-            plt.show()
+
 
 
     def dumpData(self):
