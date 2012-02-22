@@ -11,3 +11,4 @@ data.txt
 writeup/NGTSErrors.out
 *.swp
 *.cpickle
+BesanconParser/BesanconDatabase.pytables
