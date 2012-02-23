@@ -51,6 +51,15 @@ class App(object):
         
         @param args @todo
         """
+
+        answer = raw_input("This program generates the data. It takes a while. "
+                "Are you sure you want to run this, and not just plot the data using "
+                "PlotHighPrecisionRange.py? [y/N] ")
+
+        if answer.upper() != "Y":
+            print "Exiting"
+            exit()
+
         
         self._args = args
         self.fig = plt.figure(figsize=(11, 8))
