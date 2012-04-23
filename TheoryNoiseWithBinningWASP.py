@@ -12,7 +12,7 @@ import srw
 from ppgplot import *
 import AstErrors as ae
 import cPickle
-from Config import *
+from ConfigWASP import *
 
 
 class App(object):
@@ -93,30 +93,35 @@ class App(object):
         '''
         Main function
         '''
-        radius = 1.5  # Radius of flux extraction aperture
+        radius = 2.5  # Radius of flux extraction aperture
         npix = np.pi * radius ** 2
-        detector = ae.NGTSDetector()
-        extinction = 0.06
+        detector = ae.WASPDetector()
+        extinction = 0.08
         targettime = self.args.totaltime
         height = 2400.
-        apsize = 0.2
+        apsize = 0.111
         airmass = 1.
         readnoise = ReadNoise
-        zp = srw.ZP(1.)
+        #zp = srw.ZP(1.)
+        zp = 15  # Guess from WASP data file
 
-        if self.args.skylevel == "dark": skypersecperpix = 50.
-        elif self.args.skylevel == "bright": skypersecperpix = 160. 
+        if self.args.skylevel == "dark": skypersecperpix = (400. / npix /
+                self.exptime)
+        elif self.args.skylevel == "bright": skypersecperpix = (10000. / npix /
+                self.exptime)
         else: raise RuntimeError("Invalid sky type entered")
 
 
         for mag in self.mag:
-            errob = ae.ErrorContribution(mag, npix, detector.readTime(), extinction,
-                    targettime, height, apsize, zp, readnoise)
+            errob = ae.ErrorContribution(mag, npix, detector.readTime(), 
+                    extinction, targettime, height, apsize, zp, readnoise)
             self.source.append(errob.sourceError(airmass, self.exptime))
-            self.sky.append(errob.skyError(airmass, self.exptime, skypersecperpix))
+            self.sky.append(errob.skyError(airmass, self.exptime, 
+                skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
             self.scin.append(errob.scintillationError(airmass, self.exptime)) 
-            self.total.append(errob.totalError(airmass, self.exptime, skypersecperpix))
+            self.total.append(errob.totalError(airmass, self.exptime, 
+                skypersecperpix))
 
         self.source = np.log10(self.source)
         self.sky = np.log10(self.sky)
@@ -125,7 +130,8 @@ class App(object):
         self.total = np.log10(self.total)
 
         pgopen(self.args.device)
-        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], self.plotLimits[3], 0, 20)
+        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], 
+                self.plotLimits[3], 0, 20)
 
         if self.args.plotwasp: self.plotWASPData()
         if self.args.plotngts: self.plotNGTSData()
@@ -204,8 +210,9 @@ class App(object):
 
 
         pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
-                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
-                    self.args.skylevel, self.crossPoint))
+                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (
+                    self.exptime, targettime/3600., self.args.skylevel, 
+                    self.crossPoint))
         pgclos()
 
         if self.args.verbose:
