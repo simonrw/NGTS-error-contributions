@@ -22,6 +22,6 @@ BiasLevel = BiasLevelADU * Gain
 Digitisation = 16
 ElectronicSatur = ((2**Digitisation - 1)) * Area
 TargetBinTime = 3600.
-FullWellDepth = 107E3
+FullWellDepth = 80E3
 FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
 PixScale = 13.7
