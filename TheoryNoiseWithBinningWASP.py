@@ -93,7 +93,8 @@ class App(object):
         '''
         Main function
         '''
-        npix = 1.5**4 * np.pi
+        radius = 1.5  # Radius of flux extraction aperture
+        npix = np.pi * radius ** 2
         detector = ae.NGTSDetector()
         extinction = 0.06
         targettime = self.args.totaltime
