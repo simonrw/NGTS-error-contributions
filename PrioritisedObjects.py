@@ -11,6 +11,7 @@ The hightest weight wins
 
 import NHighPrecisionObjects
 import numpy as np
+import argparse
 import matplotlib.pyplot as plt
 
 def weight(mag, t, bonus, importance=[0.05,  0.3, 1.]):
@@ -32,34 +33,39 @@ def weight(mag, t, bonus, importance=[0.05,  0.3, 1.]):
     return weight
 
 
-parser = NHighPrecisionObjects.NOMADDataStore()
+def main(args):
+    parser = NHighPrecisionObjects.NOMADDataStore()
 
-bonus = 15
-importance = [1., 0.]
+    bonus = 15
+    importance = [1., 0.]
 
-linestyles = ['-', '--', ':']
+    linestyles = ['-', '--', ':']
 
-for i, field in enumerate([1, 2, 3]):
-    parser.setField(field)
-    objects = parser.visible()
-    exptime, weights = zip(*[
-        (e, np.sum(weight(objects, e, bonus=bonus, importance=importance))) 
-        for e in np.linspace(5, 90, 150)])
-
-
-
-
-    #exptime = np.array(exptime)
-    #weights = np.array(weights)
+    for i, field in enumerate([1, 2, 3]):
+        parser.setField(field)
+        objects = parser.visible()
+        exptime, weights = zip(*[
+            (e, np.sum(weight(objects, e, bonus=bonus, importance=importance))) 
+            for e in np.linspace(5, 90, 150)])
 
 
-    plt.plot(exptime, np.log10(weights), color='k', ls=linestyles[i],
-            label="NOMAD %d" % field)
-    plt.xlabel("Exposure time / s")
-    plt.ylabel("log10 Weight")
+        plt.plot(exptime, np.log10(weights), color='k', ls=linestyles[i],
+                label="NOMAD %d" % field)
+        plt.xlabel("Exposure time / s")
+        plt.ylabel("log10 Weight")
 
-parser.close()
-#plt.title("Max at %.2fs" % exptime[weights==weights.max()])
-plt.legend(loc='best')
-plt.show()
+    parser.close()
+    #plt.title("Max at %.2fs" % exptime[weights==weights.max()])
+    plt.legend(loc='best')
 
+    if args.output:
+        plt.savefig(args.output)
+    else:
+        plt.show()
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output", type=str, 
+            help="Output plot", default=None, required=False)
+    args = parser.parse_args()
+    main(args)
