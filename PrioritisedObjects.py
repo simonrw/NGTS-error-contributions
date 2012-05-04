@@ -14,7 +14,7 @@ import numpy as np
 import argparse
 from ppgplot import *
 
-def weight(mag, t, bonus, importance=[0.05,  0.3, 1.]):
+def calc_weight(mag, t, bonus, importance=[0.05,  0.3, 1.]):
     '''
     Weight is inversely proportional to the magnitude
     ie brighter objects are more important
@@ -52,7 +52,7 @@ def main(args):
         parser.setField(field)
         objects = parser.visible()
         exptime, weights = zip(*[
-            (e, np.sum(weight(objects, e, bonus=bonus, importance=importance))) 
+            (e, np.sum(calc_weight(objects, e, bonus=bonus, importance=importance)))
             for e in np.linspace(5, 90, 150)])
 
         exptime_hist.append(exptime)
