@@ -46,7 +46,7 @@ class App(object):
         Overlays the wasp data from Joao
         '''
         waspdata = cPickle.load(open(
-            os.path.join(self.fileDir, 
+            os.path.join(self.fileDir,
             "JoaoData", "data.cpickle")
             ))
 
@@ -113,14 +113,14 @@ class App(object):
 
 
         for mag in self.mag:
-            errob = ae.ErrorContribution(mag, npix, detector.readTime(), 
+            errob = ae.ErrorContribution(mag, npix, detector.readTime(),
                     extinction, targettime, height, apsize, zp, readnoise)
             self.source.append(errob.sourceError(airmass, self.exptime))
-            self.sky.append(errob.skyError(airmass, self.exptime, 
+            self.sky.append(errob.skyError(airmass, self.exptime,
                 skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
-            self.scin.append(errob.scintillationError(airmass, self.exptime)) 
-            self.total.append(errob.totalError(airmass, self.exptime, 
+            self.scin.append(errob.scintillationError(airmass, self.exptime))
+            self.total.append(errob.totalError(airmass, self.exptime,
                 skypersecperpix))
 
         self.source = np.log10(self.source)
@@ -130,7 +130,7 @@ class App(object):
         self.total = np.log10(self.total)
 
         pgopen(self.args.device)
-        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], 
+        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2],
                 self.plotLimits[3], 0, 20)
 
         if self.args.plotwasp: self.plotWASPData()
@@ -211,7 +211,7 @@ class App(object):
 
         pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
                 "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (
-                    self.exptime, targettime/3600., self.args.skylevel, 
+                    self.exptime, targettime/3600., self.args.skylevel,
                     self.crossPoint))
         pgclos()
 
@@ -225,7 +225,7 @@ class App(object):
             print "CROSSPOINT: %f" % self.crossPoint
 
 
-            
+
 
 
 
