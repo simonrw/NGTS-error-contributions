@@ -3,7 +3,7 @@
 
 '''
 Assign a weight to each object
-for a specific exposure time and count up 
+for a specific exposure time and count up
 the total sum for each exposure time.
 
 The hightest weight wins
@@ -19,7 +19,7 @@ def calc_weight(mag, t, bonus, importance=[0.05,  0.3, 1.]):
     Weight is inversely proportional to the magnitude
     ie brighter objects are more important
 
-    Add a value if the target is in the high precision 
+    Add a value if the target is in the high precision
     range, and subtract a value if the target is saturated
     '''
     rangeVals = NHighPrecisionObjects.rangeAtExptime(t)
@@ -115,7 +115,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", type=str, 
+    parser.add_argument("-o", "--output", type=str,
             help="Output plot", default=None, required=False)
     args = parser.parse_args()
     main(args)
