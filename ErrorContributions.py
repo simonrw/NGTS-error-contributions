@@ -25,7 +25,7 @@ colours = {
 
 # Some constants
 
-# Read noise electrons have to be added in quadrature 
+# Read noise electrons have to be added in quadrature
 ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
 AirmassOptions = [1., 2.]
 Extinction = 0.06 # magnitudes per airmass
@@ -33,11 +33,11 @@ Extinction = 0.06 # magnitudes per airmass
 r'''
 Note: errors in quadrature
 
-If the source counts are summed then the errors on the 
-relevant parameters are added in quadrature for each 
-frame that goes into the binning calculation. 
+If the source counts are summed then the errors on the
+relevant parameters are added in quadrature for each
+frame that goes into the binning calculation.
 
-The net result of this is that if the error in one 
+The net result of this is that if the error in one
 frame is \sigma_i then the total error in quadrature is
 
 \sigma_T = \sqrt{\sigma_1^2 + \sigma_2^2 + ...}
@@ -81,7 +81,7 @@ def Scintillation(t, Airmass):
     '''
     Scintillation function
 
-    Takes the exposure time and scales this by the 
+    Takes the exposure time and scales this by the
     parameters for the NGTS telescope.
 
     Aperture radius = 20cm
@@ -119,7 +119,7 @@ def main(args):
         * The integral of flux in the central pixel
         * The integral to infinity of the psf
 
-    This is calculated by rastering a psf across a pixel and 
+    This is calculated by rastering a psf across a pixel and
     picking the most common value.
     '''
     #CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
@@ -173,7 +173,7 @@ def main(args):
 
 
         # Read noise error
-        # Must add the read noise errors in quadrature 
+        # Must add the read noise errors in quadrature
         # for each exposure
         ReadNoiseError = ReadNoisePerAperture * sqrt(nExposures)
 
@@ -231,9 +231,9 @@ def main(args):
         ###############################################################################
 
         '''
-        From previous calculation, for the worst case when the psf is centred 
-        on the pixel, 30% of the flux goes into that pixel. Therefore when 30% 
-        of the total flux (source + sky) reaches the full well depth then the 
+        From previous calculation, for the worst case when the psf is centred
+        on the pixel, 30% of the flux goes into that pixel. Therefore when 30%
+        of the total flux (source + sky) reaches the full well depth then the
         central pixel is saturatied
 
         The 30% is assuming a psf fwhm of 1.5 pixels, and the result is calculated
@@ -275,7 +275,7 @@ def main(args):
     Plotter.line(SaturatedLevel, direction='y')
 
     # label the graph
-    Plotter.setLabels("Frames", "Fractional error", "Magnitude %.1f star" % args.targetmag)
+    Plotter.setLabels("Exposure time / s", "Fractional error", "Magnitude %.1f star" % args.targetmag)
 
     # Set up the limits
     Plotter.yrange(log10(1E-6), log10(3E-4))
@@ -286,19 +286,19 @@ def main(args):
     # Create the plot
     Plotter.render()
 
-    
+
 
 if __name__ == '__main__':
     import warnings
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", r'.*use PyArray_AsCArray.*')
         parser = argparse.ArgumentParser()
-        parser.add_argument('-d', '--device', 
+        parser.add_argument('-d', '--device',
                             help='Plotting device', default='1/xs',
                             required=False, type=str,
                             metavar='PGPLOT device')
         parser.add_argument('-m', '--targetmag',
-                            help="Target magnitude", default=None, 
+                            help="Target magnitude", default=None,
                             type=float, metavar='magnitude',
                             required=True)
         parser.add_argument("-s", "--skylevel", help="Sky type (bright "

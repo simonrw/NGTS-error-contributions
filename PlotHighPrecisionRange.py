@@ -9,10 +9,11 @@ by HighPrecisionRange.py
 
 import cPickle
 import os.path
-import numpy as np 
-import matplotlib.pyplot as plt 
+import argparse
+import matplotlib.pyplot as plt
 
-def main():
+
+def main(args):
     """Main program
     @return: @todo
     """
@@ -26,13 +27,12 @@ def main():
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    
+
     ax.plot(exptimes, crosspoints, 'k--')
     ax.plot(exptimes, satpoints, 'k--')
 
     ax.fill_between(exptimes, crosspoints, satpoints,
             color='0.9')
-
 
     # Invert the y axis
     #ax.set_xscale("log")
@@ -42,9 +42,14 @@ def main():
     ax.set_ylabel("I magnitude")
     ax.set_title("High precision (>1mmag precision, not saturating)")
 
-
-
-    plt.show()
+    if args.output:
+        plt.savefig(args.output)
+    else:
+        plt.show()
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output", help="Output device",
+            type=str, required=False, default=None)
+    args = parser.parse_args()
+    main(args)

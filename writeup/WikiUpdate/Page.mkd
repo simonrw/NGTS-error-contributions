@@ -1,0 +1,52 @@
+# Observing strategy notes
+
+**tl;dr**: [The fraction of valuable objects as a function of exposure time](#tldr)
+
+I have some simulations which calculate the optimal exposure time based on a number of factors:
+
+* The integration time (accounting for exposure time, read time and coadding data)
+* The noise model for the final instrument
+* The saturation level (two sky background levels)
+* The number of stars lost due to saturation
+* The number of stars included in the "high precision" regime (sigma < 1mmag)
+
+Generally I have taken into account taking exposures at a given exposure time, accounting for the readout time of the instrument, and coadding images up to a total exposure time of 1hr.
+
+(I have yet to update any results from the camera tests, all values used are from the spec sheets.)
+
+
+
+# Noise model
+
+The noise model contains four sources: photon noise from the source and sky, read noise and scintillation. The image below shows for a given object magnitude how the exposure time affects the level of noise. The decrease from very low values is as the readout time becomes less of a fraction of the total integration time.
+
+![Noise for an object](noisevsexpos.png)
+
+Now the same levels can be plotted for a given exposure time to estimate the noise level for different objects. The black line shows the sources added in quadrature. Lines mark the saturation point (solid and dotted vertical) and the 1mmag point. The title shows the input exposure time and sky type. For objects brighter than I =~ 9.5 we are scintillation limited and there are 3 regimes with different dominant sources. 
+
+
+![Noise model](noisemodel.png)
+
+The saturation point can be calculated for a given exposure time.
+
+![Saturation point](satvsexpos.png)
+
+The noise model can then be applied to specific fields (using real objects - NOMAD catalogue, and theoretical - Besancon model) to predict the number and types of stars which are in the two bands we care about: higher precision than 1mmag, and saturated. Ideally we want to maximise the ratio of high precision objects to saturated objects.
+
+The fields chosen are located within three regions located by Joao to have a large amount of coverage whilst avoiding the galactic plane and the moon. These were used as example target fields. The plot below shows the number of saturated stars for each of the three fields in both dark and bright time. 
+
+![Number of saturated objects](nsatperfield.png)
+
+This only shows stars we've lost. We want to know how many are in the high precision range, so this range was calculated and shown below. Everything in the grey area is not saturated and has a precision of < 1mmag. We quickly gain from going from 5s to ~20s and then gradually lose more as the exposure time is increased.
+
+![High precision regime](highrange.png)
+
+The fraction of objects for each field can be calculated as a function of exposure time. The distribution peaks at around 20s with a gain of ~1.5% extra objects. This is shown below.
+
+
+<a name="tldr" />
+![Prioritised objects](priorityobjects.png)
+
+Shown below is the number of stars for one of the fields broken down by spectral type for 3 exposure times. This data is taken from the Besancon model. 
+
+![By spectral type](byspectraltype.png)
