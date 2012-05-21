@@ -12,3 +12,4 @@ writeup/NGTSErrors.out
 *.swp
 *.cpickle
 BesanconParser/BesanconDatabase.pytables
+writeup/WikiUpdate/wikiupdate
