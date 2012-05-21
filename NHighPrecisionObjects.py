@@ -64,7 +64,7 @@ class DataStore(object):
 
     def highPrecision(self, e):
         '''
-        Returns all of the magnitudes of the 
+        Returns all of the magnitudes of the
         high precision objects
         '''
         hpRange = rangeAtExptime(e)
@@ -92,7 +92,7 @@ class DataStore(object):
 
     def close(self):
         self.parser.close()
-        
+
 
 class NOMADDataStore(DataStore):
     """
@@ -101,7 +101,7 @@ class NOMADDataStore(DataStore):
 
     def __init__(self):
         """@todo: to be defined """
-        
+
         super(NOMADDataStore, self).__init__()
 
         self.parser = NOMADFieldsParser()
@@ -114,8 +114,8 @@ class NOMADDataStore(DataStore):
 
 
 
-        
-    
+
+
 
 class BesanconDataStore(DataStore):
     """
@@ -124,7 +124,7 @@ class BesanconDataStore(DataStore):
 
     def __init__(self, restr=None):
         """@todo: to be defined """
-        
+
         super(BesanconDataStore, self).__init__()
         self.restr = restr
 
@@ -139,7 +139,7 @@ class BesanconDataStore(DataStore):
             self.data = node.cols.imagnitude[:]
 
 
-        
+
 
 
 if __name__ == '__main__':
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     fig = plt.figure()
     profileAx = fig.add_subplot(111)
-    
+
     for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
             #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
         print parser['name']
@@ -173,7 +173,7 @@ if __name__ == '__main__':
             profileAx.plot(exptimes, [parser['parser'].percentage(e) for e in exptimes], label="%s %d" % (parser['name'], field),
                     color='k', ls=linestyles[i])
 
-                
+
 
         parser['parser'].close()
 

@@ -9,8 +9,9 @@ by HighPrecisionRange.py
 
 import cPickle
 import os.path
-import numpy as np 
-import matplotlib.pyplot as plt 
+import argparse
+import matplotlib.pyplot as plt
+
 
 def main(args):
     """Main program
@@ -26,13 +27,12 @@ def main(args):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    
+
     ax.plot(exptimes, crosspoints, 'k--')
     ax.plot(exptimes, satpoints, 'k--')
 
     ax.fill_between(exptimes, crosspoints, satpoints,
             color='0.9')
-
 
     # Invert the y axis
     #ax.set_xscale("log")
@@ -41,8 +41,6 @@ def main(args):
     ax.set_xlabel("Exposure time / s")
     ax.set_ylabel("I magnitude")
     ax.set_title("High precision (>1mmag precision, not saturating)")
-
-
 
     if args.output:
         plt.savefig(args.output)
