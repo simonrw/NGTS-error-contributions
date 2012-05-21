@@ -3,6 +3,7 @@
 
 from Config import *
 import cPickle
+import sys
 import numpy as np
 from scipy.interpolate import interp1d
 #from srw.NOMADParser import NOMADParser
@@ -180,6 +181,13 @@ if __name__ == '__main__':
     profileAx.legend(loc='best')
     profileAx.set_xlabel("Exposure time / s")
     profileAx.set_ylabel("Percentage of high precision stars / %")
-    plt.show()
+
+
+
+
+    if len(sys.argv) > 1:
+        plt.savefig(sys.argv[1])
+    else:
+        plt.show()
 
 
