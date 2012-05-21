@@ -275,7 +275,7 @@ def main(args):
     Plotter.line(SaturatedLevel, direction='y')
 
     # label the graph
-    Plotter.setLabels("Frames", "Fractional error", "Magnitude %.1f star" % args.targetmag)
+    Plotter.setLabels("Exposure time / s", "Fractional error", "Magnitude %.1f star" % args.targetmag)
 
     # Set up the limits
     Plotter.yrange(log10(1E-6), log10(3E-4))
