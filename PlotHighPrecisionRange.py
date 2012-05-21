@@ -12,7 +12,7 @@ import os.path
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-def main():
+def main(args):
     """Main program
     @return: @todo
     """
@@ -44,7 +44,14 @@ def main():
 
 
 
-    plt.show()
+    if args.output:
+        plt.savefig(args.output)
+    else:
+        plt.show()
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output", help="Output device",
+            type=str, required=False, default=None)
+    args = parser.parse_args()
+    main(args)
