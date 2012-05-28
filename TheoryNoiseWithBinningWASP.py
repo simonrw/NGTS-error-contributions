@@ -209,7 +209,7 @@ class App(object):
 
 
 
-        pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
+        pglab(r"V magnitude", "Fractional error", r"t\de\u: %.1f s, "
                 "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (
                     self.exptime, targettime/3600., self.args.skylevel,
                     self.crossPoint))
