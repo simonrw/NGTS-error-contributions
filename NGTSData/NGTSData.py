@@ -32,6 +32,13 @@ class App(object):
             self.fluxerr = f['fluxerr'].data
             self.jd = f['hjd'].data
 
+            header = f[0].header
+            try:
+                self.exptime = float(header['exptime'])
+            except KeyError:
+                print "Cannot read exposure time, assuming 30 seconds"
+                self.exptime = 30
+
         self.run()
 
     def run(self):
@@ -67,7 +74,7 @@ class App(object):
         wav = np.array(wav)
         sd = np.array(sd)
 
-        mag = srw.ZP(40.) - 2.5 * np.log10(wav)
+        mag = srw.ZP(self.exptime) - 2.5 * np.log10(wav)
 
         with open("NGTSData.cpickle", 'w') as pickle_file:
             cPickle.dump({'mag': mag, 'sd': sd / wav}, pickle_file,
