@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+# encoding: utf-8
+
 
 import sys
 #import os
 #import os.path
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
-import matplotlib.pyplot as plt
 import numpy as np
 import srw
 import pyfits
@@ -24,7 +25,7 @@ class App(object):
         super(App, self).__init__()
         self.args = args
         self.filename = self.args.filename
-        self.binwidth = 1. / 24. # 1 hour bins
+        self.binwidth = 1. / 24.  # 1 hour bins
 
         with pyfits.open(self.filename) as f:
             self.flux = f['flux'].data
@@ -51,12 +52,12 @@ class App(object):
             for l in ledge:
                 r = l + self.binwidth
 
-                ind = (self.jd[i]>=l) & (self.jd[i]<r)
+                ind = (self.jd[i] >= l) & (self.jd[i] < r)
                 selectedFlux = self.flux[i, ind]
-                selectedFluxErr  = self.fluxerr[i, ind]
+                selectedFluxErr = self.fluxerr[i, ind]
                 #try:
-                binnedLC.append(np.average(selectedFlux, 
-                    weights=1./selectedFluxErr**2))
+                binnedLC.append(np.average(selectedFlux,
+                    weights=1. / selectedFluxErr ** 2))
                 #except ZeroDivisionError:
                     #binnedLC.append(np.average(selectedFlux))
 
@@ -68,15 +69,9 @@ class App(object):
 
         mag = srw.ZP(40.) - 2.5 * np.log10(wav)
 
-        cPickle.dump({'mag': mag, 'sd': sd / wav}, 
-                open("NGTSData.cpickle", "w"), 
-                protocol=2)
-
-
-                
-
-                
-
+        with open("NGTSData.cpickle", 'w') as pickle_file:
+            cPickle.dump({'mag': mag, 'sd': sd / wav}, pickle_file,
+                    protocol=2)
 
 
 if __name__ == '__main__':
