@@ -62,11 +62,8 @@ class App(object):
                 ind = (self.jd[i] >= l) & (self.jd[i] < r)
                 selectedFlux = self.flux[i, ind]
                 selectedFluxErr = self.fluxerr[i, ind]
-                #try:
                 binnedLC.append(np.average(selectedFlux,
                     weights=1. / selectedFluxErr ** 2))
-                #except ZeroDivisionError:
-                    #binnedLC.append(np.average(selectedFlux))
 
             wav.append(np.average(binnedLC))
             sd.append(np.std(binnedLC))
