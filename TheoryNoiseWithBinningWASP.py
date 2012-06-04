@@ -98,7 +98,7 @@ class App(object):
         '''
         Main function
         '''
-        radius = 2.5  # Radius of flux extraction aperture
+        radius = 3.5  # Radius of flux extraction aperture
         npix = np.pi * radius ** 2
         detector = ae.WASPDetector()
         extinction = 0.08
@@ -111,11 +111,8 @@ class App(object):
         #zp = 15  # from RGW
         zp = 18.545
 
-        if self.args.skylevel == "dark": skypersecperpix = (400. / npix /
-                self.exptime)
-        elif self.args.skylevel == "bright": skypersecperpix = (10000. / npix /
-                self.exptime)
-        else: raise RuntimeError("Invalid sky type entered")
+        if self.args.skylevel == "dark": skypersecperpix = 18.
+        elif self.args.skylevel == "bright": skypersecperpix = 18.
 
 
         for mag in self.mag:
