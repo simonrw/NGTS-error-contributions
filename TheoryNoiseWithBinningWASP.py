@@ -106,7 +106,8 @@ class App(object):
         airmass = 1.
         readnoise = ReadNoise
         #zp = srw.ZP(1.)
-        zp = 15  # Guess from WASP data file
+        #zp = 15  # from RGW
+        zp = 18.545
 
         if self.args.skylevel == "dark": skypersecperpix = (400. / npix /
                 self.exptime)
