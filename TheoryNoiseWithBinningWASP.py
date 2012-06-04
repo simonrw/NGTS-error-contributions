@@ -54,9 +54,9 @@ class App(object):
             ))
 
         # Convert I to V
-        imagCorrection = 0.27
+        #imagCorrection = 0.27
         pgsci(15)
-        pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
+        pgpt(waspdata['vmag'], np.log10(waspdata['binned']), 1)
         pgsci(1)
 
     def plotNGTSData(self):
