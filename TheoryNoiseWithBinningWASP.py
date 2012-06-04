@@ -41,8 +41,7 @@ class App(object):
 
         self.mag = np.linspace(7, 18., 1000)
 
-        self.plotLimits = (self.mag.max(), self.mag.min(),
-                -6, -1)
+        self.plotLimits = (16, 8, -5, 0)
 
         self.run()
 
