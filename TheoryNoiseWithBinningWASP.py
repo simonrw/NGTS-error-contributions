@@ -17,6 +17,8 @@ import cPickle
 from srw import pghelpers as pgh
 from ConfigWASP import *
 
+COLOURS = {'sky': 4, 'source': 2, 'scin': 5, 'total': 1, 'read': 3}
+
 
 class App(object):
     '''
