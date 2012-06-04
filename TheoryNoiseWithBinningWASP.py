@@ -14,6 +14,7 @@ import srw
 from ppgplot import *
 import AstErrors as ae
 import cPickle
+from srw import pghelpers as pgh
 from ConfigWASP import *
 
 
