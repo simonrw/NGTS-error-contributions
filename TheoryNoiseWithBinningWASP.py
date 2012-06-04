@@ -29,6 +29,7 @@ class App(object):
     read = []
     scin = []
     total = []
+
     def __init__(self, args):
         '''
         Constructor
@@ -142,83 +143,74 @@ class App(object):
         if self.args.plotwasp: self.plotWASPData()
         if self.args.plotngts: self.plotNGTSData()
 
-        if self.args.satlimit: self.saturationLimit()
+        #if self.args.satlimit: self.saturationLimit()
 
         # Draw the 1mmag line
-        pgsls(2)
-        pgsci(15)
-        pgline(np.array([self.mag.max(), self.mag.min()]),
-                np.array([-3., -3.]))
-        pgsci(1)
-        pgsls(1)
+        #pgsls(2)
+        #pgsci(15)
+        #pgline(np.array([self.mag.max(), self.mag.min()]),
+                #np.array([-3., -3.]))
+        #pgsci(1)
+        #pgsls(1)
 
-        pgsci(2)
-        ylevel = -5.8
-        pgline(self.mag, self.source)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Source")
-
-        pgsci(3)
-        ylevel += 0.2
-        pgline(self.mag, self.sky)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Sky")
-
-        pgsci(4)
-        ylevel += 0.2
-        pgline(self.mag, self.read)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Read")
-
-        pgsci(5)
-        ylevel += 0.2
-        pgline(self.mag, self.scin)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Scintillation")
-
-        pgsci(1)
-        ylevel += 0.2
-        pgline(self.mag, self.total)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Total")
-        pgsci(1)
 
         # Plot a line at the point when the total error meets
         # the 1mmag line
-        distFrom1mmag = np.abs(self.total + 3.)
-        ind = distFrom1mmag==distFrom1mmag.min()
-        self.crossPoint = self.mag[ind][0]
+        #distFrom1mmag = np.abs(self.total + 3.)
+        #ind = distFrom1mmag==distFrom1mmag.min()
+        #self.crossPoint = self.mag[ind][0]
 
 
-        pgsls(2)
-        pgsci(15)
-        pgline(np.array([self.crossPoint, self.crossPoint]),
-                np.array([-6, -1])
-                )
-        pgsci(1)
-        pgsls(1)
+        #pgsls(2)
+        #pgsci(15)
+        #pgline(np.array([self.crossPoint, self.crossPoint]),
+                #np.array([-6, -1])
+                #)
+        #pgsci(1)
+        #pgsls(1)
 
 
 
-        pglab(r"V magnitude", "Fractional error", r"t\de\u: %.1f s, "
-                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (
-                    self.exptime, targettime/3600., self.args.skylevel,
-                    self.crossPoint))
+        #pglab(r"V magnitude", "Fractional error", r"t\de\u: %.1f s, "
+                #"t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (
+                    #self.exptime, targettime/3600., self.args.skylevel,
+                    #self.crossPoint))
+        pglab(r'V magnitude', r'Fractional error', r'')
+
+        # Draw the lines
+        with pgh.change_colour(COLOURS['read']):
+            pgline(self.mag, self.read)
+        with pgh.change_colour(COLOURS['sky']):
+            pgline(self.mag, self.sky)
+        with pgh.change_colour(COLOURS['source']):
+            pgline(self.mag, self.source)
+        with pgh.change_colour(COLOURS['scin']):
+            pgline(self.mag, self.scin)
+        with pgh.change_colour(COLOURS['total']):
+            pgline(self.mag, self.total)
+        pgbox('bcnst', 0, 0, 'bcnstl', 0, 0)
+
+        # Create the legend
+        pgsvp(0.08, 0.35, 0.12, 0.32)
+        pgswin(0, 1, 0, 1)
+        #pgbox('bcnst', 0, 0, 'bcnst', 0, 0)
+        yinc = 0.8 / 5.
+        ylevel = 0.1
+        line_data = np.array([0.2, 0.4])
+
+        for i, (key, label) in enumerate([
+            ('scin', 'Scintillation'),
+            ('read', 'Read'),
+            ('sky', 'Sky'),
+            ('source', 'Source'),
+            ('total', 'Total')]):
+            with pgh.change_colour(COLOURS[key]):
+                ylevel = 0.1 + i * yinc
+                pgline(line_data,
+                        np.array([ylevel, ylevel])
+                        )
+            pgtext(0.5, ylevel, label)
+
         pgclos()
 
         if self.args.verbose:
