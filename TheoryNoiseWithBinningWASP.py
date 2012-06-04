@@ -134,8 +134,9 @@ class App(object):
         self.total = np.log10(self.total)
 
         pgopen(self.args.device)
-        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2],
-                self.plotLimits[3], 0, 20)
+        pgvstd()
+        pgswin(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2],
+                self.plotLimits[3])
 
         if self.args.plotwasp: self.plotWASPData()
         if self.args.plotngts: self.plotNGTSData()
