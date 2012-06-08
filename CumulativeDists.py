@@ -102,6 +102,7 @@ def main(args):
 
             selected = all_vmags[(all_vmags > satpoint) & (all_vmags <=
                 crosspoint)]
+            print exptime, len(selected)
 
 
             xdata, ydata = cumulative_hist(np.array(selected),
