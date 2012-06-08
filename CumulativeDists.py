@@ -83,9 +83,11 @@ def main(args):
     if args.besancon:
         all_vmags = get_besancon_mag_data()
         yhigh = 0.3
+        title = 'Besancon'
     else:
         all_vmags = get_nomad_mag_data()
         yhigh = 0.4
+        title = 'NOMAD'
 
     ytot = yhigh * len(all_vmags)
 
@@ -113,7 +115,7 @@ def main(args):
 
 
         pg.pgbox('bcnst', 0, 0, 'bcnst', 0, 0)
-        pg.pglab(r'V magnitude', 'High precision fraction', '')
+        pg.pglab(r'V magnitude', 'High precision fraction', title)
         # Label the right hand side
         pg.pgswin(x_range[0], x_range[1], 0, ytot)
         pg.pgbox('', 0, 0, 'smt', 0, 0)
