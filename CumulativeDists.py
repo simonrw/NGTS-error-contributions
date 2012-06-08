@@ -50,7 +50,7 @@ def get_nomad_mag_data():
 
 def get_besancon_mag_data():
     with open_bparser() as bp:
-        selection_cut = '((typ == 4) | (typ == 5) | (typ == 6)) & (cl == 5)'
+        selection_cut = '((typ == 4) | (typ == 5) | (typ == 6) | (typ == 7)) & (cl == 5)'
         #selection_cut = 'cl != 0'
         nodes = [bp.getTable('/fields', 'field{:d}'.format(i))
                 for i in xrange(1, 4)]
