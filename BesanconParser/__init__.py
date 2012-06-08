@@ -43,7 +43,16 @@ class BesanconParser(object):
         '''
         super(BesanconParser, self).__init__()
 
-        self.tab = tables.openFile(self.filename, 'r')
+        # Try and find the data path
+        try:
+            self.tab = tables.openFile(self.filename, 'r')
+        except IOError:
+            self.filename = os.path.expanduser(
+                    os.path.join(
+                        '~', 'work', 'NGTS', 'GalaxyData',
+                        'BesanconDatabase.pytables'))
+            self.tab = tables.openFile(self.filename, 'r')
+
 
     def close(self):
         '''
