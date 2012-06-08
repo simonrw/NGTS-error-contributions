@@ -50,7 +50,7 @@ def get_nomad_mag_data():
 
 def get_besancon_mag_data():
     with open_bparser() as bp:
-        selection_cut = '((typ == 4) | (typ == 5) | (typ == 6) | (typ == 7)) & (cl == 5)'
+        selection_cut = '''((typ == 4) | (typ == 5) | (typ == 6) | (typ == 7)) & (cl == 5) & (imagnitude + vmi < 15) & (imagnitude + vmi > 7)'''
         #selection_cut = 'cl != 0'
         nodes = [bp.getTable('/fields', 'field{:d}'.format(i))
                 for i in xrange(1, 4)]
@@ -82,7 +82,7 @@ def main(args):
     exptimes = np.arange(1, N + 1) * 10
     if args.besancon:
         all_vmags = get_besancon_mag_data()
-        yhigh = 0.04
+        yhigh = 0.3
     else:
         all_vmags = get_nomad_mag_data()
         yhigh = 0.4
