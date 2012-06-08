@@ -15,6 +15,7 @@ import argparse
 import cPickle
 import os
 from scipy.interpolate import interp1d
+from NOMADFields import NOMADFieldsParser
 import contextlib
 
 
@@ -23,6 +24,46 @@ def open_bparser():
     bp = BesanconParser()
     yield bp
     bp.close()
+
+
+@contextlib.contextmanager
+def open_nparser():
+    np = NOMADFieldsParser()
+    yield np
+    np.close()
+
+
+def get_nomad_mag_data():
+    with open_nparser() as nparse:
+        nodes = [nparse.getTable('/fields', 'field{:d}'.format(i))
+                for i in xrange(1, 4)]
+        all_vmags = []
+        for node in nodes:
+            all_vmags.extend([row['vmagnitude'] for row in
+                node.where('(vmagnitude > 7) & (vmagnitude < 15)')])
+
+    all_vmags = np.array(all_vmags)
+
+    return all_vmags
+
+
+
+def get_besancon_mag_data():
+    with open_bparser() as bp:
+        selection_cut = '((typ == 4) | (typ == 5) | (typ == 6)) & (cl == 5)'
+        #selection_cut = 'cl != 0'
+        nodes = [bp.getTable('/fields', 'field{:d}'.format(i))
+                for i in xrange(1, 4)]
+
+        all_vmags = []
+        for node in nodes:
+            all_vmags.extend([sum([row['imagnitude'], row['vmi']])
+                for row in node.where(selection_cut)])
+
+        all_vmags = np.array(all_vmags)
+
+    return all_vmags
+
 
 
 def main(args):
@@ -35,27 +76,26 @@ def main(args):
     interpcross = interp1d(exptimes, crosspoints, kind='linear')
     interpsat = interp1d(exptimes, satpoints, kind='linear')
 
-    selection_cut = '((typ == 4) | (typ == 5) | (typ == 6)) & (cl == 5)'
 
     N = 5
     colours = np.arange(2, 2 + N, 1)
     exptimes = np.arange(1, N + 1) * 10
+    if args.besancon:
+        all_vmags = get_besancon_mag_data()
+        yhigh = 0.04
+    else:
+        all_vmags = get_nomad_mag_data()
+        yhigh = 0.4
 
-    with open_bparser() as bp, pgh.open_plot('1/xs'):
+    ytot = yhigh * len(all_vmags)
+
+
+    with pgh.open_plot(args.output):
 
         pg.pgvstd()
 
-        nodes = [bp.getTable('/fields', 'field{:d}'.format(i))
-                for i in xrange(1, 4)]
 
-        all_vmags = []
-        for node in nodes:
-            all_vmags.extend(np.array([sum([row['imagnitude'], row['vmi']])
-                for row in node.where(selection_cut)]))
-
-        all_vmags = np.array(all_vmags)
-
-        pg.pgswin(x_range[0], x_range[1], 0, 0.04)
+        pg.pgswin(x_range[0], x_range[1], 0, yhigh)
         for exptime, colour in zip(exptimes, colours):
             satpoint = interpsat(exptime)
             crosspoint = interpcross(exptime)
@@ -67,15 +107,16 @@ def main(args):
             xdata, ydata = cumulative_hist(np.array(selected),
                     min_val=x_range[0], max_val=x_range[1], norm=len(all_vmags))
 
-            #ydata, xdata = np.histogram(selected, 20)
-            #xdata = xdata[:-1]
-
             with pgh.change_colour(colour):
                 pg.pgbin(xdata, ydata, False)
 
 
         pg.pgbox('bcnst', 0, 0, 'bcnst', 0, 0)
         pg.pglab(r'V magnitude', 'High precision fraction', '')
+        # Label the right hand side
+        pg.pgswin(x_range[0], x_range[1], 0, ytot)
+        pg.pgbox('', 0, 0, 'smt', 0, 0)
+        pg.pgmtxt('r', 2., 0.5, 0.5, 'N')
 
         # Create the legend
         pg.pgsvp(0.7, 0.9, 0.1, 0.3)
@@ -96,6 +137,10 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--output', type=str, default='1/xs',
+            help="Output device")
+    parser.add_argument('-b', '--besancon', action='store_true',
+            default=False, help="Use Besancon model data")
 
 
     main(parser.parse_args())
