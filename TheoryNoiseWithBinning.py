@@ -151,6 +151,12 @@ class App(object):
                         np.array([-6, -1])
                         )
 
+            # Plot the theory lines
+            for colour, ydata in zip(
+                    [2, 4, 3, 5, 1],
+                    [self.source, self.sky, self.read, self.scin, self.total]):
+                with pgh.change_colour(colour):
+                    pg.pgline(self.mag, ydata)
 
 
             pg.pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
