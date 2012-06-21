@@ -139,46 +139,6 @@ class App(object):
                 pg.pgline(np.array([self.mag.max(), self.mag.min()]),
                         np.array([-3., -3.]))
 
-            with pgh.change_colour(2):
-                ylevel = -5.8
-                pg.pgline(self.mag, self.source)
-                pg.pgline(np.array([17., 17.5]),
-                        np.array([ylevel, ylevel])
-                        )
-            pg.pgtext(16.7, ylevel, r"Source")
-
-            with pgh.change_colour(4):
-                ylevel += 0.2
-                pg.pgline(self.mag, self.sky)
-                pg.pgline(np.array([17., 17.5]),
-                        np.array([ylevel, ylevel])
-                        )
-            pg.pgtext(16.7, ylevel, r"Sky")
-
-            with pgh.change_colour(3):
-                ylevel += 0.2
-                pg.pgline(self.mag, self.read)
-                pg.pgline(np.array([17., 17.5]),
-                        np.array([ylevel, ylevel])
-                        )
-            pg.pgtext(16.7, ylevel, r"Read")
-
-            with pgh.change_colour(5):
-                ylevel += 0.2
-                pg.pgline(self.mag, self.scin)
-                pg.pgline(np.array([17., 17.5]),
-                        np.array([ylevel, ylevel])
-                        )
-            pg.pgtext(16.7, ylevel, r"Scintillation")
-
-            with pgh.change_colour(1):
-                ylevel += 0.2
-                pg.pgline(self.mag, self.total)
-                pg.pgline(np.array([17., 17.5]),
-                        np.array([ylevel, ylevel])
-                        )
-            pg.pgtext(16.7, ylevel, r"Total")
-
             # Plot a line at the point when the total error meets
             # the 1mmag line
             distFrom1mmag = np.abs(self.total + 3.)
