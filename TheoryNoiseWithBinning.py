@@ -149,7 +149,7 @@ class App(object):
         pgsci(1)
         pgtext(16.7, ylevel, r"Source")
 
-        pgsci(3)
+        pgsci(4)
         ylevel += 0.2
         pgline(self.mag, self.sky)
         pgline(np.array([17., 17.5]),
@@ -158,7 +158,7 @@ class App(object):
         pgsci(1)
         pgtext(16.7, ylevel, r"Sky")
 
-        pgsci(4)
+        pgsci(3)
         ylevel += 0.2
         pgline(self.mag, self.read)
         pgline(np.array([17., 17.5]),
