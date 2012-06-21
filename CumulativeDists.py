@@ -109,6 +109,7 @@ def main(args):
 
             xdata, ydata = cumulative_hist(np.array(selected),
                     min_val=x_range[0], max_val=x_range[1], norm=len(all_vmags))
+            ydata /= float(len(all_vmags))
 
             with pgh.change_colour(colour):
                 pg.pgbin(xdata, ydata, False)
