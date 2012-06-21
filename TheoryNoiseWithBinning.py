@@ -3,13 +3,14 @@
 import sys
 import os
 import os.path
+from srw import pghelpers as pgh
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 #import matplotlib.pyplot as plt
 import numpy as np
 import srw
 #import pyfits
-from ppgplot import *
+import ppgplot as pg
 import AstErrors as ae
 import cPickle
 from Config import *
@@ -52,9 +53,9 @@ class App(object):
 
         # Convert I to V
         imagCorrection = 0.27
-        pgsci(15)
-        pgpt(waspdata['vmag'] + imagCorrection, np.log10(waspdata['binned']), 1)
-        pgsci(1)
+        with pgh.change_colour(15):
+            pg.pgpt(waspdata['vmag'] + imagCorrection,
+                    np.log10(waspdata['binned']), 1)
 
     def plotNGTSData(self):
         '''
@@ -65,9 +66,8 @@ class App(object):
                 "NGTSData", "NGTSData.cpickle")
             ))
 
-        pgsci(15)
-        pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
-        pgsci(1)
+        with pgh.change_colour(15):
+            pg.pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
 
     def saturationLimit(self):
         fits = cPickle.load(
@@ -78,14 +78,12 @@ class App(object):
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
         # Get the plot limits
-        pgsci(15)
-        pgsls(4)
-        pgline(np.array([self.brightLimit, self.brightLimit]),
-                np.array([self.plotLimits[2], self.plotLimits[3]]))
-        pgsls(1)
-        pgline(np.array([self.darkLimit, self.darkLimit]),
-                np.array([self.plotLimits[2], self.plotLimits[3]]))
-        pgsci(1)
+        with pgh.change_colour(15):
+            with pgh.change_linestyle(4):
+                pg.pgline(np.array([self.brightLimit, self.brightLimit]),
+                        np.array([self.plotLimits[2], self.plotLimits[3]]))
+            pg.pgline(np.array([self.darkLimit, self.darkLimit]),
+                    np.array([self.plotLimits[2], self.plotLimits[3]]))
 
 
 
@@ -110,13 +108,15 @@ class App(object):
 
 
         for mag in self.mag:
-            errob = ae.ErrorContribution(mag, npix, detector.readTime(), extinction,
-                    targettime, height, apsize, zp, readnoise)
+            errob = ae.ErrorContribution(mag, npix, detector.readTime(),
+                    extinction, targettime, height, apsize, zp, readnoise)
             self.source.append(errob.sourceError(airmass, self.exptime))
-            self.sky.append(errob.skyError(airmass, self.exptime, skypersecperpix))
+            self.sky.append(errob.skyError(airmass, self.exptime,
+                skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
             self.scin.append(errob.scintillationError(airmass, self.exptime))
-            self.total.append(errob.totalError(airmass, self.exptime, skypersecperpix))
+            self.total.append(errob.totalError(airmass, self.exptime,
+                skypersecperpix))
 
         self.source = np.log10(self.source)
         self.sky = np.log10(self.sky)
@@ -124,89 +124,79 @@ class App(object):
         self.scin = np.log10(self.scin)
         self.total = np.log10(self.total)
 
-        pgopen(self.args.device)
-        pgenv(self.plotLimits[0], self.plotLimits[1], self.plotLimits[2], self.plotLimits[3], 0, 20)
+        with pgh.open_plot(self.args.device):
+            pg.pgenv(self.plotLimits[0], self.plotLimits[1],
+                    self.plotLimits[2], self.plotLimits[3],
+                    0, 20)
 
-        if self.args.plotwasp: self.plotWASPData()
-        if self.args.plotngts: self.plotNGTSData()
+            if self.args.plotwasp: self.plotWASPData()
+            if self.args.plotngts: self.plotNGTSData()
 
-        if self.args.satlimit: self.saturationLimit()
+            if self.args.satlimit: self.saturationLimit()
 
-        # Draw the 1mmag line
-        pgsls(2)
-        pgsci(15)
-        pgline(np.array([self.mag.max(), self.mag.min()]),
-                np.array([-3., -3.]))
-        pgsci(1)
-        pgsls(1)
+            # Draw the 1mmag line
+            with pgh.change_linestyle(2), pgh.change_colour(15):
+                pg.pgline(np.array([self.mag.max(), self.mag.min()]),
+                        np.array([-3., -3.]))
 
-        pgsci(2)
-        ylevel = -5.8
-        pgline(self.mag, self.source)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Source")
+            with pgh.change_colour(2):
+                ylevel = -5.8
+                pg.pgline(self.mag, self.source)
+                pg.pgline(np.array([17., 17.5]),
+                        np.array([ylevel, ylevel])
+                        )
+            pg.pgtext(16.7, ylevel, r"Source")
 
-        pgsci(4)
-        ylevel += 0.2
-        pgline(self.mag, self.sky)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Sky")
+            with pgh.change_colour(4):
+                ylevel += 0.2
+                pg.pgline(self.mag, self.sky)
+                pg.pgline(np.array([17., 17.5]),
+                        np.array([ylevel, ylevel])
+                        )
+            pg.pgtext(16.7, ylevel, r"Sky")
 
-        pgsci(3)
-        ylevel += 0.2
-        pgline(self.mag, self.read)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Read")
+            with pgh.change_colour(3):
+                ylevel += 0.2
+                pg.pgline(self.mag, self.read)
+                pg.pgline(np.array([17., 17.5]),
+                        np.array([ylevel, ylevel])
+                        )
+            pg.pgtext(16.7, ylevel, r"Read")
 
-        pgsci(5)
-        ylevel += 0.2
-        pgline(self.mag, self.scin)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Scintillation")
+            with pgh.change_colour(5):
+                ylevel += 0.2
+                pg.pgline(self.mag, self.scin)
+                pg.pgline(np.array([17., 17.5]),
+                        np.array([ylevel, ylevel])
+                        )
+            pg.pgtext(16.7, ylevel, r"Scintillation")
 
-        pgsci(1)
-        ylevel += 0.2
-        pgline(self.mag, self.total)
-        pgline(np.array([17., 17.5]),
-                np.array([ylevel, ylevel])
-                )
-        pgsci(1)
-        pgtext(16.7, ylevel, r"Total")
-        pgsci(1)
+            with pgh.change_colour(1):
+                ylevel += 0.2
+                pg.pgline(self.mag, self.total)
+                pg.pgline(np.array([17., 17.5]),
+                        np.array([ylevel, ylevel])
+                        )
+            pg.pgtext(16.7, ylevel, r"Total")
 
-        # Plot a line at the point when the total error meets
-        # the 1mmag line
-        distFrom1mmag = np.abs(self.total + 3.)
-        ind = distFrom1mmag==distFrom1mmag.min()
-        self.crossPoint = self.mag[ind][0]
+            # Plot a line at the point when the total error meets
+            # the 1mmag line
+            distFrom1mmag = np.abs(self.total + 3.)
+            ind = distFrom1mmag==distFrom1mmag.min()
+            self.crossPoint = self.mag[ind][0]
 
 
-        pgsls(2)
-        pgsci(15)
-        pgline(np.array([self.crossPoint, self.crossPoint]),
-                np.array([-6, -1])
-                )
-        pgsci(1)
-        pgsls(1)
+            with pgh.change_colour(15), pgh.change_linestyle(2):
+                pg.pgline(np.array([self.crossPoint, self.crossPoint]),
+                        np.array([-6, -1])
+                        )
 
 
 
-        pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
-                "t\dI\u: %.1f hours, sky: %s, 1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
-                    self.args.skylevel, self.crossPoint))
-        pgclos()
+            pg.pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
+                    "t\dI\u: %.1f hours, "
+                    "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
+                        self.crossPoint))
 
         if self.args.verbose:
             if self.darkLimit:
