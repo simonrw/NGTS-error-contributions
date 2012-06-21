@@ -144,8 +144,6 @@ class App(object):
             distFrom1mmag = np.abs(self.total + 3.)
             ind = distFrom1mmag==distFrom1mmag.min()
             self.crossPoint = self.mag[ind][0]
-
-
             with pgh.change_colour(15), pgh.change_linestyle(2):
                 pg.pgline(np.array([self.crossPoint, self.crossPoint]),
                         np.array([-6, -1])
@@ -159,6 +157,7 @@ class App(object):
                     pg.pgline(self.mag, ydata)
 
 
+            # Write the labels
             pg.pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
                     "t\dI\u: %.1f hours, "
                     "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
