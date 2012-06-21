@@ -46,7 +46,7 @@ class App(object):
         Overlays the wasp data from Joao
         '''
         waspdata = cPickle.load(open(
-            os.path.join(self.fileDir, 
+            os.path.join(self.fileDir,
             "JoaoData", "data.cpickle")
             ))
 
@@ -105,7 +105,7 @@ class App(object):
         zp = srw.ZP(1.)
 
         if self.args.skylevel == "dark": skypersecperpix = 50.
-        elif self.args.skylevel == "bright": skypersecperpix = 160. 
+        elif self.args.skylevel == "bright": skypersecperpix = 160.
         else: raise RuntimeError("Invalid sky type entered")
 
 
@@ -115,7 +115,7 @@ class App(object):
             self.source.append(errob.sourceError(airmass, self.exptime))
             self.sky.append(errob.skyError(airmass, self.exptime, skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
-            self.scin.append(errob.scintillationError(airmass, self.exptime)) 
+            self.scin.append(errob.scintillationError(airmass, self.exptime))
             self.total.append(errob.totalError(airmass, self.exptime, skypersecperpix))
 
         self.source = np.log10(self.source)
@@ -218,7 +218,7 @@ class App(object):
             print "CROSSPOINT: %f" % self.crossPoint
 
 
-            
+
 
 
 
