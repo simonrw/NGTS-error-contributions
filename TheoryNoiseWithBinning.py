@@ -212,8 +212,6 @@ if __name__ == '__main__':
                     action="store_true", default=False)
             parser.add_argument("-S", "--satlimit", help="Do not plot saturation limit",
                     action="store_false", default=True)
-            parser.add_argument("-v", "--verbose", default=False, help="Print extra information",
-                    action="store_true")
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
