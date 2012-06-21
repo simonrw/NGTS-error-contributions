@@ -164,19 +164,28 @@ class App(object):
                     "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
                         self.crossPoint))
 
-        if self.args.verbose:
-            if self.darkLimit:
-                print "SATLEVEL DARK: %f" % self.darkLimit
+            # Create the legend
+            pg.pgsvp(0.1, 0.4, 0.1, 0.3)
+            pg.pgswin(0., 1., 0., 1.)
 
-            if self.brightLimit:
-                print "SATLEVEL BRIGHT: %f" % self.brightLimit
+            # Have to talk about 5 lines
+            ybot = 0.1
+            ytop = 0.9
+            ydiff = ytop - ybot
+            nlines = 5
+            x0 = 0.1
+            x1 = 0.4
+            x2 = 0.5
 
-            print "CROSSPOINT: %f" % self.crossPoint
+            titles = ('Total', 'Source', 'Sky', 'Read', 'Scintillation')
+            colours = (1, 2, 4, 3, 5)
+            yvals = (1. - (ybot + ydiff * i / (nlines - 1.))
+                    for i in xrange(nlines))
 
-
-
-
-
+            for y, colour, title in zip(yvals, colours, titles):
+                with pgh.change_colour(colour):
+                    pg.pgline(np.array([x0, x1]), np.ones(2) * y)
+                pg.pgtext(x2, y, title)
 
 
 
