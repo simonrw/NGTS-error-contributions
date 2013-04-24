@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from Plot.PGPLOTPlotClass import *
 from numpy import *
+import matplotlib.pyplot as plt
 import pyximport; pyximport.install()
 import argparse
 from scipy.integrate import dblquad
@@ -94,10 +94,10 @@ def Scintillation(t, Airmass):
 
 
 def main(args):
-    # Plotting class
-    Plotter = PGPLOTPlotClass(args.device)
-
     Moon = args.skylevel  # options are bright or dark
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
 
     # Print some nice stuff to the console
     print "Assuming a gain of %.1f" % Gain
@@ -137,6 +137,7 @@ def main(args):
     # Number of exposures that fit into an hour
     nExposures = TargetBinTime / totalFrameTime
 
+    line_styles = ['-', '--', ':']
     for i, Airmass in enumerate(AirmassOptions):
         print "\t\t*** AIRMASS %.1f ***" % Airmass;
         # Airmass correction factor
@@ -148,7 +149,10 @@ def main(args):
         ###############################################################################
 
         # Zero point for a 1s exposure (true zero point)
-        zp = ZP(1.)
+        if args.zeropoint:
+            zp = float(args.zeropoint)
+        else:
+            zp = ZP(1.)
         print "Instrumental zero point: %.5f mag" % zp
 
         # Correct the source magnitude for airmass
@@ -260,31 +264,42 @@ def main(args):
 
 
         # add the data lines
-        Plotter.addLine({'xdata': expTime, 'ydata': SourceError / BinnedSourceCounts,
-            'label': "Source", 'colour': colours['red'], 'ls': i+1, 'legend': not i})
-        Plotter.addLine({'xdata': expTime, 'ydata': ReadNoiseError / BinnedSourceCounts,
-            'label': "Read noise", 'colour': colours['cyan'], 'ls': i+1, 'legend': not i})
-        Plotter.addLine({'xdata': expTime, 'ydata': SkyError / BinnedSourceCounts,
-            'label': "Sky", 'colour': colours['blue'], 'ls': i+1, 'legend': not i})
-        Plotter.addLine({'xdata': expTime, 'ydata': ScintillationError / BinnedSourceCounts,
-            'label': "Scintillation", 'colour': colours['green'], 'ls': i+1, 'legend': not i})
-        Plotter.addLine({'xdata': expTime, 'ydata': TotalError / BinnedSourceCounts,
-            'label': "Total", 'colour': colours['black'], 'ls': i+1, 'legend': not i})
+        if i == 0:
+            ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
+                    ls=line_styles[i], label="Source")
+            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'c-',
+                    ls=line_styles[i], label="Read")
+            ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
+                    ls=line_styles[i], label="Sky")
+            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'g-',
+                    ls=line_styles[i], label="Scintillation")
+            ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
+                    ls=line_styles[i], label="Total")
+        else:
+            ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
+                    ls=line_styles[i])
+            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'c-',
+                    ls=line_styles[i])
+            ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
+                    ls=line_styles[i])
+            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'g-',
+                    ls=line_styles[i])
+            ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
+                    ls=line_styles[i])
 
     # Plot the saturated line
-    Plotter.line(SaturatedLevel, direction='y')
+    ax.axvline(SaturatedLevel, color='k', ls=':')
 
     # label the graph
-    Plotter.setLabels("Exposure time / s", "Fractional error", "Magnitude %.1f star" % args.targetmag)
-
-    # Set up the limits
-    Plotter.yrange(log10(1E-6), log10(3E-4))
-
-
-
+    plt.legend(loc='best')
+    ax.set_xlabel(r'Exposure time / s')
+    ax.set_ylabel(r'Fractional error')
 
     # Create the plot
-    Plotter.render()
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    # ax.set_ylim(1E-6, 3E-3)
+    plt.show()
 
 
 
@@ -305,6 +320,8 @@ if __name__ == '__main__':
                             "or dark", choices=["bright", "dark"],
                             type=lambda val: val.lower(),
                             required=False, default="dark")
+        parser.add_argument('-z', '--zeropoint', help='Custom zero point',
+                            required=False, default=None)
         args = parser.parse_args()
 
 
