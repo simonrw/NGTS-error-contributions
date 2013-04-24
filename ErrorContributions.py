@@ -90,7 +90,9 @@ def Scintillation(t, Airmass):
     '''
     ApertureSize = 0.2
     Height = 2400.
-    return 0.004 * ApertureSize**(-2./3.) * Airmass**(7./4.) * exp(-Height/8000.) * (2. * t) ** (-1./2.)
+    mscin = 0.004 * ApertureSize**(-2./3.) * Airmass**(7./4.) * exp(-Height/8000.) * (2. * t) ** (-1./2.)
+    error_value = 1. - (10 ** (-mscin / 2.5))
+    return error_value
 
 
 def main(args):
