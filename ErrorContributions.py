@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pyximport; pyximport.install()
 import argparse
 from scipy.integrate import dblquad
-from Config import *
+import Config as config
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -26,7 +26,7 @@ colours = {
 # Some constants
 
 # Read noise electrons have to be added in quadrature
-ReadNoisePerAperture = ReadNoise * sqrt(Area) # electrons
+ReadNoisePerAperture = config.ReadNoise * sqrt(config.Area) # electrons
 AirmassOptions = [1., 2.]
 Extinction = 0.06 # magnitudes per airmass
 
@@ -102,14 +102,14 @@ def main(args):
     ax = fig.add_subplot(111)
 
     # Print some nice stuff to the console
-    print "Assuming a gain of %.1f" % Gain
-    print "Bias level: %.2f electrons" % BiasLevel
-    print "FWHM: %.2f pixels" % FWHM
-    print "Aperture radius: %.2f pixels" % Radius
-    print "Aperture area: %.2f pixels" % Area
+    print "Assuming a gain of %.1f" % config.Gain
+    print "Bias level: %.2f electrons" % config.BiasLevel
+    print "FWHM: %.2f pixels" % config.FWHM
+    print "Aperture radius: %.2f pixels" % config.Radius
+    print "Aperture area: %.2f pixels" % config.Area
     print "Read noise per aperture: %.2f electrons" % ReadNoisePerAperture
-    print "Simulating to %.1f hour(s)" % (TargetBinTime / 3600.,)
-    print "Full well depth set to %dk electrons" % (FullWellDepth / 1000)
+    print "Simulating to %.1f hour(s)" % (config.TargetBinTime / 3600.,)
+    print "Full well depth set to %dk electrons" % (config.FullWellDepth / 1000)
 
     # Target magnitude
     TargetMag = args.targetmag
@@ -133,11 +133,11 @@ def main(args):
     expTime = 10**linspace(log10(5), log10(3600), 100)
 
     # total frame duration (exposure + readout)
-    totalFrameTime = expTime + ReadTime
-    print "Readout time at %.1f MHz: %f seconds" % (HorizontalSpeed / 1E6, ReadTime)
+    totalFrameTime = expTime + config.ReadTime
+    print "Readout time at %.1f MHz: %f seconds" % (config.HorizontalSpeed / 1E6, config.ReadTime)
 
     # Number of exposures that fit into an hour
-    nExposures = TargetBinTime / totalFrameTime
+    nExposures = config.TargetBinTime / totalFrameTime
 
     line_styles = ['-', '--', ':']
     for i, Airmass in enumerate(AirmassOptions):
@@ -198,7 +198,7 @@ def main(args):
         print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
 
         # Sky counts per second
-        SkyPerSec = SkyPerSecPerPix * Area
+        SkyPerSec = SkyPerSecPerPix * config.Area
         print "Sky has %.1f electrons per second" % SkyPerSec
 
         # Total sky counts per exposure
@@ -245,13 +245,13 @@ def main(args):
         The 30% is assuming a psf fwhm of 1.5 pixels, and the result is calculated
         in the variable: CentralPixelFraction
         '''
-        TotalFrameCounts = SourceCounts + SkyCounts + (BiasLevel * Area)
+        TotalFrameCounts = SourceCounts + SkyCounts + (config.BiasLevel * config.Area)
 
         # Multiply by the fraction that is in the central pixel
         FluxInCentralPixel = CentralPixelFraction * TotalFrameCounts
 
         # Get the exposure times at which the source is saturated
-        SaturatedExpTimes = expTime[FluxInCentralPixel>FullWellDepth]
+        SaturatedExpTimes = expTime[FluxInCentralPixel > config.FullWellDepth]
 
         # Pick the minimum one to find the saturation point
         SaturatedLevel = SaturatedExpTimes.min()
