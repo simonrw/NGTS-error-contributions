@@ -140,6 +140,23 @@ def main(args):
     # Number of exposures that fit into an hour
     nExposures = config.TargetBinTime / totalFrameTime
 
+    if args.render:
+        outfile = tables.openFile(args.render, 'w')
+
+
+    ## Get the sky counts per pixel per second
+    #SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
+    if Moon.lower() == "bright": SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
+    elif Moon.lower() == "dark": SkyPerSecPerPix = 50.
+    print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
+
+    # Sky counts per second
+    SkyPerSec = SkyPerSecPerPix * config.Area
+    print "Sky has %.1f electrons per second" % SkyPerSec
+
+    # Total sky counts per exposure
+    SkyCounts = SkyPerSec * expTime
+
     line_styles = ['-', '--', ':']
     for i, Airmass in enumerate(AirmassOptions):
         print "\t\t*** AIRMASS %.1f ***" % Airmass;
@@ -191,20 +208,6 @@ def main(args):
 
         # Correct the sky in 40 seconds value
         #CorrectedSkyIn40Seconds = SkyIn40Seconds
-
-        ## Get the sky counts per pixel per second
-        #SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
-        if Moon.lower() == "bright": SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
-        elif Moon.lower() == "dark": SkyPerSecPerPix = 50.
-        print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
-
-        # Sky counts per second
-        SkyPerSec = SkyPerSecPerPix * config.Area
-        print "Sky has %.1f electrons per second" % SkyPerSec
-
-        # Total sky counts per exposure
-        SkyCounts = SkyPerSec * expTime
-
 
         # Binned sky counts
         BinnedSkyCounts = SkyCounts * nExposures
@@ -264,8 +267,6 @@ def main(args):
         #                               Plotting
         ###############################################################################
 
-
-
         # add the data lines
         if i == 0:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
@@ -290,6 +291,37 @@ def main(args):
             ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
                     ls=line_styles[i])
 
+        ###############################################################################
+        #                               Rendering
+        ###############################################################################
+
+        if args.render:
+            group = outfile.createGroup('/', 'airmass{:d}'.format(i))
+            group._v_attrs.airmass = Airmass
+
+            outfile.createArray(group, 'exptime', expTime, 'Exposure time')
+            outfile.createArray(group, 'flux', BinnedSourceCounts, 'Flux')
+            outfile.createArray(group, 'source', SourceError, 'Source')
+            outfile.createArray(group, 'sky', SkyError, 'Sky')
+            outfile.createArray(group, 'read', ReadNoiseError, 'Read')
+            outfile.createArray(group, 'scintillation', ScintillationError, 'Scintillation')
+            outfile.createArray(group, 'total', TotalError, 'Total')
+
+    if args.render:
+        group = outfile.createGroup('/', 'meta')
+        # Helper function
+        set_value = lambda name, value: setattr(group._v_attrs, name, value)
+
+        set_value('saturation_level', SaturatedLevel)
+        set_value('zero_point', zp)
+        set_value('gain', config.Gain)
+        set_value('bias', config.BiasLevel)
+        set_value('full_well_depth', config.FullWellDepth)
+        set_value('target_mag', TargetMag)
+        set_value('sky_value', SkyPerSecPerPix)
+
+        outfile.close()
+
     # Plot the saturated line
     ax.axvline(SaturatedLevel, color='k', ls=':')
 
@@ -301,8 +333,11 @@ def main(args):
     # Create the plot
     ax.set_xscale('log')
     ax.set_yscale('log')
-    # ax.set_ylim(1E-6, 3E-3)
-    plt.show()
+
+    if args.output:
+        plt.savefig(args.output, bbox_inches='tight')
+    else:
+        plt.show()
 
 
 
@@ -311,10 +346,10 @@ if __name__ == '__main__':
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", r'.*use PyArray_AsCArray.*')
         parser = argparse.ArgumentParser()
-        parser.add_argument('-d', '--device',
-                            help='Plotting device', default='1/xs',
+        parser.add_argument('-o', '--output',
+                            help='Image filename',
                             required=False, type=str,
-                            metavar='PGPLOT device')
+                            metavar='Filename')
         parser.add_argument('-m', '--targetmag',
                             help="Target magnitude", default=None,
                             type=float, metavar='magnitude',
@@ -325,6 +360,8 @@ if __name__ == '__main__':
                             required=False, default="dark")
         parser.add_argument('-z', '--zeropoint', help='Custom zero point',
                             required=False, default=None)
+        parser.add_argument('-r', '--render', help='Render tables file',
+                            type=str, required=False)
         args = parser.parse_args()
 
 
