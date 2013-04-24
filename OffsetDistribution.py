@@ -10,8 +10,9 @@ from jg.subs import progressbarClass
 import argparse
 from scipy.integrate import dblquad
 import numpy as np
-from ppgplot import *
 from Config import *
+import matplotlib.pyplot as plt
+
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -33,15 +34,11 @@ class App(object):
         self.yRange = [-0.5, 0.5]
 
 
-        pgopen(self.args.device)
         self.run()
 
     def Integrate(self, lims, offset):
         return dblquad(Gaussian2D, lims[0], lims[1], lambda x: lims[2], lambda x: lims[3], args=(self.fwhm, offset))
 
-
-    def __del__(self):
-        pgclos()
 
     def run(self):
         # The total integral of a 2d Gaussian to infinity in each direction
@@ -75,7 +72,7 @@ class App(object):
         fractions = np.log10(fractions)
 
 
-        # Create the histogram 
+        # Create the histogram
         vals, edges = np.histogram(fractions, bins=50, range=(-1, 0))
 
         # Counting errors
@@ -84,8 +81,8 @@ class App(object):
         # Width of a bin
         binWidth = np.diff(edges)[0]
 
-        # Normalise the histogram 
-        # I realise that the numpy.histogram function inclues a density parameter which 
+        # Normalise the histogram
+        # I realise that the numpy.histogram function inclues a density parameter which
         # achieves the same thing but I need the errors from the raw values
         Integral = float(np.sum(vals))
 
@@ -96,35 +93,26 @@ class App(object):
         # Get the bin centres
         centres = edges[:-1] + binWidth / 2.
 
-        pgenv(-1, 0, 0, 1.1*normalisedVals.max(), 0, 10)
-
-
-
-        # Plot the errorbars
-        #pgsci(15)
-        #pgerrb(6, centres, normalisedVals, normalisedErrs, 1.0)
-        #pgsci(1)
-
-
         # Print a line at the most probable value
-        MostProbable = centres[normalisedVals==normalisedVals.max()][0]
+        MostProbable = 10 ** centres[normalisedVals==normalisedVals.max()][0]
 
-        pgsls(2)
-        pgsci(15)
-        pgline(np.array([MostProbable, MostProbable]), np.array([0, 1.1*normalisedVals.max()]))
-        pgsci(1)
-        pgsls(1)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
 
         # Plot the histogram
-        pgbin(centres, normalisedVals, True)
+        ax.plot(10 ** centres, normalisedVals, 'k-', drawstyle='steps-mid')
 
-        if self.N > 1000:
-            pglab("Fraction", "Probability", "%.0e iterations, mp: %f" % (self.N, 10**MostProbable))
-        else:
-            pglab("Fraction", "Probability", "%d iterations, mp: %f" % (self.N, 10**MostProbable))
+        ax.set_xlabel(r'Fraction')
+        ax.set_ylabel(r'Probability')
+        ax.set_xscale('log')
 
+        ticks = [0.1, 0.2, 0.5, 1]
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(ticks)
 
+        ax.axvline(MostProbable, color='k', ls=':', zorder=-10)
 
+        plt.show()
 
 
 
