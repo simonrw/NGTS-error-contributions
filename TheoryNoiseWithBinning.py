@@ -3,17 +3,16 @@
 import sys
 import os
 import os.path
-from srw import pghelpers as pgh
 import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import srw
 #import pyfits
-import ppgplot as pg
 import AstErrors as ae
 import cPickle
 from Config import *
+
 
 
 class App(object):
@@ -53,9 +52,9 @@ class App(object):
 
         # Convert I to V
         imagCorrection = 0.27
-        with pgh.change_colour(15):
-            pg.pgpt(waspdata['vmag'] + imagCorrection,
-                    np.log10(waspdata['binned']), 1)
+        # with pgh.change_colour(15):
+        #     pg.pgpt(waspdata['vmag'] + imagCorrection,
+        #             np.log10(waspdata['binned']), 1)
 
     def plotNGTSData(self):
         '''
@@ -66,8 +65,8 @@ class App(object):
                 "NGTSData", "NGTSData.cpickle")
             ))
 
-        with pgh.change_colour(15):
-            pg.pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
+        # with pgh.change_colour(15):
+        #     pg.pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
 
     def saturationLimit(self):
         fits = cPickle.load(
@@ -78,12 +77,12 @@ class App(object):
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
         # Get the plot limits
-        with pgh.change_colour(15):
-            with pgh.change_linestyle(4):
-                pg.pgline(np.array([self.brightLimit, self.brightLimit]),
-                        np.array([self.plotLimits[2], self.plotLimits[3]]))
-            pg.pgline(np.array([self.darkLimit, self.darkLimit]),
-                    np.array([self.plotLimits[2], self.plotLimits[3]]))
+        # with pgh.change_colour(15):
+        #     with pgh.change_linestyle(4):
+        #         pg.pgline(np.array([self.brightLimit, self.brightLimit]),
+        #                 np.array([self.plotLimits[2], self.plotLimits[3]]))
+        #     pg.pgline(np.array([self.darkLimit, self.darkLimit]),
+        #             np.array([self.plotLimits[2], self.plotLimits[3]]))
 
 
 
@@ -118,75 +117,45 @@ class App(object):
             self.total.append(errob.totalError(airmass, self.exptime,
                 skypersecperpix))
 
-        self.source = np.log10(self.source)
-        self.sky = np.log10(self.sky)
-        self.read = np.log10(self.read)
-        self.scin = np.log10(self.scin)
-        self.total = np.log10(self.total)
-
-        with pgh.open_plot(self.args.device):
-            pg.pgenv(self.plotLimits[0], self.plotLimits[1],
-                    self.plotLimits[2], self.plotLimits[3],
-                    0, 20)
-
-            if self.args.plotwasp: self.plotWASPData()
-            if self.args.plotngts: self.plotNGTSData()
-
-            if self.args.satlimit: self.saturationLimit()
-
-            # Draw the 1mmag line
-            with pgh.change_linestyle(2), pgh.change_colour(15):
-                pg.pgline(np.array([self.mag.max(), self.mag.min()]),
-                        np.array([-3., -3.]))
-
-            # Plot a line at the point when the total error meets
-            # the 1mmag line
-            distFrom1mmag = np.abs(self.total + 3.)
-            ind = distFrom1mmag==distFrom1mmag.min()
-            self.crossPoint = self.mag[ind][0]
-            with pgh.change_colour(15), pgh.change_linestyle(2):
-                pg.pgline(np.array([self.crossPoint, self.crossPoint]),
-                        np.array([-6, -1])
-                        )
-
-            # Plot the theory lines
-            for colour, ydata in zip(
-                    [2, 4, 3, 5, 1],
-                    [self.source, self.sky, self.read, self.scin, self.total]):
-                with pgh.change_colour(colour):
-                    pg.pgline(self.mag, ydata)
+        self.source, self.sky, self.read, self.scin, self.total = [
+                np.array(d) for d in [self.source, self.sky, self.read, self.scin,
+                    self.total]]
 
 
-            # Write the labels
-            pg.pglab(r"I magnitude", "Fractional error", r"t\de\u: %.1f s, "
-                    "t\dI\u: %.1f hours, "
+        if self.args.plotwasp: self.plotWASPData()
+        if self.args.plotngts: self.plotNGTSData()
+
+        if self.args.satlimit: self.saturationLimit()
+
+
+        # Plot the theory lines
+        for (colour, ydata, label) in zip(
+                ['r', 'b', 'g', 'c', 'k'],
+                [self.source, self.sky, self.read, self.scin, self.total],
+                ['Source', 'Sky', 'Read', 'Scintillation', 'Total']
+                ):
+            plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
+
+        # Draw the 1mmag line
+        plt.axhline(1E-3, color='k', ls=':', zorder=-10)
+
+        # Plot a line at the point when the total error meets
+        # the 1mmag line
+        distFrom1mmag = np.abs(self.total - 1E-3)
+        ind = distFrom1mmag==distFrom1mmag.min()
+        self.crossPoint = self.mag[ind][0]
+        plt.axvline(self.crossPoint, color='k', ls=':', zorder=-10)
+
+        plt.xlabel(r'I magnitude')
+        plt.ylabel(r'Fractional error')
+        plt.title(r"$t_e$: %.1f s, "
+                    "$t_I$: %.1f hours, "
                     "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
                         self.crossPoint))
 
-            # Create the legend
-            pg.pgsvp(0.1, 0.4, 0.1, 0.3)
-            pg.pgswin(0., 1., 0., 1.)
-
-            # Have to talk about 5 lines
-            ybot = 0.1
-            ytop = 0.9
-            ydiff = ytop - ybot
-            nlines = 5
-            x0 = 0.1
-            x1 = 0.4
-            x2 = 0.5
-
-            titles = ('Total', 'Source', 'Sky', 'Read', 'Scintillation')
-            colours = (1, 2, 4, 3, 5)
-            yvals = (1. - (ybot + ydiff * i / (nlines - 1.))
-                    for i in xrange(nlines))
-
-            for y, colour, title in zip(yvals, colours, titles):
-                with pgh.change_colour(colour):
-                    pg.pgline(np.array([x0, x1]), np.ones(2) * y)
-                pg.pgtext(x2, y, title)
-
-
+        plt.legend(loc='best')
+        plt.yscale('log')
+        plt.show()
 
 
 if __name__ == '__main__':
