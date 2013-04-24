@@ -7,6 +7,7 @@ import pyximport; pyximport.install()
 import argparse
 from scipy.integrate import dblquad
 import Config as config
+import tables
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
