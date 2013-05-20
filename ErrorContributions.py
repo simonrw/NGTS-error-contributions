@@ -144,10 +144,8 @@ def main(args):
         outfile = tables.openFile(args.render, 'w')
 
 
-    ## Get the sky counts per pixel per second
-    #SkyPerSecPerPix = CorrectedSkyIn40Seconds / SkyExposure
-    if Moon.lower() == "bright": SkyPerSecPerPix = 160. # 50 for dark time, 160 for bright time
-    elif Moon.lower() == "dark": SkyPerSecPerPix = 50.
+    # Get the sky counts per pixel per second
+    SkyPerSecPerPix = config.SkyLevel[Moon.lower()]
     print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
 
     # Sky counts per second

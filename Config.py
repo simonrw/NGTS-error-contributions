@@ -26,3 +26,7 @@ TargetBinTime = 3600.
 FullWellDepth = 107E3
 FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
 PixScale = 4.97
+SkyLevel = {
+        'dark': 50.,
+        'bright': 450.,
+        }

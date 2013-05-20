@@ -101,9 +101,10 @@ class App(object):
         readnoise = ReadNoise
         zp = srw.ZP(1.)
 
-        if self.args.skylevel == "dark": skypersecperpix = 50.
-        elif self.args.skylevel == "bright": skypersecperpix = 160.
-        else: raise RuntimeError("Invalid sky type entered")
+        try:
+            skypersecperpix = SkyLevel[self.args.skylevel]
+        except KeyError:
+            raise RuntimeError("Invalid sky type entered")
 
 
         for mag in self.mag:
