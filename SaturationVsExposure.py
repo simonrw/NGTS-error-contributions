@@ -22,6 +22,7 @@ from jg.subs import progressbarClass
 import re
 import tempfile
 from functools import partial
+import tables
 
 def get_error_contrib(magnitude, skytype):
     tfile = tempfile.NamedTemporaryFile()
@@ -88,6 +89,11 @@ class App(object):
             #81.5, 121.43, 169.30, 236.03, 9.72, 7.45, 6.1,
             #])
         self.ydata, self.brightxdata, self.darkxdata = GetData()
+
+        with tables.openFile('saturation_vs_exposure.h5', 'w') as outfile:
+            outfile.createArray('/', 'mags', self.ydata)
+            outfile.createArray('/', 'dark', self.darkxdata)
+            outfile.createArray('/', 'bright', self.brightxdata)
 
         assert self.ydata.size == self.brightxdata.size
         assert self.ydata.size == self.darkxdata.size
