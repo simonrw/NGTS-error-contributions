@@ -69,13 +69,16 @@ class App(object):
         # with pgh.change_colour(15):
         #     pg.pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
 
-    def saturationLimit(self):
+    def saturationLimit(self, group):
         fits = cPickle.load(
                 open(os.path.join(self.fileDir,
                     "fits.cpickle"))
                 )
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
+
+        group._v_attrs.brightlimit = self.brightLimit
+        group._v_attrs.darklimit = self.darkLimit
 
         # Get the plot limits
         # with pgh.change_colour(15):
@@ -127,8 +130,10 @@ class App(object):
         if self.args.plotwasp: self.plotWASPData()
         if self.args.plotngts: self.plotNGTSData()
 
-        if self.args.satlimit: self.saturationLimit()
 
+        outfile = tables.openFile('noisemodel.h5', 'w')
+        group = outfile.createGroup('/', 'data', 'Data')
+        outfile.createArray(group, 'mag', self.mag)
 
         # Plot the theory lines
         for (colour, ydata, label) in zip(
@@ -137,6 +142,10 @@ class App(object):
                 ['Source', 'Sky', 'Read', 'Scintillation', 'Total']
                 ):
             plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
+
+            outfile.createArray(group, label.lower(), ydata)
+
+        if self.args.satlimit: self.saturationLimit(group)
 
         # Draw the 1mmag line
         plt.axhline(1E-3, color='k', ls=':', zorder=-10)
@@ -147,6 +156,8 @@ class App(object):
         ind = distFrom1mmag==distFrom1mmag.min()
         self.crossPoint = self.mag[ind][0]
         plt.axvline(self.crossPoint, color='k', ls=':', zorder=-10)
+
+        group._v_attrs.crosspoint = self.crossPoint
 
         plt.xlabel(r'I magnitude')
         plt.ylabel(r'Fractional error')
@@ -164,6 +175,10 @@ class App(object):
             print "CROSSPOINT {:.8f}".format(self.crossPoint)
             print "DARK {:.8f}".format(self.darkLimit)
             print "BRIGHT {:.8f}".format(self.brightLimit)
+
+        group._v_attrs.totaltime = targettime
+        group._v_attrs.exptime = self.exptime
+        outfile.close()
 
         if self.args.output:
             plt.savefig(self.args.output)
