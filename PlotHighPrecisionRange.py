@@ -25,6 +25,10 @@ def main(args):
 
     exptimes, crosspoints, darkpoints, brightpoints = cPickle.load(open(filename, 'rb'))
 
+    ind = exptimes >= 5
+    exptimes, crosspoints, darkpoints, brightpoints = [data[ind]
+            for data in [exptimes, crosspoints, darkpoints, brightpoints]]
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
@@ -33,7 +37,7 @@ def main(args):
 
     ax.fill_between(exptimes, crosspoints, darkpoints,
             color='0.9')
-    ax.plot(exptimes, brightpoints, 'k--')
+    ax.plot(exptimes, brightpoints, 'k:')
 
     # Invert the y axis
     ax.set_ylim(ax.get_ylim()[1], ax.get_ylim()[0])
@@ -43,6 +47,11 @@ def main(args):
     ax.set_title("High precision (>1mmag precision, not saturating)")
     ax.set_xscale('log')
     ax.xaxis.set_major_formatter(plt.ScalarFormatter())
+
+    ticks = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100]
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(ticks)
+    ax.set_xlim(0.9 * exptimes.min(), 1.1 * exptimes.max())
 
     if args.output:
         plt.savefig(args.output)
