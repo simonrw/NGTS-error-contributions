@@ -4,7 +4,7 @@
 '''
 How many stars are within the high precision
 range (with precision of <1mmag and not saturated)
-for varying exposure times, using both the 
+for varying exposure times, using both the
 Besancon model and real field data
 '''
 
@@ -28,7 +28,7 @@ def getStatsForExptime(time):
     and parses the results
     '''
     print "T: %.1f" % time
-    cmd = [dataScriptName, "-d", "/null", "-e", str(time), "-v"]
+    cmd = [dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
     p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     linestr, err = p.communicate()
     lines = linestr.split("\n")
@@ -39,7 +39,7 @@ def getStatsForExptime(time):
 class App(object):
     """Main application"""
 
-    # Script to run which provides the 
+    # Script to run which provides the
     # limits data
 
     # list of exposure times
@@ -48,7 +48,7 @@ class App(object):
 
     def __init__(self, args):
         """@todo: to be defined
-        
+
         @param args @todo
         """
 
@@ -60,13 +60,13 @@ class App(object):
             print "Exiting"
             exit()
 
-        
+
         self._args = args
         self.fig = plt.figure(figsize=(11, 8))
         self.ax = self.fig.add_subplot(111)
 
         self.pool = multiprocessing.Pool()
-    
+
 
 
 
@@ -96,7 +96,7 @@ class App(object):
 
 
 
-        
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-o", "--output", help="Save the figure",
