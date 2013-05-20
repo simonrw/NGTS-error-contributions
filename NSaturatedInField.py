@@ -106,6 +106,14 @@ class App(object):
 
         ax.xaxis.set_major_formatter(plt.ScalarFormatter())
         ax.set_xlim(xmax=3400)
+        ax.set_xlabel(r'Exposure time / s')
+
+        if self.args.fraction:
+            ax.set_ylabel(r'Saturated stars fraction')
+        else:
+            ax.set_ylabel(r'Saturated stars')
+
+
         plt.show()
 
 
