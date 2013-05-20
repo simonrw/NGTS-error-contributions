@@ -180,10 +180,9 @@ if __name__ == '__main__':
 
                 outfile.createArray('/', 'field{0:d}'.format(field), data)
 
-        parser['parser'].close()
-
-
             parser['parser'].close()
+
+
     profileAx.set_xlabel("Exposure time / s")
     profileAx.set_ylabel("Percentage of high precision stars / %")
 
