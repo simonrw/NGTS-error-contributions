@@ -41,6 +41,8 @@ def main(args):
     ax.set_xlabel("Exposure time / s")
     ax.set_ylabel("I magnitude")
     ax.set_title("High precision (>1mmag precision, not saturating)")
+    ax.set_xscale('log')
+    ax.xaxis.set_major_formatter(plt.ScalarFormatter())
 
     if args.output:
         plt.savefig(args.output)
