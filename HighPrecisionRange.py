@@ -28,7 +28,7 @@ def getStatsForExptime(time):
     and parses the results
     '''
     print "T: %.1f" % time
-    cmd = [dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
+    cmd = ['python', dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
     p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     linestr, err = p.communicate()
     lines = linestr.split("\n")
