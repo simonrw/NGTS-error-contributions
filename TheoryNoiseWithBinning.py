@@ -77,8 +77,12 @@ class App(object):
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
+
         group._v_attrs.brightlimit = self.brightLimit
         group._v_attrs.darklimit = self.darkLimit
+
+        plt.axvline(self.brightLimit, color='k', ls='-')
+        plt.axvline(self.darkLimit, color='k', ls='--')
 
         # Get the plot limits
         # with pgh.change_colour(15):
