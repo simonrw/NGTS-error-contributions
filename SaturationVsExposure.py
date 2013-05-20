@@ -95,7 +95,6 @@ class App(object):
         self.brightFit = np.poly1d(np.polyfit(self.brightxdata, self.ydata, 4))
         self.darkFit = np.poly1d(np.polyfit(self.darkxdata, self.ydata, 2))
 
-        pgopen(self.args.device)
 
     def __del__(self):
         '''
@@ -103,16 +102,6 @@ class App(object):
         is destroyed
         '''
         cPickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, open("fits.cpickle", "w"), protocol=2)
-        pgclos()
-
-    def plotLine(self, xdata, fit, colour=1):
-        '''
-        Utility function - plot a best fit line
-        '''
-        newxdata = np.linspace(xdata.min(), xdata.max(), 100)
-        pgsci(colour)
-        pgline(newxdata, fit(newxdata))
-        pgsci(1)
 
     def run(self):
         '''
