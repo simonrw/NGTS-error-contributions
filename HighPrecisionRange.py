@@ -10,7 +10,6 @@ Besancon model and real field data
 
 import subprocess as sp
 import os.path
-import matplotlib.pyplot as plt
 import numpy as np
 import multiprocessing
 import argparse
@@ -28,13 +27,16 @@ def getStatsForExptime(time):
     and parses the results
     '''
     print "T: %.1f" % time
-    cmd = [dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
+    cmd = ['python', dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
     p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     linestr, err = p.communicate()
     lines = linestr.split("\n")
+
     crosspoint = float(filter(lambda line: "CROSSPOINT" in line, lines)[0].split()[-1])
-    satpoint = float(filter(lambda line: "DARK" in line, lines)[0].split()[-1])
-    return crosspoint, satpoint
+    darkpoint = float(filter(lambda line: "DARK" in line, lines)[0].split()[-1])
+    brightpoint = float(filter(lambda line: 'BRIGHT' in line, lines)[0].split()[-1])
+
+    return crosspoint, darkpoint, brightpoint
 
 class App(object):
     """Main application"""
@@ -43,7 +45,7 @@ class App(object):
     # limits data
 
     # list of exposure times
-    _exptimes = np.arange(1, 200, 0.1)
+    _exptimes = 10 ** np.linspace(np.log10(1), np.log10(50), 20)
     #_exptimes = [1, 5, 10]
 
     def __init__(self, args):
@@ -62,8 +64,6 @@ class App(object):
 
 
         self._args = args
-        self.fig = plt.figure(figsize=(11, 8))
-        self.ax = self.fig.add_subplot(111)
 
         self.pool = multiprocessing.Pool()
 
@@ -71,11 +71,12 @@ class App(object):
 
 
     def run(self):
-        crosspoints, satpoints = zip(*self.pool.map(getStatsForExptime, self._exptimes))
+        crosspoints, darkpoints, brightpoints = zip(*map(getStatsForExptime, self._exptimes))
 
         self._exptimes = np.array(self._exptimes)
         self.crosspoints = np.array(crosspoints)
-        self.satpoints = np.array(satpoints)
+        self.darkpoints = np.array(darkpoints)
+        self.brightpoints = np.array(brightpoints)
 
         self.dumpData()
 
@@ -86,7 +87,8 @@ class App(object):
         '''
         Dump the data to a cpickle file
         '''
-        cPickle.dump(np.array([self._exptimes, self.crosspoints, self.satpoints]),
+        cPickle.dump(np.array([self._exptimes, self.crosspoints, self.darkpoints,
+            self.brightpoints]),
                 open("precisiondata.cpickle", "w"),
                 protocol=2)
 
@@ -99,8 +101,6 @@ class App(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output", help="Save the figure",
-            type=str, default=None, required=False)
     args = parser.parse_args()
     app = App(args)
     app.run()
