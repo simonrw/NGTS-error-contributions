@@ -43,7 +43,7 @@ class App(object):
     # limits data
 
     # list of exposure times
-    _exptimes = np.arange(1, 200, 0.1)
+    _exptimes = 10 ** np.linspace(np.log10(1), np.log10(50), 20)
     #_exptimes = [1, 5, 10]
 
     def __init__(self, args):
