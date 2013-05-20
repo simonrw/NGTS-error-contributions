@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 
 '''
 Calculate the distribution of fractions in the centre pixel for a psf of
