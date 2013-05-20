@@ -68,6 +68,8 @@ class App(object):
             pb.progress(counter+1)
             counter += 1
 
+        med_val = np.median(fractions)
+        med_val_err = np.std(fractions)
 
         # Log the fractions
         # Makes the plot easier to read
@@ -113,6 +115,10 @@ class App(object):
         ax.set_xticklabels(ticks)
 
         ax.axvline(MostProbable, color='k', ls=':', zorder=-10)
+
+        ax.axvline(med_val, color='g')
+        ax.axvline(med_val - med_val_err / 2., color='b')
+        ax.axvline(med_val + med_val_err / 2., color='b')
 
         plt.show()
 
