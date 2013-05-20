@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from ppgplot import *
 import sys
 import os.path
 import argparse
@@ -9,10 +8,6 @@ import cPickle
 from jg.ctx import j20002gal
 from subprocess import Popen, PIPE, call
 from Config import *
-
-
-
-
 
 class App(object):
     """
@@ -130,13 +125,13 @@ class App(object):
         for row in result.split("\n"):
             if "#" not in row:
                 try:
-                    # I band 
+                    # I band
                     if band == "R":
                         imagval = float(row[221:227])
                     elif band == "I":
                         imagval = float(row[211:217])
                     else: raise ValueError("Invalid band passed")
-                    # R band 
+                    # R band
                 except ValueError:
                     pass
                 else:
@@ -179,7 +174,7 @@ class App(object):
             pgsci(self.colours[i])
             pgsls(2)
             pgline(self.exptime, brightNumbers)
-            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]), 
+            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]),
                     np.array([self.legend[1] - ii * self.yspacing, self.legend[1] - ii * self.yspacing]))
             pgsci(1)
             pgtext(np.array([self.legend[0] + self.linelength + 0.05,]),
@@ -191,7 +186,7 @@ class App(object):
 
             pgsls(4)
             pgline(self.exptime, darkNumbers)
-            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]), 
+            pgline(np.array([self.legend[0], self.legend[0] + self.linelength]),
                     np.array([self.legend[1] - ii * self.yspacing, self.legend[1] - ii * self.yspacing]))
             pgsci(1)
             pgtext(np.array([self.legend[0] + self.linelength + 0.05,]),
@@ -219,7 +214,7 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser()
         parser.add_argument("-d", "--device", help="PGPLOT device",
                 default='1/xs', required=False)
-        parser.add_argument("-f", "--fraction", help="Plot as fraction", 
+        parser.add_argument("-f", "--fraction", help="Plot as fraction",
                 action="store_true", default=False)
         parser.add_argument("-b", "--band", help="Filter to use",
                 default="I", type=str, required=False)
