@@ -156,7 +156,16 @@ class App(object):
 
         plt.legend(loc='best')
         plt.yscale('log')
-        plt.show()
+
+        if self.args.verbose:
+            print "CROSSPOINT {:.8f}".format(self.crossPoint)
+            print "DARK {:.8f}".format(self.darkLimit)
+            print "BRIGHT {:.8f}".format(self.brightLimit)
+
+        if self.args.output:
+            plt.savefig(self.args.output)
+        else:
+            plt.show()
 
 
 if __name__ == '__main__':
@@ -173,14 +182,16 @@ if __name__ == '__main__':
                                 "or dark", choices=["bright", "dark"],
                                 type=lambda val: val.lower(),
                                 required=False, default="dark")
-            parser.add_argument("-d", "--device", help="PGPLOT device",
-                    required=False, default="/xs")
+            parser.add_argument('-o', '--output', help='Output device',
+                    required=False)
             parser.add_argument("-w", "--plotwasp", help="Overlay some WASP staring data",
                     action="store_true", default=False)
             parser.add_argument("-n", "--plotngts", help="Overlay some NGTS prototype data",
                     action="store_true", default=False)
             parser.add_argument("-S", "--satlimit", help="Do not plot saturation limit",
                     action="store_false", default=True)
+            parser.add_argument('-v', '--verbose', help='Verbose mode',
+                    required=False, action='store_true')
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
