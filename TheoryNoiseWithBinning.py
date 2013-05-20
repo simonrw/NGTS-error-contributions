@@ -11,6 +11,7 @@ import srw
 #import pyfits
 import AstErrors as ae
 import cPickle
+import tables
 from Config import *
 
 
@@ -149,13 +150,15 @@ class App(object):
 
         plt.xlabel(r'I magnitude')
         plt.ylabel(r'Fractional error')
-        plt.title(r"$t_e$: %.1f s, "
-                    "$t_I$: %.1f hours, "
-                    "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
-                        self.crossPoint))
+        if not args.notitle:
+            plt.title(r"$t_e$: %.1f s, "
+                        "$t_I$: %.1f hours, "
+                        "1mmag @ %.3f mag" % (self.exptime, targettime/3600.,
+                            self.crossPoint))
 
         plt.legend(loc='best')
         plt.yscale('log')
+        plt.xlim(*plt.xlim()[::-1])
 
         if self.args.verbose:
             print "CROSSPOINT {:.8f}".format(self.crossPoint)
@@ -192,6 +195,8 @@ if __name__ == '__main__':
                     action="store_false", default=True)
             parser.add_argument('-v', '--verbose', help='Verbose mode',
                     required=False, action='store_true')
+            parser.add_argument('-T', '--notitle', help='Do not plot the title',
+                    action='store_true')
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
