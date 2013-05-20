@@ -5,6 +5,7 @@ from Config import *
 import cPickle
 import sys
 import numpy as np
+import tables
 from scipy.interpolate import interp1d
 #from srw.NOMADParser import NOMADParser
 from NOMADFields import NOMADFieldsParser
@@ -156,29 +157,33 @@ if __name__ == '__main__':
     fig = plt.figure()
     profileAx = fig.add_subplot(111)
 
-    for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
-            #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
-        print parser['name']
-        for i, field in enumerate(fields):
-            print "\tField %d" % field
-            parser['parser'].setField(field)
+    with tables.openFile('out.h5', 'w') as outfile:
+        outfile.createArray('/', 'exptime', exptimes)
 
-            visibleMags[parser['name']] = parser['parser'].visible()
+        for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
+                #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
+            print parser['name']
+            for i, field in enumerate(fields):
+                print "\tField %d" % field
+                parser['parser'].setField(field)
 
-            if parser['name'] == "NOMAD":
-                ls = "-"
-            elif parser['name'] == "Besancon":
-                ls = "--"
+                visibleMags[parser['name']] = parser['parser'].visible()
 
-            profileAx.plot(exptimes, [parser['parser'].percentage(e) for e in exptimes], label="%s %d" % (parser['name'], field),
-                    color='k', ls=linestyles[i])
+                if parser['name'] == "NOMAD":
+                    ls = "-"
+                elif parser['name'] == "Besancon":
+                    ls = "--"
 
+                data = [parser['parser'].percentage(e) for e in exptimes]
+                profileAx.plot(exptimes, data, label="%s %d" % (parser['name'], field),
+                        color='k', ls=linestyles[i])
 
+                outfile.createArray('/', 'field{0:d}'.format(field), data)
 
         parser['parser'].close()
 
 
-    profileAx.legend(loc='best')
+            parser['parser'].close()
     profileAx.set_xlabel("Exposure time / s")
     profileAx.set_ylabel("Percentage of high precision stars / %")
 

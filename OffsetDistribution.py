@@ -14,7 +14,7 @@ from scipy.integrate import dblquad
 import numpy as np
 from Config import *
 import matplotlib.pyplot as plt
-
+import tables
 
 def Gaussian2D(y, x, fwhm, offset):
     sigma = fwhm / 2.35
@@ -119,6 +119,12 @@ class App(object):
         ax.axvline(med_val, color='g')
         ax.axvline(med_val - med_val_err / 2., color='b')
         ax.axvline(med_val + med_val_err / 2., color='b')
+
+        with tables.openFile('out.h5', 'w') as outfile:
+            outfile.createArray('/', 'x', 10 ** centres)
+            outfile.createArray('/', 'y', normalisedVals)
+            outfile.root._v_attrs.most_probable = med_val
+            outfile.root._v_attrs.sd = med_val_err
 
         plt.show()
 
