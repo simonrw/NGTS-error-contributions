@@ -23,7 +23,7 @@ def main(args):
             "precisiondata.cpickle"
             )
 
-    exptimes, crosspoints, satpoints = cPickle.load(open(filename, 'rb'))
+    exptimes, crosspoints, darkpoints, brightpoints = cPickle.load(open(filename, 'rb'))
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
