@@ -1,9 +1,127 @@
+<meta charset='utf-8'></meta>
+
+
 # README
 
-How are the noise contributions from NGTS data affected
-by exposure time?
+Here I break down what the scripts in this directory do. I may unite them with some form of interface script which is a huge waste of time but will make me feel better.
 
-The plan is to calculate the noise contributions (with some 
-assumptions) at every exposure time between 5s and 1 hour
-and bin them up to a timescale of 1-3 hours to see
-how they are affected.
+The scripts can roughly be broken down into a few categories
+
+* configuration
+* Noise model
+* Saturation estimation
+* Field numbers
+
+
+## Configuration 
+
+### Config.py 
+
+This is the settings file for any NGTS specific settings. This sets such things as the read time and sky background.
+
+
+### ConfigWASP.py 
+
+This is the same as `Config.py` but with WASP specific settings
+
+
+
+## Noise model 
+
+### ErrorContributions.py 
+
+This plots the noise model contributions for a given `Config`, by assuming an exposure time, calculating the noise contributions and binning up to a configurable total exposure (by default 3600 seconds, 1 hour).
+
+The main configurable parameter is the magnitude, allowing an exposure time vs fractional error plot to be created.
+
+    usage: ErrorContributions.py [-h] [-o Filename] -m magnitude
+                                 [-s {bright,dark}] [-z ZEROPOINT] [-r RENDER]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -o Filename, --output Filename
+                            Image filename
+      -m magnitude, --targetmag magnitude
+                            Target magnitude
+      -s {bright,dark}, --skylevel {bright,dark}
+                            Sky type (bright or dark
+      -z ZEROPOINT, --zeropoint ZEROPOINT
+                            Custom zero point
+      -r RENDER, --render RENDER
+                            Render tables file> 
+
+
+### TheoryNoiseWithBinning.py 
+
+(Also including `TheoryNoiseWithBinningWASP.py`)
+
+This script takes the other slice dimension through the magnitude/exposure time/fractional error cube from `ErrorContributions.py` and takes an exposure time from the user and plots the more normal fractional rms type plot with the noise model and contributions.
+
+
+    usage: TheoryNoiseWithBinning.py [-h] [-t TOTALTIME] -e EXPTIME
+                                     [-s {bright,dark}] [-d DEVICE] [-w] [-n] [-S]
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -t TOTALTIME, --totaltime TOTALTIME
+                            Total integration time
+      -e EXPTIME, --exptime EXPTIME
+                            Science exposure time
+      -s {bright,dark}, --skylevel {bright,dark}
+                            Sky type (bright or dark
+      -d DEVICE, --device DEVICE
+                            PGPLOT device
+      -w, --plotwasp        Overlay some WASP staring data
+      -n, --plotngts        Overlay some NGTS prototype data
+      -S, --satlimit        Do not plot saturation limit
+
+
+
+
+## Saturation estimation 
+
+### FractionVsCentre.py 
+
+Calculate the distribution of fractions in the centre pixel for a psf of given
+size as the psf is moved away from the centre pixel
+
+### OffsetDistribution.py 
+
+Monte-Carlo simulation using the techniques in `FractionVsCentre` to plot the distribution of central pixel flux fractions, to estimate a typical value used in the saturation estimation.
+
+### SaturationVsExposure.py 
+
+Using the noise model, calculate the saturation magnitudes as a function of science exposure time.
+
+
+
+
+
+
+## Field numbers 
+
+### HighPrecisionRange.py & PlotHighPrecisionRange.py 
+
+These calculate and plot (respectively) the high precision range, using data from `SaturationVsExposure` and the 1mmag point from `TheoryNoiseWithBinning` to produce the range at which an object is considered high precision but not saturated.
+
+### NHighPrecisionObjects.py 
+
+This script takes the high precision range from `HighPrecisionRange` and applies it to three fields using NOMAD data stored in the NOMADFields subdirectory. It plots the fraction of high precision objects in each field as a function of exposure time.
+
+### NSaturatedInField.py 
+
+Plots the number of saturated objects in the three fields used in this study. Dark and bright time are used.
+
+
+### NumberOfExposures.py 
+
+This calculates the number of exposures we require over a number of years for a given exposure time, and calculates the storage requirements.
+
+
+
+
+## Other 
+
+### BatchRun.py 
+
+This runs all scripts.
