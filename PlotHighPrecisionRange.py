@@ -9,6 +9,7 @@ by HighPrecisionRange.py
 
 import cPickle
 import os.path
+import tables
 import argparse
 import matplotlib.pyplot as plt
 
@@ -52,6 +53,13 @@ def main(args):
     ax.set_xticks(ticks)
     ax.set_xticklabels(ticks)
     ax.set_xlim(0.9 * exptimes.min(), 1.1 * exptimes.max())
+
+    with tables.openFile('highprecisionrange.h5', 'w') as outfile:
+        outfile.createArray('/', 'exptimes', exptimes)
+        outfile.createArray('/', 'crosspoints', crosspoints)
+        outfile.createArray('/', 'darklimits', darkpoints)
+        outfile.createArray('/', 'brightlimits', brightpoints)
+
 
     if args.output:
         plt.savefig(args.output)
