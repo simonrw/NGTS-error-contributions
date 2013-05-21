@@ -105,7 +105,7 @@ class App(object):
         targettime = self.args.totaltime
         height = 2400.
         apsize = 0.2
-        airmass = 1.
+        airmass = self.args.airmass
         readnoise = ReadNoise
         zp = srw.ZP(1.)
 
@@ -216,6 +216,8 @@ if __name__ == '__main__':
                     required=False, action='store_true')
             parser.add_argument('-T', '--notitle', help='Do not plot the title',
                     action='store_true')
+            parser.add_argument('-a', '--airmass', help='Airmass value',
+                    default=1.3, type=float, required=False)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
