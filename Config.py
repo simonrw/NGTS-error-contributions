@@ -4,8 +4,11 @@
 This file contains the initial assumptions
 passed throughout the analysis
 '''
+import logging
 from numpy import pi
 from AstErrors import NGTSDetector
+
+logging.basicConfig(level=logging.INFO)
 
 _detector = NGTSDetector()
 
