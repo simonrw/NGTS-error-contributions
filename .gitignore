@@ -13,3 +13,4 @@ writeup/NGTSErrors.out
 *.cpickle
 BesanconParser/BesanconDatabase.pytables
 writeup/WikiUpdate/wikiupdate
+*.h5
