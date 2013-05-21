@@ -9,12 +9,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import srw
 #import pyfits
+import logging
 import AstErrors as ae
 import cPickle
 import tables
 from Config import *
 
-
+logger = logging.getLogger('TheoryNoise')
 
 class App(object):
     '''
@@ -32,6 +33,7 @@ class App(object):
         super(App, self).__init__()
         self.args = args
         self.exptime = self.args.exptime
+        logger.info("Exposure time: {:f}".format(self.exptime))
 
         self.fileDir = os.path.dirname(__file__)
 
@@ -53,9 +55,6 @@ class App(object):
 
         # Convert I to V
         imagCorrection = 0.27
-        # with pgh.change_colour(15):
-        #     pg.pgpt(waspdata['vmag'] + imagCorrection,
-        #             np.log10(waspdata['binned']), 1)
 
     def plotNGTSData(self):
         '''
@@ -66,8 +65,6 @@ class App(object):
                 "NGTSData", "NGTSData.cpickle")
             ))
 
-        # with pgh.change_colour(15):
-        #     pg.pgpt(ngtsdata['mag'], np.log10(ngtsdata['sd']), 1)
 
     def saturationLimit(self, group):
         fits = cPickle.load(
@@ -83,15 +80,6 @@ class App(object):
 
         plt.axvline(self.brightLimit, color='k', ls='-')
         plt.axvline(self.darkLimit, color='k', ls='--')
-
-        # Get the plot limits
-        # with pgh.change_colour(15):
-        #     with pgh.change_linestyle(4):
-        #         pg.pgline(np.array([self.brightLimit, self.brightLimit]),
-        #                 np.array([self.plotLimits[2], self.plotLimits[3]]))
-        #     pg.pgline(np.array([self.darkLimit, self.darkLimit]),
-        #             np.array([self.plotLimits[2], self.plotLimits[3]]))
-
 
 
     def run(self):
@@ -109,8 +97,15 @@ class App(object):
         readnoise = ReadNoise
         zp = srw.ZP(1.)
 
+        logger.info('Airmass: {:f}'.format(airmass))
+        logger.info('Read noise: {:f}'.format(readnoise))
+        logger.info('Zero point: {:f}'.format(zp))
+        logger.info('Integrating for {:f} seconds'.format(targettime))
+
         try:
             skypersecperpix = SkyLevel[self.args.skylevel]
+            logger.info('Sky level: {:f} electrons per second per pixel'.format(
+                skypersecperpix))
         except KeyError:
             raise RuntimeError("Invalid sky type entered")
 
