@@ -107,7 +107,8 @@ class App(object):
         Destructor, dumps the data and closes the plot when the class
         is destroyed
         '''
-        cPickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, open("fits.cpickle", "w"), protocol=2)
+        cPickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, 
+                open(self.args.pickleout, "w"), protocol=2)
 
     def run(self):
         '''
@@ -143,8 +144,8 @@ class App(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--device", help="PGPLOT device",
-            default="1/xs", required=False)
+    parser.add_argument("-p", "--pickleout", help="Pickle output file name",
+            default="fits.cpickle", required=False)
     args = parser.parse_args()
     app = App(args)
     app.run()
