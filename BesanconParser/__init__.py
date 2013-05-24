@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import tables
-import os.path
+from srw.TablesParser import TablesParser
+import os
+import re
 
 SpecTypes = {
         1: "O",
@@ -26,60 +28,37 @@ SpecClass = {
         }
 
 
-class BesanconParser(object):
+class BesanconParser(TablesParser):
     '''
     Parser class for the Besancon
     data set
     '''
-    filename = os.path.join(
-            os.path.dirname(__file__),
-            "BesanconDatabase.pytables"
-            )
-
     def __init__(self):
         '''
         Create the database object and
         initialise
         '''
-        super(BesanconParser, self).__init__()
+        super(BesanconParser, self).__init__(os.path.join(
+            os.path.dirname(__file__),
+            "BesanconDatabase.h5")
+            )
 
-        # Try and find the data path
-        try:
-            self.tab = tables.openFile(self.filename, 'r')
-        except IOError:
-            self.filename = os.path.expanduser(
-                    os.path.join(
-                        '~', 'work', 'NGTS', 'GalaxyData',
-                        'BesanconDatabase.pytables'))
-            self.tab = tables.openFile(self.filename, 'r')
+    def get_coordinates(self, field_id):
+        table = self.getTable('/fields', 'field{:d}'.format(field_id))
+        header = table.attrs.header
+        line = header.split('\n')[8]
 
-
-    def close(self):
-        '''
-        Close the database object
-        '''
-        self.tab.close()
-
-    def getNode(self, path, nodename=None):
-        '''
-        Returns a node of the database
-        '''
-        if nodename:
-            return self.tab.getNode(path, nodename)
+        match = re.search(r'\(l\s*=\s*(?P<l>[0-9.]+);'
+        '\s*b\s*=\s*(?P<b>[-0-9.]+)'
+        '.*Solid angle\s+(?P<angle>[0-9.]+)', line)
+        if match:
+            return [float(match.group(key)) for key in ['l', 'b', 'angle']]
         else:
-            return self.tab.getNode(path)
+            raise RuntimeError("Cannot parse header information")
 
-    def getTable(self, path, tablename):
-        '''
-        Returns a table object
 
-        If the requested node is not a table then raise
-        an exception
-        '''
-        node = self.getNode(path, tablename)
 
-        if type(node) == tables.table.Table:
-            return node
-        else:
-            raise RuntimeError("Requested node is not a table")
+
+
+
 
