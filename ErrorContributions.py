@@ -269,22 +269,22 @@ def main(args):
         if i == 0:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
                     ls=line_styles[i], label="Source")
-            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'c-',
+            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
                     ls=line_styles[i], label="Read")
             ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
                     ls=line_styles[i], label="Sky")
-            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'g-',
+            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'c-',
                     ls=line_styles[i], label="Scintillation")
             ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
                     ls=line_styles[i], label="Total")
         else:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
                     ls=line_styles[i])
-            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'c-',
+            ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
                     ls=line_styles[i])
             ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
                     ls=line_styles[i])
-            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'g-',
+            ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'c-',
                     ls=line_styles[i])
             ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
                     ls=line_styles[i])
