@@ -89,26 +89,24 @@ def main():
             mags_giants = np.array([every['imagnitude'] for every in
                 catalogue_table.where('''(cl < 5) & (imagnitude > 0)''')])
 
-            for (dataset, colour) in zip([mags_giants, mags_dwarfs],
-                    ['0.8', 'k']):
 
-                # Plot the high precision objects
-                hp_exptime, high_precision = high_precision_objects(dataset, 
-                        exptimes)
-                ax_top.plot(hp_exptime, high_precision, 'k-', color=colour)
+            # Plot the high precision objects
+            hp_exptime, high_precision = high_precision_objects(mags_dwarfs, 
+                    exptimes)
+            ax_top.plot(hp_exptime, high_precision, 'k-', color='k')
 
-                # Plot the saturation points
-                dark, bright = saturated_objects(dataset, exptimes)
-                dark, bright = map(np.array, [dark, bright])
+            # Plot the saturation points
+            dark, bright = saturated_objects(mags_dwarfs, exptimes)
+            dark, bright = map(np.array, [dark, bright])
 
-                # Prevent the zeros being plotted
-                dark_ind = dark > 0
-                bright_ind = bright > 0
+            # Prevent the zeros being plotted
+            dark_ind = dark > 0
+            bright_ind = bright > 0
 
-                ax_bottom.plot(exptimes[dark_ind], dark[dark_ind], 'k-', 
-                        color=colour)
-                ax_bottom.plot(exptimes[bright_ind], bright[bright_ind], 'k:', 
-                        color=colour)
+            ax_bottom.plot(exptimes[dark_ind], dark[dark_ind], 'k-', 
+                    color='k')
+            ax_bottom.plot(exptimes[bright_ind], bright[bright_ind], 'k:', 
+                    color='k')
 
 
             # Calculate the shutter operations
