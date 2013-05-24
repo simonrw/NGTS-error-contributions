@@ -103,10 +103,8 @@ def main():
             dark_ind = dark > 0
             bright_ind = bright > 0
 
-            ax_bottom.plot(exptimes[dark_ind], dark[dark_ind], 'k-', 
-                    color='k')
-            ax_bottom.plot(exptimes[bright_ind], bright[bright_ind], 'k:', 
-                    color='k')
+            ax_bottom.plot(exptimes[dark_ind], dark[dark_ind], 'k-')
+            ax_bottom.plot(exptimes[bright_ind], bright[bright_ind], 'k--')
 
 
             # Calculate the shutter operations
@@ -133,6 +131,9 @@ def main():
     ax_bottom.set_xlim(5, 50)
     ax_bottom.set_xlabel(r'Exposure time / s')
     ax_bottom.set_ylim(ymax=100)
+
+    # Set the grid on the top plot
+    ax_top.grid()
     plt.tight_layout()
 
 
