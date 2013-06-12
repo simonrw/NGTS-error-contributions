@@ -35,7 +35,8 @@ def main(args):
 
     ax.set_xscale('log')
 
-    ax.set_ylim(*ax.get_ylim()[::-1])
+    ax.set_ylim(15, 8)
+    # ax.set_ylim(*ax.get_ylim()[::-1])
 
     ticks = [1, 2, 5, 10, 20, 50]
     for method in ['set_xticks', 'set_xticklabels']:
@@ -47,6 +48,7 @@ def main(args):
     ax.set_ylabel(r'I magnitude saturation point')
 
     ax.legend(loc='best')
+    ax.set_title(args['<file>'])
     plt.show()
 
 
