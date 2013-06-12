@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+Usage:
+    ExptimeOptimisation.py [options]
+
+Options:
+    -e, --exptime_fits <fits>       Exposure time fit file
+    -h, --hprange <hprange>         High precision range file
+
+
+'''
+
 import sys
 import os
 from BesanconParser import BesanconParser
