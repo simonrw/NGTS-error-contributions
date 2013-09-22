@@ -3,7 +3,12 @@
 
 '''
 Usage:
-    ExptimeOptimisation.py --exp_fits <fits> --hprange <hprange>
+    ExptimeOptimisation.py [options] --exp_fits <fits> --hprange <hprange>
+
+Options:
+    -h, --help                  Show this help
+    -o, --output <output>       Output filename
+    -t, --title <title>         Plot title
 '''
 
 import sys
@@ -147,10 +152,18 @@ class Application(object):
 
         # Set the grid on the top plot
         ax_top.grid()
+
+        if args['--title']:
+            ax_top.set_title(args['--title'])
+
+
         plt.tight_layout()
 
 
-        plt.show()
+        if self.args['--output']:
+            plt.savefig(args['--output'], bbox_inches='tight')
+        else:
+            plt.show()
 
 if __name__ == '__main__':
     args = docopt(__doc__)
