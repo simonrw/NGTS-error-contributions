@@ -179,6 +179,7 @@ class App(object):
         group._v_attrs.exptime = self.exptime
         outfile.close()
 
+        plt.grid(True, which='both')
         if self.args.output:
             plt.savefig(self.args.output)
         else:
