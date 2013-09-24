@@ -14,3 +14,4 @@ writeup/NGTSErrors.out
 BesanconParser/BesanconDatabase.pytables
 writeup/WikiUpdate/wikiupdate
 *.h5
+*.csv
