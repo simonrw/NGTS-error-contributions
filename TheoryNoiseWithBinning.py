@@ -111,6 +111,7 @@ class App(object):
             raise RuntimeError("Invalid sky type entered")
 
 
+        dark_level = self.args.darklevel
         for mag in self.mag:
             errob = ae.ErrorContribution(mag, npix, detector.readTime(),
                     extinction, targettime, height, apsize, zp, readnoise)
@@ -119,9 +120,9 @@ class App(object):
                 skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
             self.scin.append(errob.scintillationError(airmass, self.exptime))
-            self.dark.append(errob.darkError(airmass, self.exptime))
+            self.dark.append(errob.darkError(airmass, self.exptime, dark_level))
             self.total.append(errob.totalError(airmass, self.exptime,
-                skypersecperpix))
+                skypersecperpix, dark_level))
 
         self.source, self.sky, self.read, self.scin, self.total, self.dark = [
                 np.array(d) for d in [self.source, self.sky, self.read, self.scin,
@@ -216,6 +217,8 @@ if __name__ == '__main__':
                     action='store_true')
             parser.add_argument('-a', '--airmass', help='Airmass value',
                     default=1.3, type=float, required=False)
+            parser.add_argument('-d', '--darklevel', help='Level of dark current (e- per second)',
+                    default=0.6, type=float, required=False)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
