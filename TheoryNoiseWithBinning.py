@@ -26,6 +26,7 @@ class App(object):
     read = []
     scin = []
     total = []
+    dark = []
     def __init__(self, args):
         '''
         Constructor
@@ -118,12 +119,13 @@ class App(object):
                 skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
             self.scin.append(errob.scintillationError(airmass, self.exptime))
+            self.dark.append(errob.darkError(airmass, self.exptime))
             self.total.append(errob.totalError(airmass, self.exptime,
                 skypersecperpix))
 
-        self.source, self.sky, self.read, self.scin, self.total = [
+        self.source, self.sky, self.read, self.scin, self.total, self.dark = [
                 np.array(d) for d in [self.source, self.sky, self.read, self.scin,
-                    self.total]]
+                    self.total, self.dark]]
 
 
         if self.args.plotwasp: self.plotWASPData()
@@ -136,9 +138,9 @@ class App(object):
 
         # Plot the theory lines
         for (colour, ydata, label) in zip(
-                ['r', 'b', 'g', 'c', 'k'],
-                [self.source, self.sky, self.read, self.scin, self.total],
-                ['Source', 'Sky', 'Read', 'Scintillation', 'Total']
+                ['r', 'b', 'g', 'c', 'm', 'k'],
+                [self.source, self.sky, self.read, self.scin, self.total, self.dark],
+                ['Source', 'Sky', 'Read', 'Scintillation', 'Total', 'Dark']
                 ):
             plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
 
