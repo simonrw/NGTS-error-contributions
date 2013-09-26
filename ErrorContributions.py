@@ -190,6 +190,15 @@ def main(args):
         SourceError = sqrt(BinnedSourceCounts)
 
         ###############################################################################
+        #                               Dark  Error
+        ###############################################################################
+
+        # Error comes from the dark current
+        DarkCurrent = args.dark * config.Area * expTime * nExposures
+        DarkCurrentError = sqrt(DarkCurrent)
+
+
+        ###############################################################################
         #                               Read Noise Error
         ###############################################################################
 
@@ -231,7 +240,8 @@ def main(args):
         #                               Total Error
         ###############################################################################
 
-        TotalError = sqrt(SourceError**2 + ReadNoiseError**2 + SkyError**2 + ScintillationError**2)
+        TotalError = sqrt(SourceError**2 + ReadNoiseError**2 + SkyError**2 + ScintillationError**2
+                + DarkCurrentError ** 2)
 
 
         ###############################################################################
@@ -269,6 +279,8 @@ def main(args):
         if i == 0:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
                     ls=line_styles[i], label="Source")
+            ax.plot(expTime, DarkCurrentError / BinnedSourceCounts, 'm-',
+                    ls=line_styles[i], label='Dark')
             ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
                     ls=line_styles[i], label="Read")
             ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
@@ -279,6 +291,8 @@ def main(args):
                     ls=line_styles[i], label="Total")
         else:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
+                    ls=line_styles[i])
+            ax.plot(expTime, DarkCurrentError / BinnedSourceCounts, 'm-',
                     ls=line_styles[i])
             ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
                     ls=line_styles[i])
@@ -360,6 +374,8 @@ if __name__ == '__main__':
                             required=False, default=None)
         parser.add_argument('-r', '--render', help='Render tables file',
                             type=str, required=False)
+        parser.add_argument('-d', '--dark', help='Dark current',
+                type=float, required=False, default=6)
         args = parser.parse_args()
 
 
