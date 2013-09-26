@@ -14,8 +14,42 @@ import AstErrors as ae
 import cPickle
 import tables
 from Config import *
+import csv
 
 logger = logging.getLogger('TheoryNoise')
+
+class FileRender(object):
+    def __init__(self, out_filename):
+        self.filename = out_filename
+        self.datasets = {}
+
+    def add_dataset(self, name, values):
+        self.datasets[name.lower()] = values
+
+    def render(self):
+        keys = self.datasets.keys()
+        values = zip(*self.datasets.values())
+        with open(self.filename, 'w') as outfile:
+            writer = csv.DictWriter(outfile, keys)
+            writer.writeheader()
+            for row in values:
+                dict = {k: v for (k, v) in zip(keys, row)}
+                writer.writerow(dict)
+
+
+class NullFileRender(object):
+    '''
+    Allows matplotlib calls on the axis without it existing
+    '''
+    def __getattr__(self, name):
+        '''
+        Like Ruby's `method_missing`
+        '''
+        def fn(*args, **kwargs):
+            pass
+
+        return fn
+
 
 class App(object):
     '''
@@ -132,22 +166,28 @@ class App(object):
         if self.args.plotwasp: self.plotWASPData()
         if self.args.plotngts: self.plotNGTSData()
 
+        if args.render:
+            fr = FileRender(args.render)
+        else:
+            fr = NullFileRender()
 
         outfile = tables.openFile('noisemodel.h5', 'w')
         group = outfile.createGroup('/', 'data', 'Data')
         outfile.createArray(group, 'mag', self.mag)
 
         # Plot the theory lines
+        fr.add_dataset('Magnitude', self.mag)
         for (colour, ydata, label) in zip(
                 ['r', 'b', 'g', 'c', 'm', 'k'],
                 [self.source, self.sky, self.read, self.scin, self.total, self.dark],
                 ['Source', 'Sky', 'Read', 'Scintillation', 'Total', 'Dark']
                 ):
             plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
+            fr.add_dataset(label, ydata)
 
             outfile.createArray(group, label.lower(), ydata)
-
         if self.args.satlimit: self.saturationLimit(group)
+        fr.render()
 
         # Draw the 1mmag line
         plt.axhline(1E-3, color='k', ls=':', zorder=-10)
@@ -219,6 +259,8 @@ if __name__ == '__main__':
                     default=1.3, type=float, required=False)
             parser.add_argument('-d', '--darklevel', help='Level of dark current (e- per second)',
                     default=0.6, type=float, required=False)
+            parser.add_argument('-r', '--render', help="Render data to a csv file",
+                    required=False)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
