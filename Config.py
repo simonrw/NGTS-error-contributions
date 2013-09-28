@@ -31,5 +31,5 @@ FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
 PixScale = 4.97
 SkyLevel = {
         'dark': 50.,
-        'bright': 450.,
+        'bright': 550.,
         }
