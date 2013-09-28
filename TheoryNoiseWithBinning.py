@@ -263,8 +263,6 @@ if __name__ == '__main__':
                     default=0.6, type=float, required=False)
             parser.add_argument('-r', '--render', help="Render data to a csv file",
                     required=False)
-            parser.add_argument('-d', '--darklevel', help='Level of dark current (e- per second)',
-                    default=0.6, type=float, required=False)
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
