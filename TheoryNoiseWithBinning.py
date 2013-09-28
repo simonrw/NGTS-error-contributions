@@ -121,7 +121,7 @@ class App(object):
         '''
         Main function
         '''
-        radius = 1.5  # Radius of flux extraction aperture
+        radius = 2.5  # Radius of flux extraction aperture
         npix = np.pi * radius ** 2
         detector = ae.NGTSDetector()
         extinction = 0.06
@@ -130,7 +130,8 @@ class App(object):
         apsize = 0.2
         airmass = self.args.airmass
         readnoise = ReadNoise
-        zp = srw.ZP(1.)
+        # zp = srw.ZP(1.)
+        zp = 20.6795
 
         logger.info('Airmass: {:f}'.format(airmass))
         logger.info('Read noise: {:f}'.format(readnoise))
