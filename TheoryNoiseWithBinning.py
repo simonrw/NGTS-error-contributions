@@ -212,8 +212,8 @@ class App(object):
 
         plt.legend(loc='best')
         plt.yscale('log')
-        plt.xlim(18, 8)
-        plt.ylim(ymin=1E-4)
+        plt.xlim(18, 6)
+        plt.ylim(ymin=1E-5)
 
         if self.args.verbose:
             print "CROSSPOINT {:.8f}".format(self.crossPoint)
