@@ -360,6 +360,9 @@ def main(args):
     ax.set_xscale('log')
     ax.set_yscale('log')
 
+    if args.ylim:
+        ax.set_ylim(*args.ylim)
+
     if args.output:
         plt.savefig(args.output, bbox_inches='tight')
     else:
@@ -392,6 +395,8 @@ if __name__ == '__main__':
                 type=float, required=False, default=6)
         parser.add_argument('-a', '--airmasses', help='List of airmasses to use',
                 type=float, required=False, nargs='*', default=[1., 2.])
+        parser.add_argument('--ylim', help='Y plot limits', type=float,
+                required=False, default=None, nargs=2)
         args = parser.parse_args()
 
 
