@@ -274,34 +274,48 @@ def main(args):
         ###############################################################################
         #                               Plotting
         ###############################################################################
+        colours = {
+                'source': 'r',
+                'dark': 'k',
+                'read': 'g',
+                'sky': 'b',
+                'scin': 'c',
+                'total': 'm',
+                }
 
         # add the data lines
         if i == 0:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
-                    ls=line_styles[i], label="Source")
-            ax.plot(expTime, DarkCurrentError / BinnedSourceCounts, 'm-',
-                    ls=line_styles[i], label='Dark')
+                    ls=line_styles[i], label="Source", 
+                    color=colours['source'])
+            ax.plot(expTime, DarkCurrentError / BinnedSourceCounts, 'k-',
+                    ls=line_styles[i], label='Dark', 
+                    color=colours['dark'])
             ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
-                    ls=line_styles[i], label="Read")
+                    ls=line_styles[i], label="Read", 
+                    color=colours['read'])
             ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
-                    ls=line_styles[i], label="Sky")
+                    ls=line_styles[i], label="Sky", 
+                    color=colours['sky'])
             ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'c-',
-                    ls=line_styles[i], label="Scintillation")
+                    ls=line_styles[i], label="Scintillation", 
+                    color=colours['scin'])
             ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
-                    ls=line_styles[i], label="Total")
+                    ls=line_styles[i], label="Total", 
+                    color=colours['total'])
         else:
             ax.plot(expTime, SourceError / BinnedSourceCounts, 'r-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['source'])
             ax.plot(expTime, DarkCurrentError / BinnedSourceCounts, 'm-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['dark'])
             ax.plot(expTime, ReadNoiseError / BinnedSourceCounts, 'g-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['read'])
             ax.plot(expTime, SkyError / BinnedSourceCounts, 'b-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['sky'])
             ax.plot(expTime, ScintillationError / BinnedSourceCounts, 'c-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['scin'])
             ax.plot(expTime, TotalError / BinnedSourceCounts, 'k-',
-                    ls=line_styles[i])
+                    ls=line_styles[i], color=colours['total'])
 
         ###############################################################################
         #                               Rendering
