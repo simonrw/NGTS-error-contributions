@@ -363,6 +363,8 @@ def main(args):
     if args.ylim:
         ax.set_ylim(*args.ylim)
 
+    ax.xaxis.set_major_formatter(plt.ScalarFormatter())
+
     if args.output:
         plt.savefig(args.output, bbox_inches='tight')
     else:
