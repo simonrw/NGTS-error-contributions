@@ -28,7 +28,6 @@ colours = {
 
 # Read noise electrons have to be added in quadrature
 ReadNoisePerAperture = config.ReadNoise * sqrt(config.Area) # electrons
-AirmassOptions = [1., 2.]
 Extinction = 0.06 # magnitudes per airmass
 
 r'''
@@ -98,6 +97,7 @@ def Scintillation(t, Airmass):
 
 def main(args):
     Moon = args.skylevel  # options are bright or dark
+    AirmassOptions = args.airmasses
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -376,6 +376,8 @@ if __name__ == '__main__':
                             type=str, required=False)
         parser.add_argument('-d', '--dark', help='Dark current',
                 type=float, required=False, default=6)
+        parser.add_argument('-a', '--airmasses', help='List of airmasses to use',
+                type=float, required=False, nargs='*', default=[1., 2.])
         args = parser.parse_args()
 
 
