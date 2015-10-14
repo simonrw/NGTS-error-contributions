@@ -7,7 +7,6 @@ import argparse
 #from subprocess import Popen, call, PIPE, STDOUT
 import matplotlib.pyplot as plt
 import numpy as np
-import srw
 #import pyfits
 import logging
 import AstErrors as ae
@@ -131,7 +130,7 @@ class App(object):
         airmass = self.args.airmass
         readnoise = ReadNoise
         # zp = srw.ZP(1.)
-        zp = 20.6795
+        zp = 21.1
 
         logger.info('Airmass: {:f}'.format(airmass))
         logger.info('Read noise: {:f}'.format(readnoise))
