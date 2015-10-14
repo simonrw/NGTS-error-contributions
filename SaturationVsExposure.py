@@ -18,7 +18,7 @@ import numpy as np
 import os.path
 import cPickle
 import subprocess
-from jg.subs import progressbarClass
+import progressbar
 import re
 import tempfile
 from functools import partial
@@ -45,19 +45,19 @@ def GetData():
     MagRange = (8.25, 13, 0.25)
     mags = np.arange(*MagRange)
     brighttimes, darktimes = [], []
-    pb = progressbarClass(2. * mags.size)
+    pb = progressbar.ProgressBar(2. * mags.size).start()
     counter = 1
     for mag in mags:
         result = get_bright_contrib(mag)
         brighttimes.append(result)
-        pb.progress(counter)
+        pb.update(counter)
         counter += 1
 
     for mag in mags:
         result = get_dark_contrib(mag)
         darktimes.append(result)
 
-        pb.progress(counter)
+        pb.update(counter)
         counter += 1
 
     return mags, np.log10(brighttimes), np.log10(darktimes)
