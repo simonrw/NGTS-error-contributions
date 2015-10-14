@@ -120,7 +120,7 @@ class App(object):
         '''
         Main function
         '''
-        radius = 2.5  # Radius of flux extraction aperture
+        radius = 3. # Radius of flux extraction aperture
         npix = np.pi * radius ** 2
         detector = ae.NGTSDetector()
         extinction = 0.06
