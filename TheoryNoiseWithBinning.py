@@ -14,6 +14,7 @@ import pickle
 import tables
 from Config import *
 import csv
+from fits import Fits
 
 logger = logging.getLogger('TheoryNoise')
 
@@ -101,10 +102,7 @@ class App(object):
 
 
     def saturationLimit(self, group):
-        fits = pickle.load(
-                open(os.path.join(self.fileDir,
-                    "fits.cpickle"))
-                )
+        fits = Fits()
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 

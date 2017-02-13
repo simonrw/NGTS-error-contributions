@@ -10,6 +10,7 @@ from subprocess import Popen, PIPE, call
 from Config import *
 import matplotlib.pyplot as plt
 from NOMADFields import NOMADFieldsParser
+from fits import Fits
 
 class App(object):
     """
@@ -52,7 +53,7 @@ class App(object):
         self.exptime = np.linspace(np.log10(5.), np.log10(3600.), 100)
 
         # load the fits
-        fits = pickle.load(open("fits.cpickle"))
+        fits = Fits()
         self.brightFit = fits['bright']
         self.darkFit = fits['dark']
 

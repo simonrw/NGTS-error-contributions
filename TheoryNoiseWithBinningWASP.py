@@ -16,6 +16,7 @@ import AstErrors as ae
 import pickle
 from srw import pghelpers as pgh
 from ConfigWASP import *
+from fits import Fits
 
 COLOURS = {'sky': 4, 'source': 2, 'scin': 5, 'total': 1, 'read': 3}
 
@@ -75,10 +76,7 @@ class App(object):
         pgsci(1)
 
     def saturationLimit(self):
-        fits = pickle.load(
-                open(os.path.join(self.fileDir,
-                    "fits.cpickle"))
-                )
+        fits = Fits()
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
