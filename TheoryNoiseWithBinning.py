@@ -10,7 +10,7 @@ import numpy as np
 #import pyfits
 import logging
 import AstErrors as ae
-import cPickle
+import pickle
 import tables
 from Config import *
 import csv
@@ -26,8 +26,8 @@ class FileRender(object):
         self.datasets[name.lower()] = values
 
     def render(self):
-        keys = self.datasets.keys()
-        values = zip(*self.datasets.values())
+        keys = list(self.datasets.keys())
+        values = list(zip(*list(self.datasets.values())))
         with open(self.filename, 'w') as outfile:
             writer = csv.DictWriter(outfile, keys)
             writer.writeheader()
@@ -82,7 +82,7 @@ class App(object):
         '''
         Overlays the wasp data from Joao
         '''
-        waspdata = cPickle.load(open(
+        waspdata = pickle.load(open(
             os.path.join(self.fileDir,
             "JoaoData", "data.cpickle")
             ))
@@ -94,14 +94,14 @@ class App(object):
         '''
         Overlays the NGTS data
         '''
-        ngtsdata = cPickle.load(open(
+        ngtsdata = pickle.load(open(
             os.path.join(self.fileDir,
                 "NGTSData", "NGTSData.cpickle")
             ))
 
 
     def saturationLimit(self, group):
-        fits = cPickle.load(
+        fits = pickle.load(
                 open(os.path.join(self.fileDir,
                     "fits.cpickle"))
                 )
@@ -215,9 +215,9 @@ class App(object):
         plt.ylim(ymin=1E-5)
 
         if self.args.verbose:
-            print "CROSSPOINT {:.8f}".format(self.crossPoint)
-            print "DARK {:.8f}".format(self.darkLimit)
-            print "BRIGHT {:.8f}".format(self.brightLimit)
+            print("CROSSPOINT {:.8f}".format(self.crossPoint))
+            print("DARK {:.8f}".format(self.darkLimit))
+            print("BRIGHT {:.8f}".format(self.brightLimit))
 
         group._v_attrs.totaltime = targettime
         group._v_attrs.exptime = self.exptime
@@ -265,5 +265,5 @@ if __name__ == '__main__':
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
-            print >> sys.stderr, "Interrupt caught, exiting..."
+            print("Interrupt caught, exiting...", file=sys.stderr)
             sys.exit(0)

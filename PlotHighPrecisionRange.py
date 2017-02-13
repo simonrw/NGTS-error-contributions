@@ -7,7 +7,7 @@ This script plots the data generated
 by HighPrecisionRange.py
 '''
 
-import cPickle
+import pickle
 import os.path
 import tables
 import argparse
@@ -24,7 +24,7 @@ def main(args):
             "precisiondata.cpickle"
             )
 
-    exptimes, crosspoints, darkpoints, brightpoints = cPickle.load(open(filename, 'rb'))
+    exptimes, crosspoints, darkpoints, brightpoints = pickle.load(open(filename, 'rb'))
 
     ind = exptimes >= 5
     exptimes, crosspoints, darkpoints, brightpoints = [data[ind]

@@ -16,7 +16,7 @@ class PlotClass(object):
 
     def _validateLine(self, line):
         valid = True
-        linekeys = line.keys()
+        linekeys = list(line.keys())
         for key in self._reqKeys:
             valid &= (key in linekeys)
 

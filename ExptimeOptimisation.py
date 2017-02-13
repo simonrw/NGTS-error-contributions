@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from contextlib import contextmanager
 from functools import partial
-import cPickle
+import pickle
 import tables
 from scipy.interpolate import interp1d
 from docopt import docopt
@@ -43,7 +43,7 @@ class Application(object):
 
     def saturated_objects(self, mags, exptime):
         with open(os.path.join(BASE_DIR, self.args['<fits>'])) as infile:
-            data = cPickle.load(infile)
+            data = pickle.load(infile)
 
         dark_fit = data['dark']
         bright_fit = data['bright']
@@ -77,7 +77,7 @@ class Application(object):
                 out_x.append(e)
                 out_y.append(mags[ind].size)
 
-        return map(np.array, [out_x, out_y])
+        return list(map(np.array, [out_x, out_y]))
 
 
     def get_shutter_ops(self, exptimes, readout=1.5):
@@ -96,7 +96,7 @@ class Application(object):
 
         exptimes = 10 ** np.linspace(np.log10(5), np.log10(50), 100)
         with besancon_parser() as parser:
-            for i in xrange(1, 4):
+            for i in range(1, 4):
                 # Magnitude data
                 catalogue_table = parser.getTable('/fields', 'field{:d}'.format(i))
 
@@ -115,7 +115,7 @@ class Application(object):
 
                 # Plot the saturation points
                 dark, bright = self.saturated_objects(mags_dwarfs, exptimes)
-                dark, bright = map(np.array, [dark, bright])
+                dark, bright = list(map(np.array, [dark, bright]))
 
                 # Prevent the zeros being plotted
                 dark_ind = dark > 0

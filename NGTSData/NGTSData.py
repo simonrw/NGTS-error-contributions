@@ -11,7 +11,7 @@ import numpy as np
 import srw
 import pyfits
 #from ppgplot import *
-import cPickle
+import pickle
 
 
 class App(object):
@@ -36,7 +36,7 @@ class App(object):
             try:
                 self.exptime = float(header['exptime'])
             except KeyError:
-                print "Cannot read exposure time, assuming 30 seconds"
+                print("Cannot read exposure time, assuming 30 seconds")
                 self.exptime = 30
 
         self.run()
@@ -74,7 +74,7 @@ class App(object):
         mag = srw.ZP(self.exptime) - 2.5 * np.log10(wav)
 
         with open("NGTSData.cpickle", 'w') as pickle_file:
-            cPickle.dump({'mag': mag, 'sd': sd / wav}, pickle_file,
+            pickle.dump({'mag': mag, 'sd': sd / wav}, pickle_file,
                     protocol=2)
 
 
@@ -86,5 +86,5 @@ if __name__ == '__main__':
         args = parser.parse_args()
         app = App(args)
     except KeyboardInterrupt:
-        print >> sys.stderr, "Interrupt caught, exiting..."
+        print("Interrupt caught, exiting...", file=sys.stderr)
         sys.exit(0)

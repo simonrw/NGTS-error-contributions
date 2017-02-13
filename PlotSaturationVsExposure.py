@@ -14,12 +14,12 @@ Options:
 
 import matplotlib.pyplot as plt
 import numpy as np
-import cPickle
+import pickle
 from docopt import docopt
 
 def main(args):
     with open(args['<file>']) as infile:
-        data = cPickle.load(infile)
+        data = pickle.load(infile)
 
     bright_fit = data['bright']
     dark_fit = data['dark']

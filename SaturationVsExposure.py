@@ -16,7 +16,7 @@ on disk for usage later.
 import argparse
 import numpy as np
 import os.path
-import cPickle
+import pickle
 import subprocess
 import progressbar
 import re
@@ -107,7 +107,7 @@ class App(object):
         Destructor, dumps the data and closes the plot when the class
         is destroyed
         '''
-        cPickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, 
+        pickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, 
                 open(self.args.pickleout, "w"), protocol=2)
 
     def run(self):

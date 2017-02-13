@@ -12,7 +12,7 @@ import ppgplot as pg
 from BesanconParser import BesanconParser
 from srw import cumulative_hist
 import argparse
-import cPickle
+import pickle
 import os
 from scipy.interpolate import interp1d
 from NOMADFields import NOMADFieldsParser
@@ -36,7 +36,7 @@ def open_nparser():
 def get_nomad_mag_data():
     with open_nparser() as nparse:
         nodes = [nparse.getTable('/fields', 'field{:d}'.format(i))
-                for i in xrange(1, 4)]
+                for i in range(1, 4)]
         all_vmags = []
         for node in nodes:
             all_vmags.extend([row['vmagnitude'] for row in
@@ -53,7 +53,7 @@ def get_besancon_mag_data():
         selection_cut = '''((typ == 4) | (typ == 5) | (typ == 6) | (typ == 7)) & (cl == 5) & (imagnitude + vmi < 15) & (imagnitude + vmi > 7)'''
         #selection_cut = 'cl != 0'
         nodes = [bp.getTable('/fields', 'field{:d}'.format(i))
-                for i in xrange(1, 4)]
+                for i in range(1, 4)]
 
         all_vmags = []
         for node in nodes:
@@ -69,7 +69,7 @@ def get_besancon_mag_data():
 def main(args):
     with open(os.path.join(os.path.dirname(__file__),
         'precisiondata.cpickle')) as filedata:
-        exptimes, crosspoints, satpoints = cPickle.load(filedata)
+        exptimes, crosspoints, satpoints = pickle.load(filedata)
 
     x_range = [9, 14]
 
@@ -104,7 +104,7 @@ def main(args):
 
             selected = all_vmags[(all_vmags > satpoint) & (all_vmags <=
                 crosspoint)]
-            print exptime, len(selected)
+            print(exptime, len(selected))
 
 
             xdata, ydata = cumulative_hist(np.array(selected),

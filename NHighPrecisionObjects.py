@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 from Config import *
-import cPickle
+import pickle
 import sys
 import numpy as np
 import tables
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import BesanconParser
 
 
-exptimes, crosspoints, satpoints = cPickle.load(open("precisiondata.cpickle"))
+exptimes, crosspoints, satpoints = pickle.load(open("precisiondata.cpickle"))
 
 interpcross = interp1d(exptimes, crosspoints, kind='linear')
 interpsat = interp1d(exptimes, satpoints, kind='linear')
@@ -162,9 +162,9 @@ if __name__ == '__main__':
 
         for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
                 #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
-            print parser['name']
+            print(parser['name'])
             for i, field in enumerate(fields):
-                print "\tField %d" % field
+                print("\tField %d" % field)
                 parser['parser'].setField(field)
 
                 visibleMags[parser['name']] = parser['parser'].visible()
