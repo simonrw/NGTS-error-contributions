@@ -60,7 +60,7 @@ class Application(object):
         return dark_out, bright_out
 
     def high_precision_objects(self, mags, exptime):
-        with tables.openFile(os.path.join(BASE_DIR, self.args['<hprange>'])) as infile:
+        with tables.open_file(os.path.join(BASE_DIR, self.args['<hprange>'])) as infile:
             ref_e = infile.root.exptimes[:]
             crosspoints = infile.root.crosspoints[:]
 

@@ -141,7 +141,7 @@ def main(args):
     nExposures = config.TargetBinTime / totalFrameTime
 
     if args.render:
-        outfile = tables.openFile(args.render, 'w')
+        outfile = tables.open_file(args.render, 'w')
 
 
     # Get the sky counts per pixel per second
@@ -322,19 +322,19 @@ def main(args):
         ###############################################################################
 
         if args.render:
-            group = outfile.createGroup('/', 'airmass{:d}'.format(i))
+            group = outfile.create_group('/', 'airmass{:d}'.format(i))
             group._v_attrs.airmass = Airmass
 
-            outfile.createArray(group, 'exptime', expTime, 'Exposure time')
-            outfile.createArray(group, 'flux', BinnedSourceCounts, 'Flux')
-            outfile.createArray(group, 'source', SourceError, 'Source')
-            outfile.createArray(group, 'sky', SkyError, 'Sky')
-            outfile.createArray(group, 'read', ReadNoiseError, 'Read')
-            outfile.createArray(group, 'scintillation', ScintillationError, 'Scintillation')
-            outfile.createArray(group, 'total', TotalError, 'Total')
+            outfile.create_array(group, 'exptime', expTime, 'Exposure time')
+            outfile.create_array(group, 'flux', BinnedSourceCounts, 'Flux')
+            outfile.create_array(group, 'source', SourceError, 'Source')
+            outfile.create_array(group, 'sky', SkyError, 'Sky')
+            outfile.create_array(group, 'read', ReadNoiseError, 'Read')
+            outfile.create_array(group, 'scintillation', ScintillationError, 'Scintillation')
+            outfile.create_array(group, 'total', TotalError, 'Total')
 
     if args.render:
-        group = outfile.createGroup('/', 'meta')
+        group = outfile.create_group('/', 'meta')
         # Helper function
         set_value = lambda name, value: setattr(group._v_attrs, name, value)
 

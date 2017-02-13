@@ -18,7 +18,7 @@ def main(args):
 
     keys = ['read', 'sky', 'scintillation', 'source', 'total']
     colours = ['g', 'b', 'c', 'r', 'k']
-    with tables.openFile(args['<file>']) as infile:
+    with tables.open_file(args['<file>']) as infile:
         group = infile.root.data
 
         print('Exposure time: {}s'.format(group._v_attrs.exptime))

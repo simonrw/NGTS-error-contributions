@@ -171,9 +171,9 @@ class App(object):
         else:
             fr = NullFileRender()
 
-        outfile = tables.openFile('noisemodel.h5', 'w')
-        group = outfile.createGroup('/', 'data', 'Data')
-        outfile.createArray(group, 'mag', self.mag)
+        outfile = tables.open_file('noisemodel.h5', 'w')
+        group = outfile.create_group('/', 'data', 'Data')
+        outfile.create_array(group, 'mag', self.mag)
 
         # Plot the theory lines
         fr.add_dataset('Magnitude', self.mag)
@@ -185,7 +185,7 @@ class App(object):
             plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
             fr.add_dataset(label, ydata)
 
-            outfile.createArray(group, label.lower(), ydata)
+            outfile.create_array(group, label.lower(), ydata)
         if self.args.satlimit: self.saturationLimit(group)
         fr.render()
 

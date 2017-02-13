@@ -54,11 +54,11 @@ def main(args):
     ax.set_xticklabels(ticks)
     ax.set_xlim(0.9 * exptimes.min(), 1.1 * exptimes.max())
 
-    with tables.openFile('highprecisionrange.h5', 'w') as outfile:
-        outfile.createArray('/', 'exptimes', exptimes)
-        outfile.createArray('/', 'crosspoints', crosspoints)
-        outfile.createArray('/', 'darklimits', darkpoints)
-        outfile.createArray('/', 'brightlimits', brightpoints)
+    with tables.open_file('highprecisionrange.h5', 'w') as outfile:
+        outfile.create_array('/', 'exptimes', exptimes)
+        outfile.create_array('/', 'crosspoints', crosspoints)
+        outfile.create_array('/', 'darklimits', darkpoints)
+        outfile.create_array('/', 'brightlimits', brightpoints)
 
 
     if args.output:

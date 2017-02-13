@@ -157,8 +157,8 @@ if __name__ == '__main__':
     fig = plt.figure()
     profileAx = fig.add_subplot(111)
 
-    with tables.openFile('out.h5', 'w') as outfile:
-        outfile.createArray('/', 'exptime', exptimes)
+    with tables.open_file('out.h5', 'w') as outfile:
+        outfile.create_array('/', 'exptime', exptimes)
 
         for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
                 #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 profileAx.plot(exptimes, data, label="%s %d" % (parser['name'], field),
                         color='k', ls=linestyles[i])
 
-                outfile.createArray('/', 'field{0:d}'.format(field), data)
+                outfile.create_array('/', 'field{0:d}'.format(field), data)
 
             parser['parser'].close()
 

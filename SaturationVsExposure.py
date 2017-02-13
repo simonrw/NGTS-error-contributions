@@ -90,10 +90,10 @@ class App(object):
             #])
         self.ydata, self.brightxdata, self.darkxdata = GetData()
 
-        with tables.openFile('saturation_vs_exposure.h5', 'w') as outfile:
-            outfile.createArray('/', 'mags', self.ydata)
-            outfile.createArray('/', 'dark', self.darkxdata)
-            outfile.createArray('/', 'bright', self.brightxdata)
+        with tables.open_file('saturation_vs_exposure.h5', 'w') as outfile:
+            outfile.create_array('/', 'mags', self.ydata)
+            outfile.create_array('/', 'dark', self.darkxdata)
+            outfile.create_array('/', 'bright', self.brightxdata)
 
         assert self.ydata.size == self.brightxdata.size
         assert self.ydata.size == self.darkxdata.size
