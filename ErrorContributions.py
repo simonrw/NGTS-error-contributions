@@ -103,18 +103,18 @@ def main(args):
     ax = fig.add_subplot(111)
 
     # Print some nice stuff to the console
-    print "Assuming a gain of %.1f" % config.Gain
-    print "Bias level: %.2f electrons" % config.BiasLevel
-    print "FWHM: %.2f pixels" % config.FWHM
-    print "Aperture radius: %.2f pixels" % config.Radius
-    print "Aperture area: %.2f pixels" % config.Area
-    print "Read noise per aperture: %.2f electrons" % ReadNoisePerAperture
-    print "Simulating to %.1f hour(s)" % (config.TargetBinTime / 3600.,)
-    print "Full well depth set to %dk electrons" % (config.FullWellDepth / 1000)
+    print("Assuming a gain of %.1f" % config.Gain)
+    print("Bias level: %.2f electrons" % config.BiasLevel)
+    print("FWHM: %.2f pixels" % config.FWHM)
+    print("Aperture radius: %.2f pixels" % config.Radius)
+    print("Aperture area: %.2f pixels" % config.Area)
+    print("Read noise per aperture: %.2f electrons" % ReadNoisePerAperture)
+    print("Simulating to %.1f hour(s)" % (config.TargetBinTime / 3600.,))
+    print("Full well depth set to %dk electrons" % (config.FullWellDepth / 1000))
 
     # Target magnitude
     TargetMag = args.targetmag
-    print "Target magnitude: %.2f" % TargetMag
+    print("Target magnitude: %.2f" % TargetMag)
 
     # Central pixel fraction (calculated at runtime)
     '''
@@ -128,39 +128,39 @@ def main(args):
     #CentralPixelFraction = dblquad(Gaussian2D, -0.5, 0.5, lambda x: -0.5, lambda x: 0.5, args=(FWHM, (0., 0.)))[0] / \
             #dblquad(Gaussian2D, -Inf, Inf, lambda x: -Inf, lambda x: Inf, args=(FWHM, (0., 0.)))[0]
     CentralPixelFraction = 0.281838
-    print "Central pixel fraction: %f"  %  CentralPixelFraction
+    print("Central pixel fraction: %f"  %  CentralPixelFraction)
 
     # science exposure time (equal in log space)
     expTime = 10**linspace(log10(5), log10(3600), 100)
 
     # total frame duration (exposure + readout)
     totalFrameTime = expTime + config.ReadTime
-    print "Readout time at %.1f MHz: %f seconds" % (config.HorizontalSpeed / 1E6, config.ReadTime)
+    print("Readout time at %.1f MHz: %f seconds" % (config.HorizontalSpeed / 1E6, config.ReadTime))
 
     # Number of exposures that fit into an hour
     nExposures = config.TargetBinTime / totalFrameTime
 
     if args.render:
-        outfile = tables.openFile(args.render, 'w')
+        outfile = tables.open_file(args.render, 'w')
 
 
     # Get the sky counts per pixel per second
     SkyPerSecPerPix = config.SkyLevel[Moon.lower()]
-    print "Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix
+    print("Sky has %.1f electrons per second per pixel" % SkyPerSecPerPix)
 
     # Sky counts per second
     SkyPerSec = SkyPerSecPerPix * config.Area
-    print "Sky has %.1f electrons per second" % SkyPerSec
+    print("Sky has %.1f electrons per second" % SkyPerSec)
 
     # Total sky counts per exposure
     SkyCounts = SkyPerSec * expTime
 
     line_styles = ['-', '--', ':']
     for i, Airmass in enumerate(AirmassOptions):
-        print "\t\t*** AIRMASS %.1f ***" % Airmass;
+        print("\t\t*** AIRMASS %.1f ***" % Airmass);
         # Airmass correction factor
         AirmassCorrection = 10**((Extinction * Airmass) / 2.5)
-        print "Airmass correction factor: %.5f" % AirmassCorrection
+        print("Airmass correction factor: %.5f" % AirmassCorrection)
 
         ###############################################################################
         #                               Source Error
@@ -171,16 +171,16 @@ def main(args):
             zp = float(args.zeropoint)
         else:
             zp = ZP(1.)
-        print "Instrumental zero point: %.5f mag" % zp
+        print("Instrumental zero point: %.5f mag" % zp)
 
         # Correct the source magnitude for airmass
         AirmassCorrectedMag = TargetMag + Extinction * Airmass
-        print "Airmass corrected magnitude: %.3f" % AirmassCorrectedMag
+        print("Airmass corrected magnitude: %.3f" % AirmassCorrectedMag)
 
 
         # Number of source photons
         SourceCountsPerSecond = 10**((zp - AirmassCorrectedMag) / 2.5)
-        print "Source has %.1f electrons per second" % SourceCountsPerSecond
+        print("Source has %.1f electrons per second" % SourceCountsPerSecond)
         SourceCounts = SourceCountsPerSecond * expTime
 
         # binned source counts
@@ -268,7 +268,7 @@ def main(args):
         # Pick the minimum one to find the saturation point
         SaturatedLevel = SaturatedExpTimes.min()
 
-        print "Saturation in %.2f seconds" % SaturatedLevel
+        print("Saturation in %.2f seconds" % SaturatedLevel)
 
 
         ###############################################################################
@@ -322,19 +322,19 @@ def main(args):
         ###############################################################################
 
         if args.render:
-            group = outfile.createGroup('/', 'airmass{:d}'.format(i))
+            group = outfile.create_group('/', 'airmass{:d}'.format(i))
             group._v_attrs.airmass = Airmass
 
-            outfile.createArray(group, 'exptime', expTime, 'Exposure time')
-            outfile.createArray(group, 'flux', BinnedSourceCounts, 'Flux')
-            outfile.createArray(group, 'source', SourceError, 'Source')
-            outfile.createArray(group, 'sky', SkyError, 'Sky')
-            outfile.createArray(group, 'read', ReadNoiseError, 'Read')
-            outfile.createArray(group, 'scintillation', ScintillationError, 'Scintillation')
-            outfile.createArray(group, 'total', TotalError, 'Total')
+            outfile.create_array(group, 'exptime', expTime, 'Exposure time')
+            outfile.create_array(group, 'flux', BinnedSourceCounts, 'Flux')
+            outfile.create_array(group, 'source', SourceError, 'Source')
+            outfile.create_array(group, 'sky', SkyError, 'Sky')
+            outfile.create_array(group, 'read', ReadNoiseError, 'Read')
+            outfile.create_array(group, 'scintillation', ScintillationError, 'Scintillation')
+            outfile.create_array(group, 'total', TotalError, 'Total')
 
     if args.render:
-        group = outfile.createGroup('/', 'meta')
+        group = outfile.create_group('/', 'meta')
         # Helper function
         set_value = lambda name, value: setattr(group._v_attrs, name, value)
 

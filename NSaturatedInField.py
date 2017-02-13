@@ -4,12 +4,13 @@ import sys
 import os.path
 import argparse
 import numpy as np
-import cPickle
+import pickle
 from jg.ctx import j20002gal
 from subprocess import Popen, PIPE, call
 from Config import *
 import matplotlib.pyplot as plt
 from NOMADFields import NOMADFieldsParser
+from fits import Fits
 
 class App(object):
     """
@@ -43,16 +44,16 @@ class App(object):
         x = npix * pixscale / 60.
         y = npix * pixscale / 60.
         self.radius = np.sqrt(x*y/np.pi)
-        print "Searching within a radius of %f degrees, total area: %f sq degrees" % (
+        print("Searching within a radius of %f degrees, total area: %f sq degrees" % (
                 self.radius / 60.,
                 np.pi * (self.radius / 60.)**2,
-                )
+                ))
 
         # set up the exposure time array
         self.exptime = np.linspace(np.log10(5.), np.log10(3600.), 100)
 
         # load the fits
-        fits = cPickle.load(open("fits.cpickle"))
+        fits = Fits()
         self.brightFit = fits['bright']
         self.darkFit = fits['dark']
 
@@ -77,12 +78,12 @@ class App(object):
         fig = plt.figure()
         ax = fig.add_subplot(111)
         for i, field in enumerate(self.FieldCentre):
-            print "Analysing field %d,%d" % (field[0], field[1])
+            print("Analysing field %d,%d" % (field[0], field[1]))
             galcoords = j20002gal(field[0], field[1])
 
             # Fetch the list of objects
             mags = self.GetCatalogueData(i + 1)
-            print "%d objects returned" % (mags.size,)
+            print("%d objects returned" % (mags.size,))
 
             # Get the number of saturated stars
             # Normalise to make fraction

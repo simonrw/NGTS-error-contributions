@@ -10,10 +10,11 @@ import numpy as np
 #import pyfits
 import logging
 import AstErrors as ae
-import cPickle
+import pickle
 import tables
 from Config import *
 import csv
+from fits import Fits
 
 logger = logging.getLogger('TheoryNoise')
 
@@ -26,8 +27,8 @@ class FileRender(object):
         self.datasets[name.lower()] = values
 
     def render(self):
-        keys = self.datasets.keys()
-        values = zip(*self.datasets.values())
+        keys = list(self.datasets.keys())
+        values = list(zip(*list(self.datasets.values())))
         with open(self.filename, 'w') as outfile:
             writer = csv.DictWriter(outfile, keys)
             writer.writeheader()
@@ -82,7 +83,7 @@ class App(object):
         '''
         Overlays the wasp data from Joao
         '''
-        waspdata = cPickle.load(open(
+        waspdata = pickle.load(open(
             os.path.join(self.fileDir,
             "JoaoData", "data.cpickle")
             ))
@@ -94,17 +95,14 @@ class App(object):
         '''
         Overlays the NGTS data
         '''
-        ngtsdata = cPickle.load(open(
+        ngtsdata = pickle.load(open(
             os.path.join(self.fileDir,
                 "NGTSData", "NGTSData.cpickle")
             ))
 
 
     def saturationLimit(self, group):
-        fits = cPickle.load(
-                open(os.path.join(self.fileDir,
-                    "fits.cpickle"))
-                )
+        fits = Fits()
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
@@ -171,9 +169,9 @@ class App(object):
         else:
             fr = NullFileRender()
 
-        outfile = tables.openFile('noisemodel.h5', 'w')
-        group = outfile.createGroup('/', 'data', 'Data')
-        outfile.createArray(group, 'mag', self.mag)
+        outfile = tables.open_file('noisemodel.h5', 'w')
+        group = outfile.create_group('/', 'data', 'Data')
+        outfile.create_array(group, 'mag', self.mag)
 
         # Plot the theory lines
         fr.add_dataset('Magnitude', self.mag)
@@ -185,7 +183,7 @@ class App(object):
             plt.plot(self.mag, ydata, color=colour, ls='-', label=label)
             fr.add_dataset(label, ydata)
 
-            outfile.createArray(group, label.lower(), ydata)
+            outfile.create_array(group, label.lower(), ydata)
         if self.args.satlimit: self.saturationLimit(group)
         fr.render()
 
@@ -215,9 +213,9 @@ class App(object):
         plt.ylim(ymin=1E-5)
 
         if self.args.verbose:
-            print "CROSSPOINT {:.8f}".format(self.crossPoint)
-            print "DARK {:.8f}".format(self.darkLimit)
-            print "BRIGHT {:.8f}".format(self.brightLimit)
+            print("CROSSPOINT {:.8f}".format(self.crossPoint))
+            print("DARK {:.8f}".format(self.darkLimit))
+            print("BRIGHT {:.8f}".format(self.brightLimit))
 
         group._v_attrs.totaltime = targettime
         group._v_attrs.exptime = self.exptime
@@ -265,5 +263,5 @@ if __name__ == '__main__':
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
-            print >> sys.stderr, "Interrupt caught, exiting..."
+            print("Interrupt caught, exiting...", file=sys.stderr)
             sys.exit(0)

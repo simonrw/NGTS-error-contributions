@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 from Config import *
-import cPickle
+import pickle
 import sys
 import numpy as np
 import tables
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import BesanconParser
 
 
-exptimes, crosspoints, satpoints = cPickle.load(open("precisiondata.cpickle"))
+exptimes, crosspoints, satpoints = pickle.load(open("precisiondata.cpickle"))
 
 interpcross = interp1d(exptimes, crosspoints, kind='linear')
 interpsat = interp1d(exptimes, satpoints, kind='linear')
@@ -157,14 +157,14 @@ if __name__ == '__main__':
     fig = plt.figure()
     profileAx = fig.add_subplot(111)
 
-    with tables.openFile('out.h5', 'w') as outfile:
-        outfile.createArray('/', 'exptime', exptimes)
+    with tables.open_file('out.h5', 'w') as outfile:
+        outfile.create_array('/', 'exptime', exptimes)
 
         for parser in [{'name': 'NOMAD', 'parser': NOMADDataStore()},]:
                 #{'name': 'Besancon', 'parser': BesanconDataStore(ModelRestrictions)}]:
-            print parser['name']
+            print(parser['name'])
             for i, field in enumerate(fields):
-                print "\tField %d" % field
+                print("\tField %d" % field)
                 parser['parser'].setField(field)
 
                 visibleMags[parser['name']] = parser['parser'].visible()
@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 profileAx.plot(exptimes, data, label="%s %d" % (parser['name'], field),
                         color='k', ls=linestyles[i])
 
-                outfile.createArray('/', 'field{0:d}'.format(field), data)
+                outfile.create_array('/', 'field{0:d}'.format(field), data)
 
             parser['parser'].close()
 

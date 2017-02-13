@@ -9,7 +9,7 @@ Usage:
 from docopt import docopt
 import matplotlib.pyplot as plt
 import numpy as np
-from itertools import izip
+
 import tables
 
 def main(args):
@@ -18,16 +18,16 @@ def main(args):
 
     keys = ['read', 'sky', 'scintillation', 'source', 'total']
     colours = ['g', 'b', 'c', 'r', 'k']
-    with tables.openFile(args['<file>']) as infile:
+    with tables.open_file(args['<file>']) as infile:
         group = infile.root.data
 
-        print 'Exposure time: {}s'.format(group._v_attrs.exptime)
-        print 'Integration time: {}s'.format(group._v_attrs.totaltime)
+        print('Exposure time: {}s'.format(group._v_attrs.exptime))
+        print('Integration time: {}s'.format(group._v_attrs.totaltime))
 
         mags = group.mag[:]
 
 
-        for (key, colour) in izip(keys, colours):
+        for (key, colour) in zip(keys, colours):
             ax.plot(mags, getattr(group, key)[:], ls='-', color=colour)
 
         ax.axhline(1E-3, color='k', ls=':', zorder=-10)

@@ -13,9 +13,10 @@ import srw
 #import pyfits
 from ppgplot import *
 import AstErrors as ae
-import cPickle
+import pickle
 from srw import pghelpers as pgh
 from ConfigWASP import *
+from fits import Fits
 
 COLOURS = {'sky': 4, 'source': 2, 'scin': 5, 'total': 1, 'read': 3}
 
@@ -50,7 +51,7 @@ class App(object):
         '''
         Overlays the wasp data from Joao
         '''
-        waspdata = cPickle.load(open(
+        waspdata = pickle.load(open(
             os.path.join(self.fileDir,
             "JoaoData", "data.cpickle")
             ))
@@ -65,7 +66,7 @@ class App(object):
         '''
         Overlays the NGTS data
         '''
-        ngtsdata = cPickle.load(open(
+        ngtsdata = pickle.load(open(
             os.path.join(self.fileDir,
                 "NGTSData", "NGTSData.cpickle")
             ))
@@ -75,10 +76,7 @@ class App(object):
         pgsci(1)
 
     def saturationLimit(self):
-        fits = cPickle.load(
-                open(os.path.join(self.fileDir,
-                    "fits.cpickle"))
-                )
+        fits = Fits()
         self.brightLimit = fits['bright'](np.log10(self.exptime))
         self.darkLimit = fits['dark'](np.log10(self.exptime))
 
@@ -212,12 +210,12 @@ class App(object):
 
         if self.args.verbose:
             if self.darkLimit:
-                print "SATLEVEL DARK: %f" % self.darkLimit
+                print("SATLEVEL DARK: %f" % self.darkLimit)
 
             if self.brightLimit:
-                print "SATLEVEL BRIGHT: %f" % self.brightLimit
+                print("SATLEVEL BRIGHT: %f" % self.brightLimit)
 
-            print "CROSSPOINT: %f" % self.crossPoint
+            print("CROSSPOINT: %f" % self.crossPoint)
 
 
 
@@ -254,5 +252,5 @@ if __name__ == '__main__':
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
-            print >> sys.stderr, "Interrupt caught, exiting..."
+            print("Interrupt caught, exiting...", file=sys.stderr)
             sys.exit(0)

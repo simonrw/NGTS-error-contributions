@@ -16,7 +16,7 @@ on disk for usage later.
 import argparse
 import numpy as np
 import os.path
-import cPickle
+import pickle
 import subprocess
 import progressbar
 import re
@@ -90,10 +90,10 @@ class App(object):
             #])
         self.ydata, self.brightxdata, self.darkxdata = GetData()
 
-        with tables.openFile('saturation_vs_exposure.h5', 'w') as outfile:
-            outfile.createArray('/', 'mags', self.ydata)
-            outfile.createArray('/', 'dark', self.darkxdata)
-            outfile.createArray('/', 'bright', self.brightxdata)
+        with tables.open_file('saturation_vs_exposure.h5', 'w') as outfile:
+            outfile.create_array('/', 'mags', self.ydata)
+            outfile.create_array('/', 'dark', self.darkxdata)
+            outfile.create_array('/', 'bright', self.brightxdata)
 
         assert self.ydata.size == self.brightxdata.size
         assert self.ydata.size == self.darkxdata.size
@@ -107,7 +107,7 @@ class App(object):
         Destructor, dumps the data and closes the plot when the class
         is destroyed
         '''
-        cPickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, 
+        pickle.dump({'bright': self.brightFit, 'dark': self.darkFit}, 
                 open(self.args.pickleout, "w"), protocol=2)
 
     def run(self):

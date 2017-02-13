@@ -14,7 +14,7 @@ import numpy as np
 import multiprocessing
 import argparse
 
-import cPickle
+import pickle
 
 dataScriptName = os.path.join(
         os.path.dirname(__file__),
@@ -26,7 +26,7 @@ def getStatsForExptime(time):
     Calls the script which provides the data,
     and parses the results
     '''
-    print "T: %.1f" % time
+    print("T: %.1f" % time)
     cmd = ['python', dataScriptName, "-o", "/tmp/output.png", "-e", str(time), "-v"]
     p = sp.Popen(cmd, stdout=sp.PIPE, stderr=sp.PIPE)
     linestr, err = p.communicate()
@@ -54,12 +54,12 @@ class App(object):
         @param args @todo
         """
 
-        answer = raw_input("This program generates the data. It takes a while. "
+        answer = input("This program generates the data. It takes a while. "
                 "Are you sure you want to run this, and not just plot the data using "
                 "PlotHighPrecisionRange.py? [y/N] ")
 
         if answer.upper() != "Y":
-            print "Exiting"
+            print("Exiting")
             exit()
 
 
@@ -71,7 +71,7 @@ class App(object):
 
 
     def run(self):
-        crosspoints, darkpoints, brightpoints = zip(*map(getStatsForExptime, self._exptimes))
+        crosspoints, darkpoints, brightpoints = list(zip(*list(map(getStatsForExptime, self._exptimes))))
 
         self._exptimes = np.array(self._exptimes)
         self.crosspoints = np.array(crosspoints)
@@ -87,7 +87,7 @@ class App(object):
         '''
         Dump the data to a cpickle file
         '''
-        cPickle.dump(np.array([self._exptimes, self.crosspoints, self.darkpoints,
+        pickle.dump(np.array([self._exptimes, self.crosspoints, self.darkpoints,
             self.brightpoints]),
                 open("precisiondata.cpickle", "w"),
                 protocol=2)

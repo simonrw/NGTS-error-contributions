@@ -25,9 +25,9 @@ import AstErrors as ae
 def Banner(text):
     printText = text.upper()
     width = len(text) + 4
-    print "-" * width
-    print "| %s |" % (printText,)
-    print "-" * width
+    print("-" * width)
+    print("| %s |" % (printText,))
+    print("-" * width)
 
 
 
@@ -158,45 +158,45 @@ class App(object):
 
 
     def printResults(self):
-        print 
+        print() 
         Banner("assumptions")
-        print 
+        print() 
 
-        print "Exposure time: %.2fs" % (self.exptime,)
-        print "Calculating for %.1f year(s)" % (self.nYears,)
-        print "%d bias frames per day" % (self.nBiasPerDay,)
-        print "%d dark frames per day" % (self.nDarkPerDay,)
-        print "Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,)
-        print "Calculated observable hours: %d" % (self.nOpenHours,)
-        print "Simulating for %d telescopes" % (self.nTelescopes,)
-        print "Each image is %.1fMB" % (self.imageSize,)
-        print "%s" % (self.NGTSDetector,)
+        print("Exposure time: %.2fs" % (self.exptime,))
+        print("Calculating for %.1f year(s)" % (self.nYears,))
+        print("%d bias frames per day" % (self.nBiasPerDay,))
+        print("%d dark frames per day" % (self.nDarkPerDay,))
+        print("Average of %d flat frames per day (on observable nights)" % (self.nFlatPerDay,))
+        print("Calculated observable hours: %d" % (self.nOpenHours,))
+        print("Simulating for %d telescopes" % (self.nTelescopes,))
+        print("Each image is %.1fMB" % (self.imageSize,))
+        print("%s" % (self.NGTSDetector,))
 
-        print 
+        print() 
         Banner("Calculation")
-        print 
+        print() 
 
 
-        print "Read time: %.4fs" % (self.readtime,)
-        print "%f exposures per hour" % (self.nExposures,)
-        print "Total night hours in a year: %d" % (self.nTotalHours,)
-        print "Fraction of observable nights per year: %f" % (self.nOpenNights,)
-        print "%d science images per year" % (self.nScienceImages)
-        print "Science images will take up %.2fTB" % (self.scienceStorage,)
-        print "%d bias frames taken" % (np.ceil(self.nTotalBias),)
-        print "%d dark frames taken" % (np.ceil(self.nTotalDark),)
-        print "%d flat frames taken" % (np.ceil(self.nTotalFlat),)
-        print "%d total calibration frames" % (np.ceil(self.nCalibFrames),)
-        print "Calibration frames will take up %.2fTB" % (self.calibStorage,)
-        print "Calibration frames make up %.3f%% of the total storage" % (
-                self.calibFraction * 100.,)
+        print("Read time: %.4fs" % (self.readtime,))
+        print("%f exposures per hour" % (self.nExposures,))
+        print("Total night hours in a year: %d" % (self.nTotalHours,))
+        print("Fraction of observable nights per year: %f" % (self.nOpenNights,))
+        print("%d science images per year" % (self.nScienceImages))
+        print("Science images will take up %.2fTB" % (self.scienceStorage,))
+        print("%d bias frames taken" % (np.ceil(self.nTotalBias),))
+        print("%d dark frames taken" % (np.ceil(self.nTotalDark),))
+        print("%d flat frames taken" % (np.ceil(self.nTotalFlat),))
+        print("%d total calibration frames" % (np.ceil(self.nCalibFrames),))
+        print("Calibration frames will take up %.2fTB" % (self.calibStorage,))
+        print("Calibration frames make up %.3f%% of the total storage" % (
+                self.calibFraction * 100.,))
 
-        print 
+        print() 
         Banner("results")
-        print 
+        print() 
 
-        print "%d total frames" % (np.ceil(self.nTotalFrames),)
-        print "Total storage requirement: %.3fTB" % (self.totalStorage)
+        print("%d total frames" % (np.ceil(self.nTotalFrames),))
+        print("Total storage requirement: %.3fTB" % (self.totalStorage))
 
 
 if __name__ == '__main__':
@@ -217,9 +217,9 @@ if __name__ == '__main__':
         args = parser.parse_args()
         app = App(args)
     except RuntimeError as e:
-        print >> sys.stderr, "Error:", e
+        print("Error:", e, file=sys.stderr)
         sys.exit(1)
 
     except KeyboardInterrupt:
-        print >> sys.stderr, "Interrupt caught, exiting..."
+        print("Interrupt caught, exiting...", file=sys.stderr)
         sys.exit(0)

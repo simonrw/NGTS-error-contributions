@@ -120,9 +120,9 @@ class App(object):
         ax.axvline(med_val - med_val_err / 2., color='b')
         ax.axvline(med_val + med_val_err / 2., color='b')
 
-        with tables.openFile('out.h5', 'w') as outfile:
-            outfile.createArray('/', 'x', 10 ** centres)
-            outfile.createArray('/', 'y', normalisedVals)
+        with tables.open_file('out.h5', 'w') as outfile:
+            outfile.create_array('/', 'x', 10 ** centres)
+            outfile.create_array('/', 'y', normalisedVals)
             outfile.root._v_attrs.most_probable = med_val
             outfile.root._v_attrs.sd = med_val_err
 
