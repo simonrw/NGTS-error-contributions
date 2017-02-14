@@ -16,6 +16,9 @@ from Config import *
 import csv
 from fits import Fits
 
+plt.rc('text', usetex=True)
+plt.rc('figure', figsize=(8.3, 5.8))  # A5
+
 logger = logging.getLogger('TheoryNoise')
 
 class FileRender(object):
@@ -210,6 +213,7 @@ class App(object):
         plt.legend(loc='best')
         plt.yscale('log')
         plt.xlim(18, 6)
+        plt.ylim(1E-5, 1E0)
         plt.ylim(ymin=1E-5)
 
         if self.args.verbose:
@@ -222,6 +226,7 @@ class App(object):
         outfile.close()
 
         plt.grid(True, which='both')
+        plt.tight_layout()
         if self.args.output:
             plt.savefig(self.args.output)
         else:
