@@ -17,7 +17,7 @@ HorizontalSpeed = _detector.horizspeed
 VerticalTime = _detector.verttime
 NAXIS1, NAXIS2 = _detector.ccdsize
 ReadTime = _detector.readTime()
-ReadNoise = 15. # e- per pix
+ReadNoise = 12. # e- per pix
 FWHM = 1.6
 Radius = 1.5 * FWHM # pixels
 Area = pi * Radius**2
@@ -30,6 +30,6 @@ FullWellDepth = 107E3
 FieldCentre = [(60., -45.), (180., -45.), (300., -45.)]
 PixScale = 4.97
 SkyLevel = {
-        'dark': 50.,
-        'bright': 550.,
+        'dark': 20.,
+        'bright': 150.,
         }
