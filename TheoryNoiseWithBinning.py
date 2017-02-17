@@ -154,10 +154,10 @@ class App(object):
             self.sky.append(errob.skyError(airmass, self.exptime,
                 skypersecperpix))
             self.read.append(errob.readError(airmass, self.exptime))
-            self.scin.append(errob.scintillationError(airmass, self.exptime))
+            self.scin.append(errob.scintillationError(airmass, self.exptime, method=args.scintillation_method))
             self.dark.append(errob.darkError(airmass, self.exptime, dark_level))
             self.total.append(errob.totalError(airmass, self.exptime,
-                skypersecperpix, dark_level))
+                skypersecperpix, dark_level, scintillation_method=args.scintillation_method))
 
         self.source, self.sky, self.read, self.scin, self.total, self.dark = [
                 np.array(d) for d in [self.source, self.sky, self.read, self.scin,
@@ -265,6 +265,8 @@ if __name__ == '__main__':
                     default=0.6, type=float, required=False)
             parser.add_argument('-r', '--render', help="Render data to a csv file",
                     required=False)
+            parser.add_argument('--scintillation-method', required=False, choices={'young', 'osborn'},
+                    help="Choose between Young's scintillation method, and Osborn's (default) scintillation method'", default='osborn')
             args = parser.parse_args()
             app = App(args)
         except KeyboardInterrupt:
